@@ -26,10 +26,9 @@ func Register(c *fiber.Ctx) error {
 
 	database.DB.Create(&user) //insert user into DB
 	// Get all records
-	result := database.DB.Find(&user)// SELECT * FROM users;
+	result := database.DB.Find(&user) // SELECT * FROM users;
 
-	fmt.Println("HEKKLLLOOADOAOD",result.RowsAffected)// returns found records count, equals `len(users)`
-	
+	fmt.Println("HEKKLLLOOADOAOD", result.RowsAffected) // returns found records count, equals `len(users)`
 
 	return c.JSON(user)
 }

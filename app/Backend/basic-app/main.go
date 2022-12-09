@@ -3,7 +3,9 @@ package main
 import (
 	"basic-app/database"
 	"basic-app/routes"
+	"fmt"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -13,10 +15,21 @@ func main() {
 	database.Connect()
 	routes.Setup(app)
 
-	// var now time.Time
-	// db.Raw("SELECT NOW()").Scan(&now)
+	fmt.Println("Go Redis ")
+	// // another Popular method for installation
+	// opt, err := redis.ParseURL("redis://<user>:<pass>@localhost:6379/<db>")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// rdb := redis.NewClient(opt)
 
-	// fmt.Println(now)
+	client := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+	pong, err := client.Ping(client.Context()).Result() //client.Context()
+	fmt.Println(pong, err)
 
 	app.Listen(":8000")
 }
