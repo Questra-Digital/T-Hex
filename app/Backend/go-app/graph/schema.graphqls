@@ -1,0 +1,35 @@
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+}
+
+type Test {
+  id: ID!
+  status: String!
+  startedby: String!
+}
+
+type Query {
+  users: [User!]! #list of users, if there no users return error
+  tests: [Test!]! #list of tests, if there no tests return null
+  user(name: String!): User #return 1 user using ID
+  test(id: ID!): Test #return 1 test using ID
+}
+
+type Mutation {
+  addTest(input: AddTestInput!): Test!
+  addUser(input: AddUserInput!): User!
+}
+
+input AddTestInput {
+  status: String!
+  startedby: String!
+}
+
+input AddUserInput {
+  name: String!
+  email: String!
+  password: String!
+}
