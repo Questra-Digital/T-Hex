@@ -472,7 +472,7 @@ func StopsSeleniumContainer(client *client.Client, containername string) error {
 
 func main() {
 
-	to_check_docker_image := 5
+	to_check_docker_image := 6
 
 	if to_check_docker_image == 1 {
 
@@ -536,6 +536,21 @@ func main() {
 		containernameproject_test := "Go_Lang_Test_Container"
 		portopening2 := "8080"
 		image2 := "go_check"
+		inputEnv := []string{fmt.Sprintf("LISTENINGPORT=%s", portopening2)}
+		err = runContainerForProjectTestImage(client, image2, containernameproject_test, portopening2, inputEnv)
+		if err != nil {
+			log.Println(err)
+		}
+
+	} else if to_check_docker_image == 6 {
+
+		client, err := client.NewEnvClient()
+
+		fmt.Println("11) -------Running ProjectTestContainer-------")
+		time.Sleep(30 * time.Second)
+		containernameproject_test := "Python_Test_Container"
+		portopening2 := "8080"
+		image2 := "pythontest"
 		inputEnv := []string{fmt.Sprintf("LISTENINGPORT=%s", portopening2)}
 		err = runContainerForProjectTestImage(client, image2, containernameproject_test, portopening2, inputEnv)
 		if err != nil {
