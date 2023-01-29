@@ -20,6 +20,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -258,6 +260,184 @@ func runContainerForProjectTestImage(client *client.Client, imagename string, co
 	return nil
 }
 
+func buildImageforDockerFile1(client *client.Client, tags []string, dockerfile string) error {
+	ctx := context.Background()
+
+	// Create a buffer to hold the tar archive
+	buf := new(bytes.Buffer)
+	tw := tar.NewWriter(buf)
+	defer tw.Close()
+
+	// Get the current working directory
+	// cwd, err := os.Getwd()
+	// if err != nil {
+	// 	return err
+	// }
+
+	cwd := "C:\\Users\\abdul\\Desktop\\T-Hex\\t-hex\\app\\backend\\PythonTest"
+
+	// Walk the directory and add all files to the tar archive
+	err := filepath.Walk(cwd, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Create a tar header for the file
+		header, err := tar.FileInfoHeader(info, path)
+		if err != nil {
+			return err
+		}
+
+		// Update the name of the file in the header to be the path relative to the current working directory
+		header.Name = strings.TrimPrefix(path, cwd+string(filepath.Separator))
+
+		// Write the header to the tar archive
+		if err := tw.WriteHeader(header); err != nil {
+			return err
+		}
+
+		// If the file is not a directory, add its contents to the archive
+		if !info.IsDir() {
+			file, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+
+			// Copy the file's contents to the tar archive
+			if _, err := io.Copy(tw, file); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return err
+	}
+
+	// Create a reader for the tar archive
+	dockerFileTarReader := bytes.NewReader(buf.Bytes())
+
+	// Define the build options to use for the file
+	buildOptions := types.ImageBuildOptions{
+		Context:    dockerFileTarReader,
+		Dockerfile: dockerfile,
+		Remove:     true,
+		Tags:       tags,
+	}
+
+	// Build the actual image
+	imageBuildResponse, err := client.ImageBuild(
+		ctx,
+		dockerFileTarReader,
+		buildOptions,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	// Read the STDOUT from the build process
+	defer imageBuildResponse.Body.Close()
+	_, err = io.Copy(os.Stdout, imageBuildResponse.Body)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func buildImageforDockerFile2(client *client.Client, tags []string, dockerfile string) error {
+	ctx := context.Background()
+
+	// Create a buffer to hold the tar archive
+	buf := new(bytes.Buffer)
+	tw := tar.NewWriter(buf)
+	defer tw.Close()
+
+	// Get the current working directory
+	// cwd, err := os.Getwd()
+	// if err != nil {
+	// 	return err
+	// }
+
+	cwd := "C:\\Users\\abdul\\Desktop\\T-Hex\\t-hex\\app\\backend\\GoTest"
+
+	// Walk the directory and add all files to the tar archive
+	err := filepath.Walk(cwd, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Create a tar header for the file
+		header, err := tar.FileInfoHeader(info, path)
+		if err != nil {
+			return err
+		}
+
+		// Update the name of the file in the header to be the path relative to the current working directory
+		header.Name = strings.TrimPrefix(path, cwd+string(filepath.Separator))
+
+		// Write the header to the tar archive
+		if err := tw.WriteHeader(header); err != nil {
+			return err
+		}
+
+		// If the file is not a directory, add its contents to the archive
+		if !info.IsDir() {
+			file, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+
+			// Copy the file's contents to the tar archive
+			if _, err := io.Copy(tw, file); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return err
+	}
+
+	// Create a reader for the tar archive
+	dockerFileTarReader := bytes.NewReader(buf.Bytes())
+
+	// Define the build options to use for the file
+	buildOptions := types.ImageBuildOptions{
+		Context:    dockerFileTarReader,
+		Dockerfile: dockerfile,
+		Remove:     true,
+		Tags:       tags,
+	}
+
+	// Build the actual image
+	imageBuildResponse, err := client.ImageBuild(
+		ctx,
+		dockerFileTarReader,
+		buildOptions,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	// Read the STDOUT from the build process
+	defer imageBuildResponse.Body.Close()
+	_, err = io.Copy(os.Stdout, imageBuildResponse.Body)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Stop and remove a container
 func stopAndRemoveContainer(client *client.Client, containername string) error {
 	ctx := context.Background()
@@ -292,56 +472,139 @@ func StopsSeleniumContainer(client *client.Client, containername string) error {
 
 func main() {
 
-	client, err := client.NewEnvClient()
-	if err != nil {
-		log.Fatalf("Unable to create docker client: %s", err)
+	to_check_docker_image := 5
+
+	if to_check_docker_image == 1 {
+
+		client, err := client.NewEnvClient()
+		if err != nil {
+			log.Fatalf("Unable to create docker client: %s", err)
+		}
+		fmt.Println("1) -------Pulling selenium image from docker hub registory-------")
+		image := "selenium/standalone-chrome"
+		err = buildImage(client, image)
+		if err != nil {
+
+			log.Println(err)
+			return
+		}
+		fmt.Println("2) -------Running Selenium_Container-------")
+		containername := "Selenium_Container"
+		portopening := "4444"
+		inputEnv1 := []string{fmt.Sprintf("LISTENINGPORT=%s", portopening)}
+		err = runContainer(client, image, containername, portopening, inputEnv1)
+		if err != nil {
+			log.Println(err)
+		}
+		fmt.Println("3) -------Running ProjectTestContainer-------")
+		time.Sleep(30 * time.Second)
+		containernameproject_test := "ProjectTestContainer"
+		portopening2 := "8080"
+		image2 := "my-go-app"
+		inputEnv := []string{fmt.Sprintf("LISTENINGPORT=%s", portopening2)}
+		err = runContainerForProjectTestImage(client, image2, containernameproject_test, portopening2, inputEnv)
+		if err != nil {
+			log.Println(err)
+		}
+		fmt.Println("4) -------Stop and removing ProjectTest Container-------")
+		time.Sleep(120 * time.Second)
+		stopAndRemoveContainer(client, "ProjectTestContainer")
+		fmt.Println("5) -------Stop Selenium_Container Container-------")
+		StopsSeleniumContainer(client, "Selenium_Container")
+
+	} else if to_check_docker_image == 2 {
+
+		client, err := client.NewEnvClient()
+
+		fmt.Println("7) -------Running ProjectTestContainer-------")
+		time.Sleep(30 * time.Second)
+		containernameproject_test := "PythonTestContainer"
+		portopening2 := "8080"
+		image2 := "command_image"
+		inputEnv := []string{fmt.Sprintf("LISTENINGPORT=%s", portopening2)}
+		err = runContainerForProjectTestImage(client, image2, containernameproject_test, portopening2, inputEnv)
+		if err != nil {
+			log.Println(err)
+		}
+
+	} else if to_check_docker_image == 3 {
+
+		client, err := client.NewEnvClient()
+
+		fmt.Println("8) -------Running ProjectTestContainer-------")
+		time.Sleep(30 * time.Second)
+		containernameproject_test := "Go_Lang_Test_Container"
+		portopening2 := "8080"
+		image2 := "go_check"
+		inputEnv := []string{fmt.Sprintf("LISTENINGPORT=%s", portopening2)}
+		err = runContainerForProjectTestImage(client, image2, containernameproject_test, portopening2, inputEnv)
+		if err != nil {
+			log.Println(err)
+		}
+
+	} else if to_check_docker_image == 4 {
+
+		fmt.Println("9) -------Create Image from a Docker File-------")
+
+		// -- BUILD IMAGE FROM A DOCKER FILE
+		client, err := client.NewEnvClient()
+		if err != nil {
+			log.Fatalf("Unable to create docker client: %s", err)
+		}
+		// Client, imagename and Dockerfile location
+
+		tags := []string{"again_python"}
+
+		dockerfile := "Dockerfile"
+
+		err = buildImageforDockerFile1(client, tags, dockerfile)
+		if err != nil {
+			log.Println(err)
+			os.Exit(1)
+		}
+
+	} else if to_check_docker_image == 5 {
+
+		fmt.Println("10) -------Create Image from a Docker File-------")
+
+		// -- BUILD IMAGE FROM A DOCKER FILE
+		client, err := client.NewEnvClient()
+		if err != nil {
+			log.Fatalf("Unable to create docker client: %s", err)
+		}
+		// Client, imagename and Dockerfile location
+
+		tags := []string{"go_check"}
+
+		dockerfile := "Dockerfile"
+
+		err = buildImageforDockerFile2(client, tags, dockerfile)
+		if err != nil {
+			log.Println(err)
+			os.Exit(1)
+		}
+
+	} else {
+
+		fmt.Println("6) -------Create Image from a Docker File-------")
+
+		// -- BUILD IMAGE FROM A DOCKER FILE
+		client, err := client.NewEnvClient()
+		if err != nil {
+			log.Fatalf("Unable to create docker client: %s", err)
+		}
+		// Client, imagename and Dockerfile location
+
+		tags := []string{"python_hello_world_image"}
+		dockerfile := `C:\Users\abdul\Desktop\T-Hex\t-hex\app\backend\PythonTest\Dockerfile`
+
+		// dockerfile := `C:\Users\abdul\Desktop\go-workspace\src\ProjectTest\Dockerfile`
+		err = buildImageforDockerFile(client, tags, dockerfile)
+		if err != nil {
+			log.Println(err)
+		}
+
+		// --
 	}
-	fmt.Println("1) -------Pulling selenium image from docker hub registory-------")
-	image := "selenium/standalone-chrome"
-	err = buildImage(client, image)
-	if err != nil {
 
-		log.Println(err)
-		return
-	}
-	fmt.Println("2) -------Running Selenium_Container-------")
-	containername := "Selenium_Container"
-	portopening := "4444"
-	inputEnv1 := []string{fmt.Sprintf("LISTENINGPORT=%s", portopening)}
-	err = runContainer(client, image, containername, portopening, inputEnv1)
-	if err != nil {
-		log.Println(err)
-	}
-	fmt.Println("3) -------Running ProjectTestContainer-------")
-	time.Sleep(30 * time.Second)
-	containernameproject_test := "ProjectTestContainer"
-	portopening2 := "8080"
-	image2 := "my-go-app"
-	inputEnv := []string{fmt.Sprintf("LISTENINGPORT=%s", portopening2)}
-	err = runContainerForProjectTestImage(client, image2, containernameproject_test, portopening2, inputEnv)
-	if err != nil {
-		log.Println(err)
-	}
-	fmt.Println("4) -------Stop and removing ProjectTest Container-------")
-	time.Sleep(30 * time.Second)
-	stopAndRemoveContainer(client, "ProjectTestContainer")
-	fmt.Println("5) -------Stop Selenium_Container Container-------")
-	StopsSeleniumContainer(client, "Selenium_Container")
-
-	// -- BUILD IMAGE FROM A DOCKER FILE
-
-	// client, err := client.NewEnvClient()
-	// if err != nil {
-	// 	log.Fatalf("Unable to create docker client: %s", err)
-	// }
-
-	// // Client, imagename and Dockerfile location
-	// tags := []string{"this_is_a_imagename"}
-	// dockerfile := `C:\Users\abdul\Desktop\go-workspace\src\ProjectTest\Dockerfile`
-	// err = buildImageforDockerFile(client, tags, dockerfile)
-	// if err != nil {
-	// 	log.Println(err)
-	// }
-
-	// --
 }
