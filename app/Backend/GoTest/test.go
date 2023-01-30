@@ -48,5 +48,5 @@ func main() {
 		log.Fatalf("Failed to get page title: %v", err)
 	}
 
-	fmt.Printf("Search results page title: %s\n", title)
+	fmt.Printf("Go Project says: Search results page title: %s\n", title)
 }
