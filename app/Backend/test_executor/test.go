@@ -309,7 +309,8 @@ func main() {
 
 	tags1 := []string{"python_test"}
 	dockerfile1 := "Dockerfile"
-	contextPath1 := "C:\\Users\\abdul\\Desktop\\T-Hex\\t-hex\\app\\backend\\PythonTest"
+	// contextPath1 := "C:\\Users\\abdul\\Desktop\\T-Hex\\t-hex\\app\\backend\\PythonTest"
+	contextPath1 := "example\\PythonTest"
 	err = buildImageforDockerFile2(client, tags1, dockerfile1, contextPath1)
 	if err != nil {
 		log.Println(err)
@@ -320,7 +321,8 @@ func main() {
 
 	tags2 := []string{"go_test"}
 	dockerfile2 := "Dockerfile"
-	contextPath2 := "C:\\Users\\abdul\\Desktop\\T-Hex\\t-hex\\app\\backend\\GoTest"
+	//contextPath2 := "C:\\Users\\abdul\\Desktop\\T-Hex\\t-hex\\app\\backend\\GoTest"
+	contextPath2 := "example\\GoTest"
 	err = buildImageforDockerFile2(client, tags2, dockerfile2, contextPath2)
 	if err != nil {
 		log.Println(err)
