@@ -1,0 +1,20 @@
+type Test {
+  id: ID!
+  status: String!
+  # //startedby: String!
+  testPath: String!
+}
+
+type Query {
+  tests: [Test!]! #list of tests, if there no tests return null
+  test(id: ID!): Test #return 1 test using ID
+}
+
+type Mutation {
+  startTest(input: startTestInput!): Test!
+}
+
+input startTestInput {
+  testPath: String!
+  # //startedby: String!
+}
