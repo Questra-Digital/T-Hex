@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"go-app/graph/model"
+	"test_executor/graph/model"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -20,7 +20,7 @@ func ConnectCockroachDB() *gorm.DB { //using function return instead
 	}
 	
 
-	db.AutoMigrate(&model.User{}, &model.Test{})
+	db.AutoMigrate(&model.Test{})
 
 	var now time.Time
 	db.Raw("SELECT NOW()").Scan(&now)

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"go-app/configdb"
-	"go-app/graph"
+	"test_executor/configdb"
+	"test_executor/graph"
 	"log"
 	"net/http"
 	"os"
