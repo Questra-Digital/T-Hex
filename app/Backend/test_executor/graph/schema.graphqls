@@ -12,9 +12,45 @@ type Query {
 
 type Mutation {
   startTest(input: startTestInput!): Test!
+  updateTest(input: updateTestInput!): Test!
+
+  seleniumPull: String!
+  # seleniumStart: String!
+  seleniumStart(input: seleniumInput!): String!
+  seleniumStop(input: seleniumInput!): String!
+  seleniumRemove(input: seleniumInput!): String!
+
+  projectBuildImage(input: projectBuildImageInput!): String!
+  projectContainerStart(input: projectContainerStartInput!): String!
+  projectContainerStop(input: projectContainerEndInput!): String!
+  projectContainerRemove(input: projectContainerEndInput!): String!
+}
+
+input seleniumInput {
+  containerName: String!
+}
+
+input projectBuildImageInput {
+  imgName: String!
+  projectPath: String! #contextPath: pythonProject
+}
+
+input projectContainerStartInput {
+  imageName: String!
+  containerName: String!
+  # seleniumContainerName: String!
+}
+input projectContainerEndInput {
+  containerName: String!
 }
 
 input startTestInput {
   testPath: String!
   # //startedby: String!
+}
+
+input updateTestInput {
+  id: ID!
+  status: String!
+  testPath: String!
 }

@@ -2,7 +2,30 @@
 
 package model
 
+type ProjectBuildImageInput struct {
+	ImgName     string `json:"imgName"`
+	ProjectPath string `json:"projectPath"`
+}
+
+type ProjectContainerEndInput struct {
+	ContainerName string `json:"containerName"`
+}
+
+type ProjectContainerStartInput struct {
+	ImageName     string `json:"imageName"`
+	ContainerName string `json:"containerName"`
+}
+
+type SeleniumInput struct {
+	ContainerName string `json:"containerName"`
+}
+
 type StartTestInput struct {
+	TestPath string `json:"testPath"`
+}
+
+type UpdateTestInput struct {
+	ID       int    `json:"id"`
 	Status   string `json:"status"`
 	TestPath string `json:"testPath"`
 }
