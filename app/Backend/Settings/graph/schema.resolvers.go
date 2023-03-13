@@ -6,13 +6,14 @@ package graph
 
 import (
 	"Settings/graph/model"
+	s "Settings/service"
 	"context"
 	"fmt"
 )
 
 // SetSettings is the resolver for the setSettings field.
-func (r *mutationResolver) SetSettings(ctx context.Context, input model.GetSettingtInput) (*model.Settings, error) {
-	panic(fmt.Errorf("not implemented: SetSettings - setSettings"))
+func (r *mutationResolver) SetSettings(ctx context.Context, input model.GetSettingInput) (*model.Settings, error) {
+	return s.SetSettings(ctx, input)
 }
 
 // Settings is the resolver for the settings field.

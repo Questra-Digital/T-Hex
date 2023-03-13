@@ -45,7 +45,7 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		SetSettings func(childComplexity int, input model.GetSettingtInput) int
+		SetSettings func(childComplexity int, input model.GetSettingInput) int
 	}
 
 	Query struct {
@@ -65,7 +65,7 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	SetSettings(ctx context.Context, input model.GetSettingtInput) (*model.Settings, error)
+	SetSettings(ctx context.Context, input model.GetSettingInput) (*model.Settings, error)
 }
 type QueryResolver interface {
 	Settings(ctx context.Context) ([]*model.Settings, error)
@@ -97,7 +97,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.SetSettings(childComplexity, args["input"].(model.GetSettingtInput)), true
+		return e.complexity.Mutation.SetSettings(childComplexity, args["input"].(model.GetSettingInput)), true
 
 	case "Query.setting":
 		if e.complexity.Query.Setting == nil {
@@ -175,7 +175,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
-		ec.unmarshalInputgetSettingtInput,
+		ec.unmarshalInputgetSettingInput,
 	)
 	first := true
 
@@ -258,10 +258,10 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_setSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.GetSettingtInput
+	var arg0 model.GetSettingInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNgetSettingtInput2SettingsᚋgraphᚋmodelᚐGetSettingtInput(ctx, tmp)
+		arg0, err = ec.unmarshalNgetSettingInput2SettingsᚋgraphᚋmodelᚐGetSettingInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -352,7 +352,7 @@ func (ec *executionContext) _Mutation_setSettings(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().SetSettings(rctx, fc.Args["input"].(model.GetSettingtInput))
+		return ec.resolvers.Mutation().SetSettings(rctx, fc.Args["input"].(model.GetSettingInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2742,8 +2742,8 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputgetSettingtInput(ctx context.Context, obj interface{}) (model.GetSettingtInput, error) {
-	var it model.GetSettingtInput
+func (ec *executionContext) unmarshalInputgetSettingInput(ctx context.Context, obj interface{}) (model.GetSettingInput, error) {
+	var it model.GetSettingInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -3687,8 +3687,8 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) unmarshalNgetSettingtInput2SettingsᚋgraphᚋmodelᚐGetSettingtInput(ctx context.Context, v interface{}) (model.GetSettingtInput, error) {
-	res, err := ec.unmarshalInputgetSettingtInput(ctx, v)
+func (ec *executionContext) unmarshalNgetSettingInput2SettingsᚋgraphᚋmodelᚐGetSettingInput(ctx context.Context, v interface{}) (model.GetSettingInput, error) {
+	res, err := ec.unmarshalInputgetSettingInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

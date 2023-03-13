@@ -15,10 +15,10 @@ type Query {
 }
 
 type Mutation {
-  setSettings(input: getSettingtInput!): Settings!
+  setSettings(input: getSettingInput!): Settings!
 }
 
-input getSettingtInput {
+input getSettingInput {
   browser: String!
   version: String!
   stepByStepDebugging: Boolean!
