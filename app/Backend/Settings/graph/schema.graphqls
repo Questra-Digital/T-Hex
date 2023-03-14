@@ -1,0 +1,28 @@
+
+type Settings {
+  id: ID!
+  browser: String!
+  version: String!
+  stepByStepDebugging: Boolean!
+  enableLogs: Boolean!
+  parallelism: Boolean!
+  numberOfParallelTests: Int!
+}
+
+type Query {
+  settings: [Settings!]! #list of tests, if there no tests return null
+  setting(id: ID!): Settings #return 1 test using ID
+}
+
+type Mutation {
+  setSettings(input: getSettingInput!): Settings!
+}
+
+input getSettingInput {
+  browser: String!
+  version: String!
+  stepByStepDebugging: Boolean!
+  enableLogs: Boolean!
+  parallelism: Boolean!
+  numberOfParallelTests: Int!
+}

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"test_executor/configdb"
-	"test_executor/graph"
+	"Settings/configdb"
+	"Settings/graph"
 	"log"
 	"net/http"
 	"os"
@@ -15,7 +15,7 @@ const defaultPort = "8080"
 
 func main() {
 
-	configdb.ConnectCockroachDB()	//db connection + migration
+	configdb.ConnectCockroachDB() //db connection + migration
 
 	port := os.Getenv("PORT")
 	if port == "" {
