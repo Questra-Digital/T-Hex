@@ -1,0 +1,17 @@
+title Logs(test + selenium)
+
+
+
+test-executor->api: fetch logs for test run 
+api->logs: fetch logs for test id
+logs-->api: tracing 
+api-->test-executor: tracing 
+
+logs->selenium container: trace logs 
+selenium container-->logs:
+logs->project container: trace logs
+project container-->logs: 
+
+
+logs->db: store logs in Elactic Search DataBASE(text based)
+
