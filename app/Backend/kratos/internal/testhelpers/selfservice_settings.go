@@ -1,0 +1,288 @@
+// Copyright © 2023 Ory Corp
+// SPDX-License-Identifier: Apache-2.0
+
+package testhelpers
+
+import (
+	"bytes"
+	"context"
+	"net/http"
+	"net/url"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/tidwall/gjson"
+
+	kratos "github.com/ory/kratos/internal/httpclient"
+
+	"github.com/gobuffalo/httptest"
+	"github.com/julienschmidt/httprouter"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/tidwall/sjson"
+	"github.com/urfave/negroni"
+
+	"github.com/ory/kratos/driver"
+	"github.com/ory/kratos/driver/config"
+	"github.com/ory/kratos/identity"
+	"github.com/ory/kratos/selfservice/flow/settings"
+	"github.com/ory/kratos/x"
+	"github.com/ory/x/ioutilx"
+	"github.com/ory/x/urlx"
+)
+
+func NewSettingsUIFlowEchoServer(t *testing.T, reg driver.Registry) *httptest.Server {
+	ctx := context.Background()
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		e, err := reg.SettingsFlowPersister().GetSettingsFlow(r.Context(), x.ParseUUID(r.URL.Query().Get("flow")))
+		require.NoError(t, err)
+		reg.Writer().Write(w, r, e)
+	}))
+	reg.Config().MustSet(ctx, config.ViperKeySelfServiceSettingsURL, ts.URL+"/settings-ts")
+	t.Cleanup(ts.Close)
+	return ts
+}
+
+func InitializeSettingsFlowViaBrowser(t *testing.T, client *http.Client, isSPA bool, ts *httptest.Server) *kratos.SettingsFlow {
+	publicClient := NewSDKCustomClient(ts, client)
+
+	req, err := http.NewRequest("GET", ts.URL+settings.RouteInitBrowserFlow, nil)
+	require.NoError(t, err)
+
+	if isSPA {
+		req.Header.Set("Accept", "application/json")
+	}
+
+	res, err := client.Do(req)
+	require.NoError(t, err)
+
+	var flowID string
+	if isSPA {
+		flowID = gjson.GetBytes(x.MustReadAll(res.Body), "id").String()
+	} else {
+		flowID = res.Request.URL.Query().Get("flow")
+	}
+
+	require.NoError(t, res.Body.Close())
+
+	rs, _, err := publicClient.FrontendApi.GetSettingsFlow(context.Background()).
+		Id(flowID).Execute()
+	require.NoError(t, err)
+	assert.Empty(t, rs.Active)
+
+	return rs
+}
+
+func InitializeSettingsFlowViaAPI(t *testing.T, client *http.Client, ts *httptest.Server) *kratos.SettingsFlow {
+	publicClient := NewSDKCustomClient(ts, client)
+
+	rs, _, err := publicClient.FrontendApi.CreateNativeSettingsFlow(context.Background()).Execute()
+	require.NoError(t, err)
+	assert.Empty(t, rs.Active)
+
+	return rs
+}
+
+func EncodeFormAsJSON(t *testing.T, isApi bool, values url.Values) (payload string) {
+	if !isApi {
+		return values.Encode()
+	}
+	payload = "{}"
+	for k := range values {
+		var err error
+		payload, err = sjson.Set(payload, strings.ReplaceAll(k, ".", "\\."), values.Get(k))
+		require.NoError(t, err)
+	}
+	return payload
+}
+
+func ExpectStatusCode(isAPI bool, api, browser int) int {
+	if isAPI {
+		return api
+	}
+	return browser
+}
+
+func ExpectURL(isAPI bool, api, browser string) string {
+	if isAPI {
+		return api
+	}
+	return browser
+}
+
+func NewSettingsUITestServer(t *testing.T, conf *config.Config) *httptest.Server {
+	router := httprouter.New()
+	router.GET("/settings", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		w.WriteHeader(http.StatusNoContent)
+	})
+	router.GET("/login", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		w.WriteHeader(http.StatusUnauthorized)
+	})
+	ts := httptest.NewServer(router)
+	t.Cleanup(ts.Close)
+
+	ctx := context.Background()
+	conf.MustSet(ctx, config.ViperKeySelfServiceSettingsURL, ts.URL+"/settings")
+	conf.MustSet(ctx, config.ViperKeySelfServiceLoginUI, ts.URL+"/login")
+
+	return ts
+}
+
+func NewSettingsUIEchoServer(t *testing.T, reg *driver.RegistryDefault) *httptest.Server {
+	router := httprouter.New()
+	router.GET("/settings", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		res, err := reg.SettingsFlowPersister().GetSettingsFlow(r.Context(), x.ParseUUID(r.URL.Query().Get("flow")))
+		require.NoError(t, err)
+		reg.Writer().Write(w, r, res)
+	})
+
+	router.GET("/login", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		w.WriteHeader(http.StatusUnauthorized)
+	})
+	ts := httptest.NewServer(router)
+	t.Cleanup(ts.Close)
+
+	ctx := context.Background()
+	reg.Config().MustSet(ctx, config.ViperKeySelfServiceSettingsURL, ts.URL+"/settings")
+	reg.Config().MustSet(ctx, config.ViperKeySelfServiceLoginUI, ts.URL+"/login")
+
+	return ts
+}
+
+func NewSettingsLoginAcceptAPIServer(t *testing.T, publicClient *kratos.APIClient, conf *config.Config) *httptest.Server {
+	var called int
+	loginTS := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		require.Equal(t, 0, called)
+		called++
+
+		conf.MustSet(r.Context(), config.ViperKeySelfServiceSettingsPrivilegedAuthenticationAfter, "5m")
+
+		res, _, err := publicClient.FrontendApi.GetLoginFlow(context.Background()).Id(r.URL.Query().Get("flow")).Execute()
+
+		require.NoError(t, err)
+		require.NotEmpty(t, res.RequestUrl)
+
+		redir := urlx.ParseOrPanic(res.RequestUrl).Query().Get("return_to")
+		t.Logf("Redirecting to: %s", redir)
+		http.Redirect(w, r, redir, http.StatusFound)
+	}))
+	t.Cleanup(func() {
+		loginTS.Close()
+	})
+	ctx := context.Background()
+	conf.MustSet(ctx, config.ViperKeySelfServiceLoginUI, loginTS.URL+"/login")
+	return loginTS
+}
+
+func NewSettingsAPIServer(t *testing.T, reg *driver.RegistryDefault, ids map[string]*identity.Identity) (*httptest.Server, *httptest.Server, map[string]*http.Client) {
+	ctx := context.Background()
+	public, admin := x.NewRouterPublic(), x.NewRouterAdmin()
+	reg.SettingsHandler().RegisterAdminRoutes(admin)
+
+	n := negroni.Classic()
+	n.UseHandler(public)
+	hh := x.NewTestCSRFHandler(n, reg)
+	reg.WithCSRFHandler(hh)
+
+	reg.SettingsHandler().RegisterPublicRoutes(public)
+	reg.SettingsStrategies(context.Background()).RegisterPublicRoutes(public)
+	reg.LoginHandler().RegisterPublicRoutes(public)
+	reg.LoginHandler().RegisterAdminRoutes(admin)
+	reg.LoginStrategies(context.Background()).RegisterPublicRoutes(public)
+
+	tsp, tsa := httptest.NewServer(hh), httptest.NewServer(admin)
+	t.Cleanup(tsp.Close)
+	t.Cleanup(tsa.Close)
+
+	reg.Config().MustSet(ctx, config.ViperKeyPublicBaseURL, tsp.URL)
+	reg.Config().MustSet(ctx, config.ViperKeyAdminBaseURL, tsa.URL)
+	// #nosec G112
+	return tsp, tsa, AddAndLoginIdentities(t, reg, &httptest.Server{Config: &http.Server{Handler: public}, URL: tsp.URL}, ids)
+}
+
+// AddAndLoginIdentities adds the given identities to the store (like a registration flow) and returns http.Clients
+// which contain their sessions.
+func AddAndLoginIdentities(t *testing.T, reg *driver.RegistryDefault, public *httptest.Server, ids map[string]*identity.Identity) map[string]*http.Client {
+	result := map[string]*http.Client{}
+	for k := range ids {
+		tid := x.NewUUID().String()
+		_ = reg.PrivilegedIdentityPool().DeleteIdentity(context.Background(), ids[k].ID)
+		route, _ := MockSessionCreateHandlerWithIdentity(t, reg, ids[k])
+		location := "/sessions/set/" + tid
+
+		if router, ok := public.Config.Handler.(*x.RouterPublic); ok {
+			router.Router.GET(location, route)
+		} else if router, ok := public.Config.Handler.(*httprouter.Router); ok {
+			router.GET(location, route)
+		} else if router, ok := public.Config.Handler.(*x.RouterAdmin); ok {
+			router.GET(location, route)
+		} else {
+			t.Logf("Got unknown type: %T", public.Config.Handler)
+			t.FailNow()
+		}
+		result[k] = NewSessionClient(t, public.URL+location)
+	}
+	return result
+}
+
+func SettingsMakeRequest(
+	t *testing.T,
+	isAPI bool,
+	isSPA bool,
+	f *kratos.SettingsFlow,
+	hc *http.Client,
+	values string,
+) (string, *http.Response) {
+	require.NotEmpty(t, f.Ui.Action)
+
+	req := NewRequest(t, isSPA || isAPI, "POST", f.Ui.Action, bytes.NewBufferString(values))
+	if isSPA || isAPI {
+		req.Header.Set("Accept", "application/json")
+	}
+
+	res, err := hc.Do(req)
+	require.NoError(t, err, "action: %s", f.Ui.Action)
+	defer res.Body.Close()
+
+	return string(ioutilx.MustReadAll(res.Body)), res
+}
+
+// SubmitSettingsForm initiates a settings flow (for Browser and API!), fills out the form and modifies
+// the form values with `withValues`, and submits the form. If completed, it will return the flow as JSON.
+func SubmitSettingsForm(
+	t *testing.T,
+	isAPI bool,
+	isSPA bool,
+	hc *http.Client,
+	publicTS *httptest.Server,
+	withValues func(v url.Values),
+	expectedStatusCode int,
+	expectedURL string,
+) string {
+	if hc == nil {
+		hc = new(http.Client)
+		if !isAPI {
+			hc = NewClientWithCookies(t)
+		}
+	}
+
+	hc.Transport = NewTransportWithLogger(hc.Transport, t)
+	var payload *kratos.SettingsFlow
+	if isAPI {
+		payload = InitializeSettingsFlowViaAPI(t, hc, publicTS)
+	} else {
+		payload = InitializeSettingsFlowViaBrowser(t, hc, isSPA, publicTS)
+	}
+
+	time.Sleep(time.Millisecond * 10) // add a bit of delay to allow `1ns` to time out.
+
+	values := SDKFormFieldsToURLValues(payload.Ui.Nodes)
+	withValues(values)
+
+	b, res := SettingsMakeRequest(t, isAPI, isSPA, payload, hc, EncodeFormAsJSON(t, isAPI || isSPA, values))
+	assert.EqualValues(t, expectedStatusCode, res.StatusCode, "%s", b)
+	assert.Contains(t, res.Request.URL.String(), expectedURL, "%+v\n\t%s", res.Request, b)
+
+	return b
+}

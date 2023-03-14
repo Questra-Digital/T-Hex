@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string",
+      "format": "email",
+      "ory.sh/kratos": {
+        "credentials": {
+          "password": {
+            "identifier": true
+          },
+          "totp": {
+            "account_name": true
+          }
+        }
+      }
+    }
+  }
+}
