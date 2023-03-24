@@ -1,0 +1,12 @@
+selfservice:
+  default_browser_return_url: "#/definitions/defaultReturnTo"
+  flows:
+    recovery:
+      enabled: true
+
+dsn: foo
+
+identity:
+  schemas:
+    - id: default
+      url: https://example.com

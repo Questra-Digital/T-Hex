@@ -8,8 +8,16 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "10.0.4",
-    "react": "17.0.1",
-    "react-dom": "17.0.1"
+    "browserslist": "^4.21.5",
+    "caniuse-lite": "^1.0.30001469",
+    "i": "^0.3.7",
+    "next": "^10.0.4",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-router-dom": "^6.8.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.28",
+    "typescript": "^5.0.2"
   }
 }

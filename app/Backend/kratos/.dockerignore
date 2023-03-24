@@ -1,0 +1,16 @@
+docs
+.releaser
+.github
+.circleci
+tmp
+scripts
+.idea
+.git/
+database.yaml
+contrib/quickstart
+node_modules/
+./quickstart.yml
+./quickstart-*.yml
+.bin/
+test/
+pgked.go

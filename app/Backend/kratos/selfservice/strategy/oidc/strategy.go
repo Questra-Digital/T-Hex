@@ -1,0 +1,498 @@
+// Copyright © 2023 Ory Corp
+// SPDX-License-Identifier: Apache-2.0
+
+package oidc
+
+import (
+	"bytes"
+	"context"
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"path/filepath"
+	"strings"
+
+	"github.com/ory/kratos/cipher"
+	"github.com/ory/x/jsonnetsecure"
+
+	"github.com/ory/kratos/text"
+
+	"github.com/ory/kratos/ui/container"
+	"github.com/ory/x/decoderx"
+	"github.com/ory/x/stringsx"
+
+	"github.com/ory/kratos/ui/node"
+
+	"github.com/gofrs/uuid"
+	"github.com/julienschmidt/httprouter"
+	"github.com/pkg/errors"
+	"github.com/tidwall/gjson"
+
+	"github.com/ory/x/jsonx"
+
+	"github.com/ory/herodot"
+	"github.com/ory/kratos/continuity"
+	"github.com/ory/kratos/driver/config"
+	"github.com/ory/kratos/identity"
+	"github.com/ory/kratos/schema"
+	"github.com/ory/kratos/selfservice/errorx"
+	"github.com/ory/kratos/selfservice/flow"
+	"github.com/ory/kratos/selfservice/flow/login"
+	"github.com/ory/kratos/selfservice/flow/registration"
+	"github.com/ory/kratos/selfservice/flow/settings"
+
+	"github.com/ory/kratos/selfservice/strategy"
+	"github.com/ory/kratos/session"
+	"github.com/ory/kratos/x"
+)
+
+const (
+	RouteBase = "/self-service/methods/oidc"
+
+	RouteAuth     = RouteBase + "/auth/:flow"
+	RouteCallback = RouteBase + "/callback/:provider"
+)
+
+var _ identity.ActiveCredentialsCounter = new(Strategy)
+
+type dependencies interface {
+	errorx.ManagementProvider
+
+	config.Provider
+
+	x.LoggingProvider
+	x.CookieProvider
+	x.CSRFProvider
+	x.CSRFTokenGeneratorProvider
+	x.WriterProvider
+	x.HTTPClientProvider
+	x.TracingProvider
+
+	identity.ValidationProvider
+	identity.PrivilegedPoolProvider
+	identity.ActiveCredentialsCounterStrategyProvider
+	identity.ManagementProvider
+
+	session.ManagementProvider
+	session.HandlerProvider
+
+	login.HookExecutorProvider
+	login.FlowPersistenceProvider
+	login.HooksProvider
+	login.StrategyProvider
+	login.HandlerProvider
+	login.ErrorHandlerProvider
+
+	registration.HookExecutorProvider
+	registration.FlowPersistenceProvider
+	registration.HooksProvider
+	registration.StrategyProvider
+	registration.HandlerProvider
+	registration.ErrorHandlerProvider
+
+	settings.ErrorHandlerProvider
+	settings.FlowPersistenceProvider
+	settings.HookExecutorProvider
+
+	continuity.ManagementProvider
+
+	cipher.Provider
+
+	jsonnetsecure.VMProvider
+}
+
+func isForced(req interface{}) bool {
+	f, ok := req.(interface {
+		IsForced() bool
+	})
+	return ok && f.IsForced()
+}
+
+// Strategy implements selfservice.LoginStrategy, selfservice.RegistrationStrategy and selfservice.SettingsStrategy.
+// It supports login, registration and settings via OpenID Providers.
+type Strategy struct {
+	d         dependencies
+	validator *schema.Validator
+	dec       *decoderx.HTTP
+}
+
+type authCodeContainer struct {
+	FlowID           string          `json:"flow_id"`
+	State            string          `json:"state"`
+	Traits           json.RawMessage `json:"traits"`
+	TransientPayload json.RawMessage `json:"transient_payload"`
+}
+
+func generateState(flowID string) string {
+	state := x.NewUUID().String()
+	return base64.RawURLEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", flowID, state)))
+}
+
+func (s *Strategy) CountActiveFirstFactorCredentials(cc map[identity.CredentialsType]identity.Credentials) (count int, err error) {
+	for _, c := range cc {
+		if c.Type == s.ID() && gjson.ValidBytes(c.Config) {
+			var conf identity.CredentialsOIDC
+			if err = json.Unmarshal(c.Config, &conf); err != nil {
+				return 0, errors.WithStack(err)
+			}
+
+			for _, ider := range c.Identifiers {
+				parts := strings.Split(ider, ":")
+				if len(parts) != 2 {
+					continue
+				}
+
+				for _, prov := range conf.Providers {
+					if parts[0] == prov.Provider && parts[1] == prov.Subject && len(prov.Subject) > 1 && len(prov.Provider) > 1 {
+						count++
+					}
+				}
+			}
+		}
+	}
+	return
+}
+
+func (s *Strategy) CountActiveMultiFactorCredentials(cc map[identity.CredentialsType]identity.Credentials) (count int, err error) {
+	return 0, nil
+}
+
+func (s *Strategy) setRoutes(r *x.RouterPublic) {
+	wrappedHandleCallback := strategy.IsDisabled(s.d, s.ID().String(), s.handleCallback)
+	if handle, _, _ := r.Lookup("GET", RouteCallback); handle == nil {
+		r.GET(RouteCallback, wrappedHandleCallback)
+	}
+
+	// Apple can use the POST request method when calling the callback
+	if handle, _, _ := r.Lookup("POST", RouteCallback); handle == nil {
+		// Hardcoded path to Apple provider, I don't have a better way of doing it right now.
+		// Also this exempt disables CSRF checks for both GET and POST requests. Unfortunately
+		// CSRF handler does not allow to define a rule based on the request method, at least not yet.
+		s.d.CSRFHandler().ExemptPath(RouteBase + "/callback/apple")
+
+		// When handler is called using POST method, the cookies are not attached to the request
+		// by the browser. So here we just redirect the request to the same location rewriting the
+		// form fields to query params. This second GET request should have the cookies attached.
+		r.POST(RouteCallback, s.redirectToGET)
+	}
+}
+
+// Redirect POST request to GET rewriting form fields to query params.
+func (s *Strategy) redirectToGET(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	publicUrl := s.d.Config().SelfPublicURL(r.Context())
+	dest := *r.URL
+	dest.Host = publicUrl.Host
+	dest.Scheme = publicUrl.Scheme
+	if err := r.ParseForm(); err == nil {
+		q := dest.Query()
+		for key, values := range r.Form {
+			for _, value := range values {
+				q.Set(key, value)
+			}
+		}
+		dest.RawQuery = q.Encode()
+	}
+	dest.Path = filepath.Join(publicUrl.Path, dest.Path)
+
+	http.Redirect(w, r, dest.String(), http.StatusFound)
+}
+
+func NewStrategy(d dependencies) *Strategy {
+	return &Strategy{
+		d:         d,
+		validator: schema.NewValidator(),
+	}
+}
+
+func (s *Strategy) ID() identity.CredentialsType {
+	return identity.CredentialsTypeOIDC
+}
+
+func (s *Strategy) validateFlow(ctx context.Context, r *http.Request, rid uuid.UUID) (flow.Flow, error) {
+	if rid.IsNil() {
+		return nil, errors.WithStack(herodot.ErrBadRequest.WithReason("The session cookie contains invalid values and the flow could not be executed. Please try again."))
+	}
+
+	if ar, err := s.d.RegistrationFlowPersister().GetRegistrationFlow(ctx, rid); err == nil {
+		if ar.Type != flow.TypeBrowser {
+			return ar, ErrAPIFlowNotSupported
+		}
+
+		if err := ar.Valid(); err != nil {
+			return ar, err
+		}
+		return ar, nil
+	}
+
+	if ar, err := s.d.LoginFlowPersister().GetLoginFlow(ctx, rid); err == nil {
+		if ar.Type != flow.TypeBrowser {
+			return ar, ErrAPIFlowNotSupported
+		}
+
+		if err := ar.Valid(); err != nil {
+			return ar, err
+		}
+		return ar, nil
+	}
+
+	ar, err := s.d.SettingsFlowPersister().GetSettingsFlow(ctx, rid)
+	if err == nil {
+		if ar.Type != flow.TypeBrowser {
+			return ar, ErrAPIFlowNotSupported
+		}
+
+		sess, err := s.d.SessionManager().FetchFromRequest(ctx, r)
+		if err != nil {
+			return ar, err
+		}
+
+		if err := ar.Valid(sess); err != nil {
+			return ar, err
+		}
+		return ar, nil
+	}
+
+	return ar, err // this must return the error
+}
+
+func (s *Strategy) validateCallback(w http.ResponseWriter, r *http.Request) (flow.Flow, *authCodeContainer, error) {
+	var (
+		code  = stringsx.Coalesce(r.URL.Query().Get("code"), r.URL.Query().Get("authCode"))
+		state = r.URL.Query().Get("state")
+	)
+
+	if state == "" {
+		return nil, nil, errors.WithStack(herodot.ErrBadRequest.WithReasonf(`Unable to complete OpenID Connect flow because the OpenID Provider did not return the state query parameter.`))
+	}
+
+	var cntnr authCodeContainer
+	if _, err := s.d.ContinuityManager().Continue(r.Context(), w, r, sessionName, continuity.WithPayload(&cntnr)); err != nil {
+		return nil, nil, err
+	}
+
+	if state != cntnr.State {
+		return nil, &cntnr, errors.WithStack(herodot.ErrBadRequest.WithReasonf(`Unable to complete OpenID Connect flow because the query state parameter does not match the state parameter from the session cookie.`))
+	}
+
+	req, err := s.validateFlow(r.Context(), r, x.ParseUUID(cntnr.FlowID))
+	if err != nil {
+		return nil, &cntnr, err
+	}
+
+	if r.URL.Query().Get("error") != "" {
+		return req, &cntnr, errors.WithStack(herodot.ErrBadRequest.WithReasonf(`Unable to complete OpenID Connect flow because the OpenID Provider returned error "%s": %s`, r.URL.Query().Get("error"), r.URL.Query().Get("error_description")))
+	}
+
+	if code == "" {
+		return req, &cntnr, errors.WithStack(herodot.ErrBadRequest.WithReasonf(`Unable to complete OpenID Connect flow because the OpenID Provider did not return the code query parameter.`))
+	}
+
+	return req, &cntnr, nil
+}
+
+func (s *Strategy) alreadyAuthenticated(w http.ResponseWriter, r *http.Request, req interface{}) bool {
+	// we assume an error means the user has no session
+	if _, err := s.d.SessionManager().FetchFromRequest(r.Context(), r); err == nil {
+		if _, ok := req.(*settings.Flow); ok {
+			// ignore this if it's a settings flow
+		} else if !isForced(req) {
+			http.Redirect(w, r, s.d.Config().SelfServiceBrowserDefaultReturnTo(r.Context()).String(), http.StatusSeeOther)
+			return true
+		}
+	}
+
+	return false
+}
+
+func (s *Strategy) handleCallback(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	var (
+		code = stringsx.Coalesce(r.URL.Query().Get("code"), r.URL.Query().Get("authCode"))
+		pid  = ps.ByName("provider")
+	)
+
+	req, cntnr, err := s.validateCallback(w, r)
+	if err != nil {
+		if req != nil {
+			s.forwardError(w, r, req, s.handleError(w, r, req, pid, nil, err))
+		} else {
+			s.d.SelfServiceErrorManager().Forward(r.Context(), w, r, s.handleError(w, r, nil, pid, nil, err))
+		}
+		return
+	}
+
+	if s.alreadyAuthenticated(w, r, req) {
+		return
+	}
+
+	provider, err := s.provider(r.Context(), r, pid)
+	if err != nil {
+		s.forwardError(w, r, req, s.handleError(w, r, req, pid, nil, err))
+		return
+	}
+
+	te, ok := provider.(TokenExchanger)
+	if !ok {
+		te, err = provider.OAuth2(r.Context())
+		if err != nil {
+			s.forwardError(w, r, req, s.handleError(w, r, req, pid, nil, err))
+			return
+		}
+	}
+
+	token, err := te.Exchange(r.Context(), code)
+	if err != nil {
+		s.forwardError(w, r, req, s.handleError(w, r, req, pid, nil, err))
+		return
+	}
+
+	claims, err := provider.Claims(r.Context(), token, r.URL.Query())
+	if err != nil {
+		s.forwardError(w, r, req, s.handleError(w, r, req, pid, nil, err))
+		return
+	}
+
+	if err := claims.Validate(); err != nil {
+		s.forwardError(w, r, req, s.handleError(w, r, req, pid, nil, err))
+		return
+	}
+
+	switch a := req.(type) {
+	case *login.Flow:
+		if ff, err := s.processLogin(w, r, a, token, claims, provider, cntnr); err != nil {
+			if ff != nil {
+				s.forwardError(w, r, ff, err)
+				return
+			}
+			s.forwardError(w, r, a, err)
+		}
+		return
+	case *registration.Flow:
+		a.TransientPayload = cntnr.TransientPayload
+		if ff, err := s.processRegistration(w, r, a, token, claims, provider, cntnr); err != nil {
+			if ff != nil {
+				s.forwardError(w, r, ff, err)
+				return
+			}
+			s.forwardError(w, r, a, err)
+		}
+		return
+	case *settings.Flow:
+		sess, err := s.d.SessionManager().FetchFromRequest(r.Context(), r)
+		if err != nil {
+			s.forwardError(w, r, a, s.handleError(w, r, a, pid, nil, err))
+			return
+		}
+		if err := s.linkProvider(w, r, &settings.UpdateContext{Session: sess, Flow: a}, token, claims, provider); err != nil {
+			s.forwardError(w, r, a, s.handleError(w, r, a, pid, nil, err))
+			return
+		}
+		return
+	default:
+		s.forwardError(w, r, req, s.handleError(w, r, req, pid, nil, errors.WithStack(x.PseudoPanic.
+			WithDetailf("cause", "Unexpected type in OpenID Connect flow: %T", a))))
+		return
+	}
+}
+
+func (s *Strategy) populateMethod(r *http.Request, c *container.Container, message func(provider string) *text.Message) error {
+	conf, err := s.Config(r.Context())
+	if err != nil {
+		return err
+	}
+
+	// does not need sorting because there is only one field
+	c.SetCSRF(s.d.GenerateCSRFToken(r))
+	AddProviders(c, conf.Providers, message)
+
+	return nil
+}
+
+func (s *Strategy) Config(ctx context.Context) (*ConfigurationCollection, error) {
+	var c ConfigurationCollection
+
+	conf := s.d.Config().SelfServiceStrategy(ctx, string(s.ID())).Config
+	if err := jsonx.
+		NewStrictDecoder(bytes.NewBuffer(conf)).
+		Decode(&c); err != nil {
+		s.d.Logger().WithError(err).WithField("config", conf)
+		return nil, errors.WithStack(herodot.ErrInternalServerError.WithReasonf("Unable to decode OpenID Connect Provider configuration: %s", err))
+	}
+
+	return &c, nil
+}
+
+func (s *Strategy) provider(ctx context.Context, r *http.Request, id string) (Provider, error) {
+	if c, err := s.Config(ctx); err != nil {
+		return nil, err
+	} else if provider, err := c.Provider(id, s.d); err != nil {
+		return nil, err
+	} else {
+		return provider, nil
+	}
+}
+
+func (s *Strategy) forwardError(w http.ResponseWriter, r *http.Request, f flow.Flow, err error) {
+	switch ff := f.(type) {
+	case *login.Flow:
+		s.d.LoginFlowErrorHandler().WriteFlowError(w, r, ff, s.NodeGroup(), err)
+	case *registration.Flow:
+		s.d.RegistrationFlowErrorHandler().WriteFlowError(w, r, ff, s.NodeGroup(), err)
+	case *settings.Flow:
+		var i *identity.Identity
+		if sess, err := s.d.SessionManager().FetchFromRequest(r.Context(), r); err == nil {
+			i = sess.Identity
+		}
+		s.d.SettingsFlowErrorHandler().WriteFlowError(w, r, s.NodeGroup(), ff, i, err)
+	default:
+		panic(errors.Errorf("unexpected type: %T", ff))
+	}
+}
+
+func (s *Strategy) handleError(w http.ResponseWriter, r *http.Request, f flow.Flow, provider string, traits []byte, err error) error {
+	switch rf := f.(type) {
+	case *login.Flow:
+		return err
+	case *registration.Flow:
+		// Reset all nodes to not confuse users.
+		// This is kinda hacky and will probably need to be updated at some point.
+
+		rf.UI.Nodes = node.Nodes{}
+
+		// Adds the "Continue" button
+		rf.UI.SetCSRF(s.d.GenerateCSRFToken(r))
+		AddProvider(rf.UI, provider, text.NewInfoRegistrationContinue())
+
+		if traits != nil {
+			ds, err := s.d.Config().DefaultIdentityTraitsSchemaURL(r.Context())
+			if err != nil {
+				return err
+			}
+
+			traitNodes, err := container.NodesFromJSONSchema(r.Context(), node.OpenIDConnectGroup, ds.String(), "", nil)
+			if err != nil {
+				return err
+			}
+
+			rf.UI.Nodes = append(rf.UI.Nodes, traitNodes...)
+			rf.UI.UpdateNodeValuesFromJSON(traits, "traits", node.OpenIDConnectGroup)
+		}
+
+		return err
+	case *settings.Flow:
+		return err
+	}
+
+	return err
+}
+
+func (s *Strategy) NodeGroup() node.UiNodeGroup {
+	return node.OpenIDConnectGroup
+}
+
+func (s *Strategy) CompletedAuthenticationMethod(ctx context.Context) session.AuthenticationMethod {
+	return session.AuthenticationMethod{
+		Method: s.ID(),
+		AAL:    identity.AuthenticatorAssuranceLevel1,
+	}
+}

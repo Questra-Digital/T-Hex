@@ -1,0 +1,87 @@
+{
+  "$id": "https://example.com/complex.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["meal"],
+  "properties": {
+    "meal": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "chef": {
+          "type": "string"
+        }
+      }
+    },
+    "traits": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "ory.sh/kratos": {
+            "credentials": {
+              "password": {
+                "identifier": true
+              }
+            },
+            "verification": {
+              "via": "email"
+            }
+          }
+        },
+        "stringy": {
+          "type": "string"
+        },
+        "numby": {
+          "type": "number"
+        },
+        "booly": {
+          "type": "boolean"
+        },
+        "should_big_number": {
+          "type": "number",
+          "minimum": 1200
+        },
+        "should_long_string": {
+          "type": "string",
+          "minLength": 25
+        }
+      }
+    },
+    "fruits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "vegetables": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/veggie"
+      }
+    }
+  },
+  "definitions": {
+    "veggie": {
+      "type": "object",
+      "required": [
+        "veggieName",
+        "veggieLike"
+      ],
+      "properties": {
+        "veggieName": {
+          "type": "string"
+        },
+        "veggieLike": {
+          "type": "boolean"
+        },
+        "veggieAmount": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

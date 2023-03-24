@@ -1,0 +1,9 @@
+{
+  "id": "c2427b6d-312b-46d9-9285-536db7ae11fd",
+  "value": "foobar@ory.sh",
+  "verified": false,
+  "via": "email",
+  "status": "pending",
+  "created_at": "2013-10-07T08:23:19Z",
+  "updated_at": "2013-10-07T08:23:19Z"
+}

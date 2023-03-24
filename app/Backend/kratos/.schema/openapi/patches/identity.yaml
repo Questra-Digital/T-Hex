@@ -1,0 +1,27 @@
+- op: add
+  path: /components/schemas/identityState/enum
+  value:
+    - active
+    - inactive
+- op: add
+  path: /components/schemas/identityCredentialsType/enum
+  value:
+    - password
+    - totp
+    - oidc
+    - webauthn
+    - lookup_secret
+- op: remove
+  path: /components/schemas/updateIdentityBody/properties/metadata_admin/type
+- op: remove
+  path: /components/schemas/updateIdentityBody/properties/metadata_public/type
+- op: remove
+  path: /components/schemas/createIdentityBody/properties/metadata_admin/type
+- op: remove
+  path: /components/schemas/createIdentityBody/properties/metadata_public/type
+- op: remove
+  path: /components/schemas/nullJsonRawMessage/type
+- op: add
+  path: /components/schemas/nullJsonRawMessage/nullable
+  value: true
+
