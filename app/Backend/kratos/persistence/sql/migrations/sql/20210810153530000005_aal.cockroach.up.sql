@@ -1,1 +1,0 @@
-UPDATE "sessions" SET "authentication_methods" = "_authentication_methods_tmp";

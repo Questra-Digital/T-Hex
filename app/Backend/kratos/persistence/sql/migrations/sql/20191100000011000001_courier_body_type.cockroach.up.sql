@@ -1,1 +1,0 @@
-ALTER TABLE "courier_messages" ADD COLUMN "body" text;

@@ -1,1 +1,0 @@
-ALTER TABLE "_sessions_tmp" RENAME TO "sessions";

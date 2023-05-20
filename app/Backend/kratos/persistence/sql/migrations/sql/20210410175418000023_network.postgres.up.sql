@@ -1,1 +1,0 @@
-ALTER TABLE "continuity_containers" ALTER COLUMN "nid" TYPE UUID, ALTER COLUMN "nid" DROP NOT NULL;

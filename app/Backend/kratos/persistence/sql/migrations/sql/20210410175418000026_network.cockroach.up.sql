@@ -1,1 +1,0 @@
-UPDATE "selfservice_settings_flows" SET "nid" = "_nid_tmp";

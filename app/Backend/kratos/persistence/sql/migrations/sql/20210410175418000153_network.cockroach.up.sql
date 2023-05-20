@@ -1,1 +1,0 @@
-ALTER TABLE "identity_verification_tokens" DROP CONSTRAINT "identity_verification_tokens_nid_fk_idx";

@@ -1,6 +1,0 @@
-selfservice:
-  flows:
-    recovery:
-      notify_unknown_recipients: true
-    verification:
-      notify_unknown_recipients: true

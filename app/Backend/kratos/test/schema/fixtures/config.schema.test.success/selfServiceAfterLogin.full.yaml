@@ -1,4 +1,0 @@
-default_browser_return_url: "#/definitions/defaultReturnTo"
-password: "#/definitions/selfServiceAfterDefaultLoginMethod"
-webauthn: "#/definitions/selfServiceAfterDefaultLoginMethod"
-oidc: "#/definitions/selfServiceAfterOIDCLoginMethod"

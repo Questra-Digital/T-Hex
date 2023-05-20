@@ -1,1 +1,0 @@
-ALTER TABLE "sessions" ADD COLUMN "aal" TEXT NOT NULL DEFAULT 'aal1';

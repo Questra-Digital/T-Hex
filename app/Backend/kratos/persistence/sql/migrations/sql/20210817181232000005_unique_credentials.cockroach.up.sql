@@ -1,1 +1,0 @@
-ALTER TABLE "identity_credential_identifiers" RENAME COLUMN "identity_credential_type_id" TO "_identity_credential_type_id_tmp";

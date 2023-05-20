@@ -1,1 +1,0 @@
-INSERT INTO "_selfservice_settings_flows_tmp" (id, request_url, issued_at, expires_at, identity_id, created_at, updated_at, active_method, state, type, ui, nid, internal_context) SELECT id, request_url, issued_at, expires_at, identity_id, created_at, updated_at, active_method, state, type, ui, nid, internal_context FROM "selfservice_settings_flows";

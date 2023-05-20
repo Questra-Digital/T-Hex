@@ -1,1 +1,0 @@
-DROP TABLE `selfservice_profile_management_request_methods`;

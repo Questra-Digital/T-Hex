@@ -1,1 +1,0 @@
-UPDATE "identity_verifiable_addresses" SET "expires_at" = "_expires_at_tmp";

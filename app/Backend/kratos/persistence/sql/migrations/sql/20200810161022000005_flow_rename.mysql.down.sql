@@ -1,1 +1,0 @@
-ALTER TABLE `selfservice_registration_flows` RENAME TO `selfservice_registration_requests`;

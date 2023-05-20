@@ -1,1 +1,0 @@
-ALTER TABLE "identity_recovery_tokens" ADD COLUMN "selfservice_recovery_flow_id" UUID;

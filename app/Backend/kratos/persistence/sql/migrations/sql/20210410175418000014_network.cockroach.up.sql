@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_registration_flows" RENAME COLUMN "nid" TO "_nid_tmp";

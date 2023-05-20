@@ -1,1 +1,0 @@
-ALTER TABLE `identity_verifiable_addresses` MODIFY `code` VARCHAR (32) NOT NULL;

@@ -1,1 +1,0 @@
-CREATE INDEX "courier_messages_status_idx" ON "_courier_messages_tmp" (status);

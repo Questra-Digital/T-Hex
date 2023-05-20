@@ -1,1 +1,0 @@
-ALTER TABLE `identities` DROP FOREIGN KEY `identities_nid_fk_idx`;

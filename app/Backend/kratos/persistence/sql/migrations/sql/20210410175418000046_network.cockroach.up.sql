@@ -1,1 +1,0 @@
-UPDATE "continuity_containers" SET "nid" = "_nid_tmp";

@@ -1,1 +1,0 @@
-ALTER TABLE "identity_recovery_tokens" DROP CONSTRAINT "identity_recovery_tokens_identity_id_fk_idx";

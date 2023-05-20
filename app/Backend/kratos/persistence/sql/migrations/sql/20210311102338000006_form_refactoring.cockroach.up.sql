@@ -1,1 +1,0 @@
-UPDATE "selfservice_login_flows" SET "ui" = "_ui_tmp";

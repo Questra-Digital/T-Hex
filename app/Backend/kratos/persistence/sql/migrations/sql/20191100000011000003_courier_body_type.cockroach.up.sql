@@ -1,1 +1,0 @@
-ALTER TABLE "courier_messages" ALTER COLUMN "body" SET NOT NULL;

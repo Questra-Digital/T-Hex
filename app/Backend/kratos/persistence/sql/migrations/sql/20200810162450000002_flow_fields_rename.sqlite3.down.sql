@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_registration_flow_methods" RENAME COLUMN "selfservice_registration_flow_id" TO "selfservice_registration_request_id";

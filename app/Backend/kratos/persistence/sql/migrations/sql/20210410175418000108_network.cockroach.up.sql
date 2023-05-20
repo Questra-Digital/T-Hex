@@ -1,1 +1,0 @@
-UPDATE "identity_recovery_addresses" SET "nid" = "_nid_tmp";

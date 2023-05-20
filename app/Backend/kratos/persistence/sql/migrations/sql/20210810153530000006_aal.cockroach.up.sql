@@ -1,1 +1,0 @@
-ALTER TABLE "sessions" ALTER COLUMN "authentication_methods" SET NOT NULL;

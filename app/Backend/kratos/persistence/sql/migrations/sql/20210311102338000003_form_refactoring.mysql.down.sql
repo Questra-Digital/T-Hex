@@ -1,1 +1,0 @@
-ALTER TABLE `selfservice_recovery_flows` ADD COLUMN `messages` JSON;

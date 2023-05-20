@@ -1,1 +1,0 @@
-DROP TABLE "selfservice_login_request_methods";

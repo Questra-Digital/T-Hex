@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_login_flows" DROP COLUMN "requested_aal";

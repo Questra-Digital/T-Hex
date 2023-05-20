@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_errors" ADD COLUMN "csrf_token" TEXT NOT NULL DEFAULT '';

@@ -1,1 +1,0 @@
-ALTER TABLE "identity_verifiable_addresses" RENAME COLUMN "code" TO "_code_tmp";

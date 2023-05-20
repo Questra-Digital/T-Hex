@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_errors" ALTER COLUMN "nid" TYPE UUID, ALTER COLUMN "nid" DROP NOT NULL;

@@ -1,1 +1,0 @@
-ALTER TABLE "continuity_containers" DROP COLUMN "_nid_tmp";

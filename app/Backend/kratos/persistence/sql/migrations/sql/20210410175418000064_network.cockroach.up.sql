@@ -1,1 +1,0 @@
-ALTER TABLE "identities" RENAME COLUMN "nid" TO "_nid_tmp";

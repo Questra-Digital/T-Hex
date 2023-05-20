@@ -1,1 +1,0 @@
-UPDATE "identity_recovery_tokens" SET "selfservice_recovery_flow_id" = "_selfservice_recovery_flow_id_tmp";

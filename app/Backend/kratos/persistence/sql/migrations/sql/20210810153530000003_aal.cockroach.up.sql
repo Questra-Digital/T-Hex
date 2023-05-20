@@ -1,1 +1,0 @@
-ALTER TABLE "sessions" RENAME COLUMN "authentication_methods" TO "_authentication_methods_tmp";

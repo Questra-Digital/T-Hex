@@ -1,1 +1,0 @@
-ALTER TABLE selfservice_registration_flows ADD COLUMN nid CHAR(36) NULL REFERENCES networks(id) ON DELETE CASCADE ON UPDATE RESTRICT;

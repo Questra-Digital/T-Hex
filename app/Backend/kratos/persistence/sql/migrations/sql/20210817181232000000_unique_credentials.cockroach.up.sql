@@ -1,1 +1,0 @@
-DROP INDEX IF EXISTS "identity_credential_identifiers_identifier_nid_uq_idx";

@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_registration_flows" DROP COLUMN "internal_context";

@@ -1,1 +1,0 @@
-DROP INDEX IF EXISTS "courier_messages_status_idx";

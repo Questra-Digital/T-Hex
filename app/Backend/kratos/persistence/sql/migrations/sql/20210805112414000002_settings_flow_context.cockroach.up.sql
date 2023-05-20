@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_settings_flows" RENAME COLUMN "internal_context" TO "_internal_context_tmp";

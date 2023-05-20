@@ -1,1 +1,0 @@
-CREATE INDEX "sessions_nid_idx" ON "_sessions_tmp" (id, nid);

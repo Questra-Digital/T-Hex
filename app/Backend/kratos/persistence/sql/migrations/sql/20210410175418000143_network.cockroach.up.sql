@@ -1,1 +1,0 @@
-ALTER TABLE "identity_verifiable_addresses" DROP COLUMN "_nid_tmp";

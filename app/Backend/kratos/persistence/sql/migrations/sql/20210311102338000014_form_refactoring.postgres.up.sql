@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_settings_flows" ALTER COLUMN "ui" TYPE jsonb, ALTER COLUMN "ui" DROP NOT NULL;

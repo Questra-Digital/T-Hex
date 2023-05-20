@@ -1,1 +1,0 @@
-ALTER TABLE "courier_messages" ADD COLUMN "template_type" TEXT NOT NULL DEFAULT '';

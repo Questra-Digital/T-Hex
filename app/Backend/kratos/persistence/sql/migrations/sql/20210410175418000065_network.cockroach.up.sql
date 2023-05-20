@@ -1,1 +1,0 @@
-ALTER TABLE "identities" ADD COLUMN "nid" UUID;

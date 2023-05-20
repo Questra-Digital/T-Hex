@@ -1,1 +1,0 @@
-UPDATE "selfservice_recovery_flows" SET "ui" = "_ui_tmp";

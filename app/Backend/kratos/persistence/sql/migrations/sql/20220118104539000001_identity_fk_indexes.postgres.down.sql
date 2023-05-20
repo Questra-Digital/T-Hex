@@ -1,1 +1,0 @@
-DROP INDEX "identity_recovery_addresses_nid_identity_id_idx";

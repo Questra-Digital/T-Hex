@@ -1,1 +1,0 @@
-ALTER TABLE identity_credential_identifiers ADD COLUMN identity_credential_type_id CHAR(36) NULL REFERENCES identity_credential_types(id) ON DELETE CASCADE ON UPDATE RESTRICT;

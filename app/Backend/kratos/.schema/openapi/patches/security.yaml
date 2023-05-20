@@ -1,3 +1,0 @@
-- op: replace
-  path: /components/schemas/genericError/properties/details/additionalProperties
-  value: false

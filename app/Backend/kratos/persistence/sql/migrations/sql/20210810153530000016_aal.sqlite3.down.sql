@@ -1,1 +1,0 @@
-DROP INDEX IF EXISTS "sessions_logout_token_uq_idx";

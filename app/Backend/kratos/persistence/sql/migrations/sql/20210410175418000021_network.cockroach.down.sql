@@ -1,1 +1,0 @@
-DROP INDEX IF EXISTS "identity_recovery_addresses_nid_idx";

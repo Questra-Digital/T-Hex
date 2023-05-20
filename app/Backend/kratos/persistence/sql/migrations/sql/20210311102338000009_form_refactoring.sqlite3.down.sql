@@ -1,1 +1,0 @@
-ALTER TABLE "_selfservice_recovery_flows_tmp" RENAME TO "selfservice_recovery_flows";

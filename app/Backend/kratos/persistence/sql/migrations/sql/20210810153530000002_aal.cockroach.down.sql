@@ -1,1 +1,0 @@
-ALTER TABLE "sessions" DROP COLUMN "authentication_methods";

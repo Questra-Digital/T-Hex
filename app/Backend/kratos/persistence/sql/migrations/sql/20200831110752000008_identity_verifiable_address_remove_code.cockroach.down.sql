@@ -1,1 +1,0 @@
-UPDATE "identity_verifiable_addresses" SET "code" = "_code_tmp";

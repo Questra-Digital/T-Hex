@@ -1,1 +1,0 @@
-DROP INDEX IF EXISTS "selfservice_registration_flows_nid_idx";

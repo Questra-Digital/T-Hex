@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_login_flows" ADD COLUMN "requested_aal" TEXT NOT NULL DEFAULT 'aal1';

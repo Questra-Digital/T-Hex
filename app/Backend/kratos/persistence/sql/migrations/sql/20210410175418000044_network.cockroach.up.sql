@@ -1,1 +1,0 @@
-ALTER TABLE "continuity_containers" RENAME COLUMN "nid" TO "_nid_tmp";

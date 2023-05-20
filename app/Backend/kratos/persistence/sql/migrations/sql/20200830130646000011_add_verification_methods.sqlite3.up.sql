@@ -1,1 +1,0 @@
-ALTER TABLE "_selfservice_verification_flows_tmp" RENAME TO "selfservice_verification_flows";

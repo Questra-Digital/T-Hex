@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_login_flows" RENAME COLUMN "ui" TO "_ui_tmp";

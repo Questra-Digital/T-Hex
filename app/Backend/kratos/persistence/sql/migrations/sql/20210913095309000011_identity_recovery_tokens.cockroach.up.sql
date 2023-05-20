@@ -1,1 +1,0 @@
-ALTER TABLE "identity_recovery_tokens" ALTER COLUMN "identity_id" SET NOT NULL;

@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_login_requests" ADD COLUMN "type" TEXT NOT NULL DEFAULT 'browser';

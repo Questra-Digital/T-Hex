@@ -1,1 +1,0 @@
-ALTER TABLE "_selfservice_registration_requests_tmp" RENAME TO "selfservice_registration_requests";

@@ -1,1 +1,0 @@
-UPDATE selfservice_verification_flows SET form=(SELECT * FROM (SELECT m.config FROM selfservice_verification_flows AS r INNER JOIN selfservice_verification_flow_methods AS m ON r.id=m.selfservice_verification_flow_id) as t);

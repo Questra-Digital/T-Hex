@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_verification_requests" ADD COLUMN "type" TEXT NOT NULL DEFAULT 'browser';

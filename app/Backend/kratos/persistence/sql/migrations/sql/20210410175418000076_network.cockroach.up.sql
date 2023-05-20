@@ -1,1 +1,0 @@
-UPDATE "identity_credentials" SET "nid" = "_nid_tmp";

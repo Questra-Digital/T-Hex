@@ -1,1 +1,0 @@
-ALTER TABLE "identity_verifiable_addresses" ALTER COLUMN "expires_at" TYPE timestamp, ALTER COLUMN "expires_at" DROP NOT NULL;

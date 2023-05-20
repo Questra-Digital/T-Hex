@@ -1,1 +1,0 @@
-CREATE UNIQUE INDEX "sessions_logout_token_uq_idx" ON "_sessions_tmp" (logout_token);

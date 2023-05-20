@@ -1,1 +1,0 @@
-ALTER TABLE `identity_recovery_addresses` DROP FOREIGN KEY `identity_recovery_addresses_nid_fk_idx`;

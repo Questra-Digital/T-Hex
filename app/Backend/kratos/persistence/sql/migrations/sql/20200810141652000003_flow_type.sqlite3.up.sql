@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_recovery_requests" ADD COLUMN "type" TEXT NOT NULL DEFAULT 'browser';

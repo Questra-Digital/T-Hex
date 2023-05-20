@@ -1,1 +1,0 @@
-DROP INDEX "selfservice_errors_nid_idx";

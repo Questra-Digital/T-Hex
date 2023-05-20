@@ -1,1 +1,0 @@
-ALTER TABLE `selfservice_settings_flows` DROP FOREIGN KEY `selfservice_settings_flows_nid_fk_idx`;

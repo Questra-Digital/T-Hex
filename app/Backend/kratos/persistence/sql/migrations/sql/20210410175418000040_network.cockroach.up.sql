@@ -1,1 +1,0 @@
-ALTER TABLE "continuity_containers" ADD COLUMN "nid" UUID;

@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_errors" DROP CONSTRAINT "selfservice_errors_nid_fk_idx";

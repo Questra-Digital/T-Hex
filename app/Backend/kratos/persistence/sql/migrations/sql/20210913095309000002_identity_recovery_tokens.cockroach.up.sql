@@ -1,1 +1,0 @@
-ALTER TABLE "identity_recovery_tokens" ADD COLUMN "identity_recovery_address_id" UUID;

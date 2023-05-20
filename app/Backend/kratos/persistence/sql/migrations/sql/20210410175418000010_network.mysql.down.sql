@@ -1,1 +1,0 @@
-ALTER TABLE `selfservice_errors` DROP COLUMN `nid`;

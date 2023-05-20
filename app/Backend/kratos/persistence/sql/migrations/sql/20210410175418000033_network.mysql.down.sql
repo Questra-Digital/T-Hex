@@ -1,1 +1,0 @@
-ALTER TABLE `identity_verifiable_addresses` DROP FOREIGN KEY `identity_verifiable_addresses_nid_fk_idx`;

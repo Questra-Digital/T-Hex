@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_settings_flows" DROP COLUMN "_ui_tmp";

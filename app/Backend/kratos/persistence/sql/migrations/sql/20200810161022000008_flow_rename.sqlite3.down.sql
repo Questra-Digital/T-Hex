@@ -1,1 +1,0 @@
-ALTER TABLE "selfservice_login_flows" RENAME TO "selfservice_login_requests";

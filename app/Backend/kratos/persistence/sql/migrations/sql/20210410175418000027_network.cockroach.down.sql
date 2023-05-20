@@ -1,1 +1,0 @@
-DROP INDEX IF EXISTS "continuity_containers_nid_idx";

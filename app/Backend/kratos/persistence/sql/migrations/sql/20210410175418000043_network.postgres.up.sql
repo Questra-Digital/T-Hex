@@ -1,1 +1,0 @@
-ALTER TABLE "identity_credential_identifiers" ALTER COLUMN "nid" TYPE UUID, ALTER COLUMN "nid" DROP NOT NULL;

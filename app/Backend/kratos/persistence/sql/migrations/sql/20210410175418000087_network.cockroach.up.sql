@@ -1,1 +1,0 @@
-ALTER TABLE "identity_credential_identifiers" DROP COLUMN "_nid_tmp";

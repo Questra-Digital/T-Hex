@@ -1,1 +1,0 @@
-ALTER TABLE "sessions" ALTER COLUMN "logout_token" TYPE VARCHAR (32), ALTER COLUMN "logout_token" DROP NOT NULL;

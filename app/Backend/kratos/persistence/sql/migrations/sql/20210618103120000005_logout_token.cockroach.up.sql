@@ -1,1 +1,0 @@
-ALTER TABLE "sessions" DROP COLUMN "_logout_token_tmp";

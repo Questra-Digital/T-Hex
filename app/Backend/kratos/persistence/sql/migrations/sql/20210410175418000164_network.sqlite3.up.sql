@@ -1,1 +1,0 @@
-CREATE UNIQUE INDEX "identity_verification_tokens_token_uq_idx" ON "_identity_verification_tokens_tmp" (token);

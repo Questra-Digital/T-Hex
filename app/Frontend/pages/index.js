@@ -7,6 +7,9 @@ import HomePage from './InsidePages/HomePage';
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import SideNavbar from './Components/SideNavbar';
+import CloneRepository from './TestCompoenents/CloneRepository';
+import CustomizeSettings from './TestCompoenents/CustomizeSettings';
 
 export default function Home() {
 
@@ -29,15 +32,34 @@ export default function Home() {
   // Code that uses `document` goes here
   return (
     <Router>
-      <Header_page />
-      <Routes>
-        <Route exact path="/Debugging" element={<Debugging />} />
-        <Route exact path="/HomePage" element={<HomePage/>} />
-        <Route exact path="/Settings" element={<SettingConfiguration />} />
-        <Route exact path="/StartTest" element={<StartTest />} />
-        
-      </Routes>
-      <Footer_page />
+
+      <div className='fixed w-full'>
+        <Header_page />
+      </div>
+
+      <div className="flex flex-row">
+        <div className="mt-20 fixed basis-1/5">
+          <SideNavbar />
+        </div>
+
+        <div className="mt-20 ml-auto basis-4/5">
+          <Routes>
+            {/* <Route exact path="/Debugging" element={<Debugging />} />
+            <Route exact path="/HomePage" element={<HomePage />} />
+            <Route exact path="/Settings" element={<SettingConfiguration />} /> */}
+            <Route exact path="/CustomizeSettings" element={<CustomizeSettings/>} />
+            <Route exact path="/CloneRepository" element={<CloneRepository/>} />
+          </Routes>
+        </div>
+      </div>
+
+
+
+
+
+
+
+      {/* <Footer_page /> */}
     </Router>
   );
 }

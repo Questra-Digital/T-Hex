@@ -1,1 +1,0 @@
-UPDATE "selfservice_registration_flows" SET "ui" = "_ui_tmp";

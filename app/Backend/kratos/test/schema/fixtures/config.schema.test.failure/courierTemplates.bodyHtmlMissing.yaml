@@ -1,5 +1,0 @@
-valid:
-  email:
-    body:
-      plaintext: "https://some-url"
-    subject: "https://some-url"

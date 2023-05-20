@@ -1,1 +1,0 @@
-UPDATE "selfservice_errors" SET "seen_at" = "_seen_at_tmp";
