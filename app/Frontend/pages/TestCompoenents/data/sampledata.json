@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "projectName": "Project A",
+    "projectOwner": "John Doe",
+    "createdAt": "2023-05-27T10:30:00Z",
+    "status": "In Progress",
+    "duration": "25 sec"
+  },
+  {
+    "id": 2,
+    "projectName": "Project B",
+    "projectOwner": "Jane Smith",
+    "createdAt": "2023-05-26T14:15:00Z",
+    "status": "Completed",
+    "duration": "15 sec"
+  },
+  {
+    "id": 3,
+    "projectName": "Project C",
+    "projectOwner": "Michael Johnson",
+    "createdAt": "2023-05-25T09:45:00Z",
+    "status": "Completed",
+    "duration": "35 sec"
+  },
+  {
+    "id": 4,
+    "projectName": "Project D",
+    "projectOwner": "Emily Brown",
+    "createdAt": "2023-05-24T16:20:00Z",
+    "status": "Pending",
+    "duration": "60 sec"
+  },
+  {
+    "id": 5,
+    "projectName": "Project A",
+    "projectOwner": "John Doe",
+    "createdAt": "2023-05-27T10:30:00Z",
+    "status": "In Progress",
+    "duration": "25 sec"
+  },
+  {
+    "id": 6,
+    "projectName": "Project B",
+    "projectOwner": "Jane Smith",
+    "createdAt": "2023-05-26T14:15:00Z",
+    "status": "Completed",
+    "duration": "15 sec"
+  },
+  {
+    "id": 7,
+    "projectName": "Project C",
+    "projectOwner": "Michael Johnson",
+    "createdAt": "2023-05-25T09:45:00Z",
+    "status": "Completed",
+    "duration": "35 sec"
+  },
+  {
+    "id": 8,
+    "projectName": "Project D",
+    "projectOwner": "Emily Brown",
+    "createdAt": "2023-05-24T16:20:00Z",
+    "status": "Pending",
+    "duration": "60 sec"
+  }
+
+]

@@ -13,17 +13,34 @@ import (
 
 // SetSettings is the resolver for the setSettings field.
 func (r *mutationResolver) SetSettings(ctx context.Context, input model.GetSettingInput) (*model.Settings, error) {
+	fmt.Printf("SetSettings")
 	return s.SetSettings(ctx, input)
+}
+
+// SetProjectInfo is the resolver for the setProjectInfo field.
+func (r *mutationResolver) SetProjectInfo(ctx context.Context, input model.ProjectInfoInput) (*model.Projectinfos, error) {
+	fmt.Printf("SetProjectInfo")
+	return s.SetProjectInfo(ctx, input)
 }
 
 // Settings is the resolver for the settings field.
 func (r *queryResolver) Settings(ctx context.Context) ([]*model.Settings, error) {
-	panic(fmt.Errorf("not implemented: Settings - settings"))
+	return s.GetAllSettings(ctx)
 }
 
 // Setting is the resolver for the setting field.
 func (r *queryResolver) Setting(ctx context.Context, id int) (*model.Settings, error) {
-	panic(fmt.Errorf("not implemented: Setting - setting"))
+	return s.GetSettingByID(ctx, id)
+}
+
+// ProjectInfos is the resolver for the projectInfos field.
+func (r *queryResolver) ProjectInfos(ctx context.Context) ([]*model.Projectinfos, error) {
+	return s.GetAllProjectInfos(ctx)
+}
+
+// ProjectInfo is the resolver for the projectInfo field.
+func (r *queryResolver) ProjectInfo(ctx context.Context, id int) (*model.Projectinfos, error) {
+	return s.GetProjectInfoByID(ctx, id)
 }
 
 // Mutation returns MutationResolver implementation.

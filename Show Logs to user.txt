@@ -1,8 +1,0 @@
-title Show Logs to user
-
-user->api: show logs for test Id
-api->logs: show logs for test Id
-logs->db: fetch logs for id
-db-->logs: return logs
-logs-->api: logs
-api-->user: display
