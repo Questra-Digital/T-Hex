@@ -1,0 +1,128 @@
+Documented By:
+Ramsha Rana
+Background Knowledge
+JavaScript:
+	Programming language
+	Allow Framework & library (React, Angular, Vue.js)
+Uses:
+1: Web Development:
+•	Front end      
+
+Enhancing Interactivity and creating Dynamic web pages 
+
+•	Client-side validation
+
+Validating user input on client side before sending it to server, reducing server load.
+
+•	Browser extension
+
+Allow browser customization, security and privacy search engine, language etc.
+
+2: Server-side Development:
+•	Building APIs and real time applications and allowing server-side rendering of web pages.
+
+3: Mobile App Development:
+•	Using ReactNative to develop cross platform apps.
+
+4: Game Development:
+
+•	Html and CSS with Js to make web-based game.
+
+5: Desktop Application:
+
+•	Electron framework used to make applications to run on deskstop using JavaScript.
+
+6: Data Visualization:
+•	D3.js library used to make interactive and dynamic data. 
+
+7: Internet of Things:
+
+•	Jhonny-five platform used to enable hardware devices using JavaScript.
+
+8: Chatbots and AI Development:
+
+•	Natural Language Processing (NLP) language use to make AI Application.
+
+9: Web APIs:
+•	Fetch data from external resources by interacting with web APIs.
+10: Interactive Form:
+
+•	Use to add auto-complete, real-time validation and dynamic form elements.
+
+11: Web Animation:
+•	CSS transitions used to make web animations.
+
+How JavaScript Helps in Automation of Websites?
+
+DOM Manipulation:
+
+JavaScript manipulate the Document Object Model of the website i-e clicking button or editing the content.
+Event Simulation:
+JavaScript simulate mouse clicking, user input.
+
+Browser Automation: 
+
+JavaScript use Puppeteer library to allows automating entire browser sessions. Puppeteer provides a high-level APIs making it easy to navigate websites, interact with pages, and take screenshots or capture PDFs.
+
+Testing: 
+
+JavaScript is used for automated testing of web applications. Testing frameworks like Jasmine, Mocha, and Jest allow developers to write test scripts in JavaScript to validate that a website function correctly. Selenium WebDriver
+(web driver helps to automate web browser actions such as opening web pages, clicking buttons, filling out forms, and extracting data) supports multiple programming languages including JavaScript which is used for web testing.
+
+
+
+
+
+
+
+GoLang:
+	Programming Language
+Uses:
+1: Web Development:
+
+Web Servers: 
+Go library includes "net/http" package to create efficient web applications.
+
+Web Frameworks: web frameworks like Gin and Echo are built on top of Go, simplifying the development of web applications.
+
+2: Backend Development:
+
+APIs: Go is used to build RESTful APIs and microservices.
+
+Databases: Go allow both SQL and NoSQL database libraries.
+
+
+Operating Systems it can make building operating systems, 
+
+Concurrency: Go built-in support for concurrency via Goroutines and Channels allow concurrent and parallel programs.
+
+3: Cloud Services:
+
+Serverless: Go is used for building serverless functions like Google Cloud Functions.
+
+Containers: Many containerization tools like Docker and Kubernetes are written in Go. 
+
+
+
+Cross-Platform Development:
+
+Go allows developers to write cross-platform applications that can run on multiple operating systems.
+How GOLang Helps in Automation of Websites?
+
+Web Testing: Go can be used to write automated tests for web applications.
+it use Ginkgo and Gomega framework to provide support for behavior-driven development (BDD) which is used for web testing.
+DevOps and Automation:
+
+Scripting: Go can be used for writing scripts and automation tools for DevOps tasks like deployment, monitoring, and configuration management.
+
+Continuous Integration: Go is used in CI/CD pipelines to automate the building, testing, and deployment of applications.
+
+
+
+
+
+
+
+
+
+
