@@ -9,65 +9,18 @@ export default function HomePage() {
   return (
     <div>
       <main>
+
+        
         <section className={styles.hero}>
           <div className={styles.heroContainer}>
-            <h1 className={styles.heroTitle}>Scalable Web Testing Platform</h1>
+            <h1 className={styles.heroTitle}>Web Test Hub</h1>
             <p className={styles.heroDescription}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut
-              sapien nulla. Vestibulum eu mauris velit. Phasellus nec justo
-              urna. Morbi eleifend elit quis ligula facilisis, vitae iaculis
-              dolor dignissim. Integer quis dolor vel odio consequat mattis et
-              et diam.
+              
+WebTestHub is a cutting-edge test automation software designed as an affordable, robust, and user-centric platform specifically tailored to streamline and enhance automated testing processes. Born from the need to address limitations in existing solutions, particularly the constraints of the "Scalable Web Testing Platform," WebTestHub focuses on revolutionizing automated testing by enabling multiple parallel test executions through the utilization of multiple containers.
             </p>
             <Link to="/CloneRepository">
               <button className={styles.heroButton}>Get Started</button>
             </Link>
-          </div>
-        </section>
-
-        <section className={styles.features}>
-          <div className={styles.featureContainer}>
-            <div className={styles.featureItem}>
-              <h2 className={styles.featureTitle}>Cross-web Testing</h2>
-              <img
-                src="/cwt.webp"
-                alt="Cross Web Testing"
-                width={400}
-                height={60}
-              />
-              <span> -----------------------------------------</span>
-              <p className={styles.featureDescription}>
-                Test your web application across multiple browsers, platforms,
-                and devices to ensure consistent functionality and performance.
-              </p>
-            </div>
-            <div className={styles.featureItem}>
-              <h2 className={styles.featureTitle}>Screenshots</h2>
-              <img src="/ss.png" alt="Screenshots" width={400} height={60} />
-              <span> -----------------------------------------</span>
-              <p className={styles.featureDescription}>
-                Capture screenshots of your web application on different
-                browsers and devices for visual comparison.
-              </p>
-            </div>
-            <div className={styles.featureItem}>
-              <h2 className={styles.featureTitle}>Videos of Tests Ran</h2>
-              <img src="/vid.png" alt="Videos" width={400} height={60} />
-              <span> -----------------------------------------</span>
-              <p className={styles.featureDescription}>
-                Record videos of your test runs to review user interactions,
-                identify UI issues, and improve your web application.
-              </p>
-            </div>
-            <div className={styles.featureItem}>
-              <h2 className={styles.featureTitle}>Logs</h2>
-              <img src="/logs.jpg" alt="Logs" width={300} height={30} />
-              <span> -----------------------------------------</span>
-              <p className={styles.featureDescription}>
-                Access detailed logs of your test runs to analyze errors,
-                diagnose issues, and optimize your web application.
-              </p>
-            </div>
           </div>
         </section>
 
