@@ -3,12 +3,23 @@
   background-color: #222222;
   color: #ffffff;
 
-  background-image: url("/wallpaper.jpg");
+  background-image: url("/wall.jpg");
   background-size: cover;
   background-position: center;
   padding-top: 350px;
   padding-bottom: 100px;
 }
+/* HomePage.module.css */
+
+.selenium {
+  padding: 5rem 0;
+  /* Additional styles for the section */
+}
+
+.whiteBackground {
+  background-color: #ffffff; /* Set background color to white */
+}
+
 
 .heroContainer {
   max-width: 800px;
@@ -84,7 +95,7 @@
 
 .selenium {
   padding: 5rem 0;
-  background-color:  #0c4a6e;
+  background-color:  #ffffff;
 }
 
 .seleniumContainer {
