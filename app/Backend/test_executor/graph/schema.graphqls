@@ -1,0 +1,114 @@
+type Test {
+  id: ID!
+  username: String! #abdullahsaleem40404@gmail.com
+  project: String! #python-project
+  type: String! #video/ screenshot/ logs
+  urlid: String! #817491248721894782
+  testfile: String! #python1
+  status: String! #passed/failed/ error
+  duration: String! #5s
+}
+
+type Query {
+  tests: [Test!]! #list of tests, if there no tests return null
+  test(id: ID!): Test #return 1 test using ID
+  # ////////////////////////////////
+
+  # //these gets data stored in DB when SettingsMicroservice runs
+  settings: [Settings!]! #list of tests, if there no tests return null
+  setting(id: ID!): Settings!
+  projectInfos: [Projectinfos!]!
+  projectInfo(id: ID!): Projectinfos!
+}
+
+type Mutation {
+  initiateTest: String!
+  destroyAll: String!
+  startTest(input: startTestInput!): String!
+  saveTestResult(input: saveTestResultInput!): Test!
+  updateTest(input: updateTestInput!): Test!
+
+  seleniumPull: String!
+  # seleniumStart: String!
+  seleniumStart(input: startTestInput!): String!
+  seleniumStop(input: seleniumInput!): String!
+  seleniumRemove(input: seleniumInput!): String!
+
+  createDockerFile(input: createDockerFileInput!): String!
+  cloneGitRepository(input: cloneGitRepInput!): String!
+
+  projectBuildImage(input: startTestInput!): String!
+  projectContainerStart(input: startTestInput!): String!
+  projectContainerStop(input: projectContainerEndInput!): String!
+  projectContainerRemove(input: projectContainerEndInput!): String!
+}
+
+input cloneGitRepInput {
+  gitRepPath: String!
+}
+
+input createDockerFileInput {
+  dockerCmnds: String!
+}
+
+input seleniumInput {
+  containerName: String!
+}
+
+input projectBuildImageInput {
+  imgName: String!
+  projectPath: String! #contextPath: pythonProject
+}
+
+input projectContainerStartInput {
+  imageName: String!
+  containerName: String!
+  # seleniumContainerName: String!
+}
+input projectContainerEndInput {
+  containerName: String!
+}
+
+input startTestInput {
+  seleniumContainerName: String!
+  projectPath: String!
+  projectImageName: String!
+  projectContainerName: String!
+  # //startedby: String!
+}
+
+input saveTestResultInput {
+  username: String! #abdullahsaleem40404@gmail.com
+  project: String! #python-project
+  type: String! #video/ screenshot/ logs
+  urlid: String! #817491248721894782
+  testfile: String! #python1
+  status: String! #passed/failed/ error
+  duration: String! #5s
+}
+
+input updateTestInput {
+  id: ID!
+  status: String!
+  testPath: String!
+}
+
+# //////////////////////////////// #
+type Settings {
+  id: ID!
+  browser: String!
+  version: String!
+  stepByStepDebugging: Boolean!
+  enableLogs: Boolean!
+  parallelism: Boolean!
+  numberOfParallelTests: Int!
+}
+
+type Projectinfos {
+  id: ID!
+  gitEmail: String!
+  gitProjectName: String!
+  gitLanguage: String!
+  gitNoOfTestCases: Int!
+  gitTestCaseFileName: String!
+}
