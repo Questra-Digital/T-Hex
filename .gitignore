@@ -1,0 +1,3 @@
+app/Backend/api_gateway/node_modules
+app/Frontend/node_modules
+app/Frontend/.next

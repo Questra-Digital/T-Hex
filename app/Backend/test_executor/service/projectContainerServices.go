@@ -7,9 +7,16 @@ import (
 	"fmt"
 	"io"
 	"log"
+<<<<<<< HEAD
 	"os"
 	"path/filepath"
 	"strings"
+=======
+	"strings"
+	"os"
+	"path/filepath"
+	
+>>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -101,6 +108,10 @@ func RunContainerForProjectTestImage(client *client.Client, imagename string, co
 	}
 	platform := &v1.Platform{}
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 	hostConfig := &container.HostConfig{
 		Links: []string{"Selenium_Container:alias"},
 		PortBindings: natting.PortMap{

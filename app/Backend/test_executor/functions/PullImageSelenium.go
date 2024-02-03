@@ -9,7 +9,11 @@ import (
 	"github.com/docker/docker/client"
 )
 
+<<<<<<< HEAD
 func PullImageSeleniumForChrome(client *client.Client) error {
+=======
+func PullImageSelenium(client *client.Client) error {
+>>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 	ctx := context.Background()
 	image := "selenium/standalone-chrome"
 	reader, err := client.ImagePull(ctx, image, types.ImagePullOptions{})
@@ -19,6 +23,7 @@ func PullImageSeleniumForChrome(client *client.Client) error {
 	io.Copy(os.Stdout, reader)
 	return nil
 }
+<<<<<<< HEAD
 
 func PullImageSeleniumForEdge(client *client.Client) error {
 	ctx := context.Background()
@@ -30,3 +35,5 @@ func PullImageSeleniumForEdge(client *client.Client) error {
 	io.Copy(os.Stdout, reader)
 	return nil
 }
+=======
+>>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
