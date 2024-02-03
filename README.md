@@ -114,6 +114,6 @@ If you have any questions, suggestions, or feedback, please contact us at [[abdu
 Happy testing!
 
 # Contributors list 
-[<img src="https://github.com/F200413.png" width="60px;"/><br /><sub><ahref="https://github.com/F200413">F200413 </a></sub>](https://github.com/F200413/)
-[<img src="https://github.com/F200143.png" width="60px;"/><br /><sub><ahref="https://github.com/F200143">F200143 </a></sub>](https://github.com/F200143/)
+[<img src="https://github.com/F200413.png" width="60px;"/><br /><sub><a href="https://github.com/F200413"> Abdullah Nadeem </a></sub>](https://github.com/F200413/)
 
+[<img src="https://github.com/huzaifaroman.png" width="60px;"/><br /><sub><a href="https://github.com/huzaifaroman"> Huzaifa Roman </a></sub>](https://github.com/huzaifaroman/)
