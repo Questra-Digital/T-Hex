@@ -1,15 +1,31 @@
+
 version: '3.3'
 
 services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - 4000:4000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Path(`/`)"
+      - "traefik.http.services.app.loadbalancer.server.port=4000"
     volumes:
       - .:/app
       - "node_modules:/app/node_modules"
+    depends_on:
+      - traefik
 
 volumes:
   node_modules:
