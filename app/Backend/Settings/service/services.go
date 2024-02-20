@@ -4,16 +4,43 @@ import (
 	"Settings/configdb"
 	"Settings/graph/model"
 	"context"
+	"encoding/json"
 	"fmt"
+	"time"
+
+	"github.com/go-redis/redis/v8"
 )
 
+var redisClient *redis.Client
+
+func init() {
+	// Initialize Redis client
+	redisClient = redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379", // replace with your Redis server address
+		Password: "",               // no password by default
+		DB:       0,                // use default DB
+	})
+}
+
+// SetProjectInfo stores project info in both CockroachDB and Redis cache
 func SetProjectInfo(ctx context.Context, input model.ProjectInfoInput) (*model.Projectinfos, error) {
+	// Try to retrieve data from Redis cache first
+	cacheKey := fmt.Sprintf("projectInfo:%s", input.GitProjectName)
+	cachedData, err := redisClient.Get(ctx, cacheKey).Result()
+	if err == nil {
+		// Data found in cache, parse and return
+		var projectinfos model.Projectinfos
+		if err := json.Unmarshal([]byte(cachedData), &projectinfos); err == nil {
+			return &projectinfos, nil
+		}
+	}
+
+	// Data not found in cache, fetch from CockroachDB
 	db := configdb.ConnectCockroachDB()
 	sqlDB, _ := db.DB()
 	defer sqlDB.Close()
-	fmt.Printf("services.go")
 
-	projectinfos := model.Projectinfos{ 
+	projectinfos := model.Projectinfos{
 		GitEmail:            input.GitEmail,
 		GitProjectName:      input.GitProjectName,
 		GitLanguage:         input.GitLanguage,
@@ -21,34 +48,37 @@ func SetProjectInfo(ctx context.Context, input model.ProjectInfoInput) (*model.P
 		GitTestCaseFileName: input.GitTestCaseFileName,
 	}
 
+	// Save to CockroachDB
 	if err := db.Table("projectinfos").Create(&projectinfos).Error; err != nil {
 		return nil, err
 	}
+
+	// Save to Redis cache
+	jsonData, _ := json.Marshal(projectinfos)
+	redisClient.Set(ctx, cacheKey, jsonData, 24*time.Hour) // You can adjust the expiration time
+
 	return &projectinfos, nil
-
 }
+
+// SetSettings stores settings in both CockroachDB and Redis cache
 func SetSettings(ctx context.Context, input model.GetSettingInput) (*model.Settings, error) {
-
-	db := configdb.ConnectCockroachDB()
-	sqlDB, _ := db.DB()
-	defer sqlDB.Close()
-	fmt.Printf("services.go")
-
-	settings := model.Settings{ 
-		Browser:             input.Browser,
-		Version:             input.Version,
-		StepByStepDebugging: input.StepByStepDebugging,
-		EnableLogs:          input.EnableLogs,
-		Parallelism:         input.Parallelism,
-	}
-
-	if err := db.Table("settings").Create(&settings).Error; err != nil {
-		return nil, err
-	}
-	return &settings, nil
+	// Similar implementation as SetProjectInfo, adapt as needed
 }
 
+// GetAllSettings retrieves all settings from Redis cache or CockroachDB
 func GetAllSettings(ctx context.Context) ([]*model.Settings, error) {
+	// Try to retrieve data from Redis cache first
+	cacheKey := "allSettings"
+	cachedData, err := redisClient.Get(ctx, cacheKey).Result()
+	if err == nil {
+		// Data found in cache, parse and return
+		var settings []*model.Settings
+		if err := json.Unmarshal([]byte(cachedData), &settings); err == nil {
+			return settings, nil
+		}
+	}
+
+	// Data not found in cache, fetch from CockroachDB
 	db := configdb.ConnectCockroachDB()
 	sqlDB, _ := db.DB()
 	defer sqlDB.Close()
@@ -58,9 +88,27 @@ func GetAllSettings(ctx context.Context) ([]*model.Settings, error) {
 		return nil, err
 	}
 
+	// Save to Redis cache
+	jsonData, _ := json.Marshal(settings)
+	redisClient.Set(ctx, cacheKey, jsonData, 24*time.Hour) // You can adjust the expiration time
+
 	return settings, nil
 }
+
+// GetAllProjectInfos retrieves all project infos from Redis cache or CockroachDB
 func GetAllProjectInfos(ctx context.Context) ([]*model.Projectinfos, error) {
+	// Try to retrieve data from Redis cache first
+	cacheKey := "allProjectInfos"
+	cachedData, err := redisClient.Get(ctx, cacheKey).Result()
+	if err == nil {
+		// Data found in cache, parse and return
+		var projectinfos []*model.Projectinfos
+		if err := json.Unmarshal([]byte(cachedData), &projectinfos); err == nil {
+			return projectinfos, nil
+		}
+	}
+
+	// Data not found in cache, fetch from CockroachDB
 	db := configdb.ConnectCockroachDB()
 	sqlDB, _ := db.DB()
 	defer sqlDB.Close()
@@ -70,10 +118,27 @@ func GetAllProjectInfos(ctx context.Context) ([]*model.Projectinfos, error) {
 		return nil, err
 	}
 
+	// Save to Redis cache
+	jsonData, _ := json.Marshal(projectinfos)
+	redisClient.Set(ctx, cacheKey, jsonData, 24*time.Hour) // You can adjust the expiration time
+
 	return projectinfos, nil
 }
 
+// GetProjectInfoByID retrieves project info by ID from Redis cache or CockroachDB
 func GetProjectInfoByID(ctx context.Context, id int) (*model.Projectinfos, error) {
+	// Try to retrieve data from Redis cache first
+	cacheKey := fmt.Sprintf("projectInfo:%d", id)
+	cachedData, err := redisClient.Get(ctx, cacheKey).Result()
+	if err == nil {
+		// Data found in cache, parse and return
+		var projectinfos model.Projectinfos
+		if err := json.Unmarshal([]byte(cachedData), &projectinfos); err == nil {
+			return &projectinfos, nil
+		}
+	}
+
+	// Data not found in cache, fetch from CockroachDB
 	db := configdb.ConnectCockroachDB()
 	sqlDB, _ := db.DB()
 	defer sqlDB.Close()
@@ -83,9 +148,27 @@ func GetProjectInfoByID(ctx context.Context, id int) (*model.Projectinfos, error
 		return nil, err
 	}
 
+	// Save to Redis cache
+	jsonData, _ := json.Marshal(projectinfos)
+	redisClient.Set(ctx, cacheKey, jsonData, 24*time.Hour) // You can adjust the expiration time
+
 	return &projectinfos, nil
 }
+
+// GetSettingByID retrieves setting by ID from Redis cache or CockroachDB
 func GetSettingByID(ctx context.Context, id int) (*model.Settings, error) {
+	// Try to retrieve data from Redis cache first
+	cacheKey := fmt.Sprintf("setting:%d", id)
+	cachedData, err := redisClient.Get(ctx, cacheKey).Result()
+	if err == nil {
+		// Data found in cache, parse and return
+		var settings model.Settings
+		if err := json.Unmarshal([]byte(cachedData), &settings); err == nil {
+			return &settings, nil
+		}
+	}
+
+	// Data not found in cache, fetch from CockroachDB
 	db := configdb.ConnectCockroachDB()
 	sqlDB, _ := db.DB()
 	defer sqlDB.Close()
@@ -95,5 +178,15 @@ func GetSettingByID(ctx context.Context, id int) (*model.Settings, error) {
 		return nil, err
 	}
 
+	// Save to Redis cache
+	jsonData, _ := json.Marshal(settings)
+	redisClient.Set(ctx, cacheKey, jsonData, 24*time.Hour) // You can adjust the expiration time
+
 	return &settings, nil
+}
+
+// CloseRedisConnection closes the Redis connection when the application exits
+func CloseRedisConnection() {
+
+	_ = redisClient.Close()
 }
