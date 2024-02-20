@@ -1,4 +1,4 @@
-version: "3"
+version: '3.3'
 
 services:
   web:
@@ -7,10 +7,16 @@ services:
       dockerfile: Dockerfile
       target: dev
     container_name: web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.web.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.web.entrypoints=websecure"
+      - "traefik.http.routers.web.tls=true"
+      - "traefik.http.services.web.loadbalancer.server.port=3000"  # Port exposed by the frontend service
     volumes:
       - ./:/app
       - /app/node_modules
-
-    # command: npm run dev -- --inspect
     ports:
       - 3000:3000
+    depends_on:
+      - traefik
