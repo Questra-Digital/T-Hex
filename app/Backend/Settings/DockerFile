@@ -1,0 +1,20 @@
+# Use an official Go runtime as a base image
+FROM golang:1.17
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy only the go.mod and go.sum files to download dependencies
+COPY go.mod go.sum ./
+
+# Download and install any dependencies
+RUN go mod download
+
+# Copy the entire project
+COPY . .
+
+# Expose the port your application runs on (adjust as needed)
+EXPOSE 9090
+
+# Command to run the application
+CMD ["go", "run", "server.go"]
