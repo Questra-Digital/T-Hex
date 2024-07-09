@@ -1,4 +1,3 @@
-
 package model
 
 type GetSettingInput struct {
