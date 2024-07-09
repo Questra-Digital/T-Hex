@@ -25,13 +25,8 @@ func RunFluentdContainer(client *client.Client, imagename string, containername 
 		context.Background(),
 		config,
 		hostConfig,
-<<<<<<< HEAD
-		nil,
-		nil,
-=======
 		nil, 
 		nil, 
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 		containername,
 	)
 
