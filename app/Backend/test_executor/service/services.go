@@ -163,7 +163,7 @@ func InitiateTest(ctx context.Context, ID int, GitEmail string, GitProjectName s
 	nooftestcases := GitNoOfTestCases
 	language := GitLanguage
 
-	baseDir := "C:/Users/abdul/Desktop/Work By Waleed FYP/sideby_fyp_project/"
+	baseDir := "/home/nafees/projects/qd/T-Hex/app/"
 	basePath := "example/" + username + "/" + projectname + "/"
 
 	start_time := make([]time.Time, nooftestcases)
@@ -252,7 +252,7 @@ func InitiateTest(ctx context.Context, ID int, GitEmail string, GitProjectName s
 		tags1 := []string{tag_string}
 		dockerfile1 := "Dockerfile"
 		dockerfile1 += strconv.Itoa(i)
-		contextPath1 := "example\\" + username + "\\" + projectname
+		contextPath1 := "example/" + username + "/" + projectname
 		err = f.BuildImageforDockerFile2(client, tags1, dockerfile1, contextPath1)
 		if err != nil {
 			log.Println(err)
