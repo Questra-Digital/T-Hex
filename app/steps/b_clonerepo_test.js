@@ -14,21 +14,16 @@ Scenario('test CloneRepository component functionality', async ({ I }) => {
   I.see('Enter URL of Repository');
 
   // Perform additional assertions or interactions as needed
-
-  // Example: Fill the input field with a repository URL
- I.fillField('repoinput', 'https://github.com/F200413/FYP-Sample-Python-Test.git');
+  I.fillField('email', 'Jawadkhalid@cfd.nu.edu.pk');
   I.wait(2);
-
-  // Click the "Add Repository" button
-  I.click('Add Repository');
-
-  // Wait for a certain amount of time (e.g., 3 seconds) after clicking the button
-  I.wait(3);
-
-  // Verify that the modal is displayed
-  I.see('Project had been added successfully.');
-I.wait(1);
-  // Add more assertions or interactions as needed
-
-  // Close the modal or perform other actions
+  I.fillField('test', 'FYP-Sample-Python-Tesstts');
+  I.wait(2);
+  I.fillField('number', '3');
+  I.wait(2);
+  I.fillField('fname', 'python');
+  I.wait(2);
+  I.fillField('projectlang', 'python');
+  I.wait(2);
+  I.click('Save Details');
+  
 });

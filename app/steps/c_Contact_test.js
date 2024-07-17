@@ -5,6 +5,7 @@ Feature('Dockerfile');
 Scenario('Test Dockerfile', async ({ I }) => {
   I.amOnPage('http://localhost:3000');  
   // Click on the "Contact" link
+  I.click('Get Started');
   I.click('Contact');
   I.wait(2);
   I.executeScript(() => {
@@ -22,6 +23,6 @@ Scenario('Test Dockerfile', async ({ I }) => {
   I.wait(1);
   I.fillField('message', 'Hello Abdullah Ramsha And Huzaifa You Guys Are doing Good now Well Done Thankyou <3');
   I.wait(2);
- 
+
   I.click('SEND');
 });
