@@ -12,7 +12,142 @@ const CloneRepository = (props) => {
   const [projectLang, setProjectLang] = useState("");
   const [userGithubemail, setuserGithubemail] = useState("");
   const [projectName, setprojectName] = useState("");
-  const [testcasefilename, settestcasefilename] = useState("");
+  const [testcasefilename, import React, { useState } from "react";
+  import { gql } from "@apollo/client";
+  import axios from "axios";
+  import client from "../../appolo-client";
+  
+  const CloneRepository = (props) => {
+    const [showModal, setShowModal] = useState(false);
+    const [isClickable, setIsClickable] = useState(true);
+    const [inputCloneGitRep, setInputCloneGitRep] = useState("");
+    const [totalnooftestcases, settotalnooftestcases] = useState(5);
+  
+    const fetchNumberOfFiles = async (repoUrl) => {
+      try {
+        const response = await axios.get(`${repoUrl}/contents`);
+        const fileCount = response.data.filter((item) => item.type === "file").length;
+        return fileCount;
+      } catch (error) {
+        console.error("Error fetching repository information:", error);
+        return 0;
+      }
+    };
+  
+    const handleCloneGitRep = async () => {
+      console.log("path: " + inputCloneGitRep);
+  
+      const { data } = await client.mutate({
+        mutation: gql`
+          mutation CloneGitRepository($input: cloneGitRepInput!) {
+            cloneGitRepository(input: $input)
+          }
+        `,
+        variables: {
+          input: {
+            gitRepPath: inputCloneGitRep,
+          },
+        },
+      });
+  
+      const fileCount = await fetchNumberOfFiles(inputCloneGitRep);
+      settotalnooftestcases(fileCount);
+  
+      setInputCloneGitRep("");
+    };
+  
+    const handleButtonClick = async () => {
+      handleCloneGitRep();
+      setShowModal(true);
+      setIsClickable(true);
+    };
+  
+    return (
+      <>
+        <div className="bg-white p-8 rounded-md w-full mt-5">
+          <div className="flex items-center justify-between pb-6">
+            <div>
+              <h1 className="text-gray-700 font-semibold text-xl">
+                Enter URL of Repository
+              </h1>
+            </div>
+            <div className="flex items-center justify-between">
+              <svg
+                aria-hidden="true"
+                className="mr-2 flex-shrink-0 w-8 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.25 16.518l-4.5-4.319 1.396-1.435 3.078 2.937 6.105-6.218 1.421 1.409-7.5 7.626z"
+                  clipRule="evenodd"
+                ></path>
+              </svg>
+              <div className="wiflex bg-gray-50 items-center p-2 rounded-md">
+                <input
+                  className="bg-gray-50 outline-none ml-1 block w-9/10 "
+                  type="text"
+                  name=""
+                  id=""
+                  placeholder="GitHub or GitLab URL..."
+                  onChange={(e) => setInputCloneGitRep(e.target.value)}
+                  value={inputCloneGitRep}
+                />
+              </div>
+              <div className="lg:ml-40 ml-10 space-x-8">
+                <button
+                  onClick={handleButtonClick}
+                  disabled={!isClickable}
+                  className={`bg-teal-600 hover:bg-teal-500 focus:bg-teal-700 active:bg-teal-800 disabled:bg-gray-400 px-4 py-2 rounded-md text-white font-semibold tracking-wide ${
+                    isClickable ? "cursor-pointer" : "cursor-default"
+                  }`}
+                >
+                  Add Repository
+                </button>
+              </div>
+            </div>
+          </div>
+  
+          {showModal === false ? (
+            <div>
+              <div className="mt-5 -mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+                <div className="text-center p-10 border border-gray-300 rounded bg-gray-100">
+                  <h2 className="text-2xl text-gray-900">No projects found</h2>
+                  <p className="text-gray-600">Please add one.</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="mt-5 -mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+                <div className="text-center p-10 border border-gray-300 rounded bg-gray-100">
+                  <h2 className="text-2xl text-green-700">
+                    Project had been added successfully.
+                  </h2>
+                  <div className="mt-3 flex justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      fill="#2ecc71"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.25 16.518l-4.5-4.319 1.396-1.435 3.078 2.937 6.105-6.218 1.421 1.409-7.5 7.626z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  };
+  
+  export default CloneRepository;
+  settestcasefilename] = useState("");
   const [totalnooftestcases, settotalnooftestcases] = useState("");
 
   const handleCloneGitRep = async (e) => {
