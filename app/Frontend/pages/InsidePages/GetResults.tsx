@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import ListHead from '../ShowData/ListHead';
 import ListBody from '../ShowData/ListBody';
+
 const GetResults = ({ data }: any) => {
 
 
   if (!data || data.length === 0) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
 
-  const pageSize = 3; 
+  const pageSize = 20;
   const [currentPage, setCurrentPage] = useState(1);
 
 

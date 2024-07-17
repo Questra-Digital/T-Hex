@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { gql } from "@apollo/client";
 import client from "../../appolo-client";
 
 const RunTest = (props) => {
   const [isClickable, setIsClickable] = useState(true);
+  const [progress, setProgress] = useState(0);
 
   const handleButtonClick = () => {
     setIsClickable(false);
@@ -22,47 +23,70 @@ const RunTest = (props) => {
     console.log("InititateTest Result: \n", data);
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (progress < 100) {
+        setProgress(progress + 1);
+      }
+    }, 10000); // 500 ms interval for faster animation
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(interval);
+  }, [progress]);
+
+  const runVideo = "/darl.mp4";
+
   return (
     <>
-      <div className="bg-white p-8 rounded-md w-full mt-5">
-        <div className=" flex pb-6">
-          <div>
-            <h1 className="text-gray-700 font-semibold text-2xl">
-              Everything is done
-            </h1>
-          </div>
-          <div className="flex">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-              className="flex-shrink-0 w-8 h-6 mt-2 ml-5  text-green-500 transition duration-75 dark:text-green-400 group-hover:text-green-900 dark:group-hover:text-green fill-current"
-            >
-              <path
-                d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 
-                        209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 
-                        24.6-9.4 33.9 0s9.4 24.6 0 33.9z"
-              />
-            </svg>
-          </div>
-        </div>
+      {/* Video Background */}
+      <video
+        autoPlay
+        loop
+        muted
+        style={{
+          position: "absolute",
+          width: "80%",
+          height: "88%",
+          objectFit: "cover",
+          zIndex: -1,
+        }}
+      >
+        <source src={runVideo} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
 
-        <div>
-          <div className="mt-5 -mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-            <div className="text-center p-10 border border-gray-300 rounded bg-gray-50">
-              <h2 className="text-xl text-green-800 font-semibold text-gray-900">
-                Now click on the following button to start the test.
-              </h2>
+      <div className="relative h-screen flex flex-col items-center justify-center text-white" >
+        
+        {/* Text */}
+        <h1 className="text-2xl font-semibold mb-8 p-3 bg-black rounded-lg text-white "  
+       
 
-              <button
-                onClick={handleButtonClick}
-                disabled={!isClickable}
-                className="mt-4 bg-green-600 hover:bg-green-500 focus:bg-green-700 active:bg-green-800 disabled:bg-gray-400 px-4 py-2 rounded-md text-white font-semibold tracking-wide
-                                ${isClickable ? 'cursor-pointer' : 'cursor-default'}
-                                "
-              >
-                Start Test
-              </button>
-            </div>
+        >
+          Ready to unleash the power of your tests?
+        </h1>
+
+        {/* Button */}
+        <button
+          onClick={handleButtonClick}
+          disabled={!isClickable}
+          className={`bg-blue-600 hover:bg-purple-500 focus:bg-purple-700 active:bg-blue-800 disabled:bg-gray-400 px-8 py-4 rounded-md text-white font-semibold tracking-wide ${
+            isClickable ? "cursor-pointer" : "cursor-default"
+          }`}
+          style={{ backgroundColor: isClickable ? 'purple' : "#cccccc" }}
+        >
+          Start Test
+        </button>
+
+        {/* Progress Bar */}
+        <div className="mt-8 w-64">
+          <div className="relative h-8 bg-gray-300 rounded-full overflow-hidden">
+            <div
+              className="absolute top-0 left-0 bg-purple-500 h-full transition-all duration-500"
+              style={{ width: `${progress}%` }}
+            ></div>
+            <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 font-semibold">
+              {progress}%
+            </span>
           </div>
         </div>
       </div>

@@ -13,15 +13,19 @@ import CloneRepository from './TestCompoenents/CloneRepository';
 import CustomizeSettings from './TestCompoenents/CustomizeSettings';
 import CreateDockerFile from './TestCompoenents/CreateDockerFile';
 import Results from './TestCompoenents/Results'
-
 import ContactUs from './InsidePages/ContactUs'
 import Logs from './TestCompoenents/Logs'
 import Screenshots from './TestCompoenents/Screenshots'
 import Videos from './TestCompoenents/Videos'
 import EndTest from './TestCompoenents/EndTest'
+import Login from './InsidePages/Login'
+import Signup from './InsidePages/Signup'
+import Subscription from './InsidePages/SubscriptionPlans'
+import Payment from './InsidePages/payment';
+
+//import Payment from './InsidePages/Payment'
 
 export default function Home() {
-
   const [isBrowser, setIsBrowser] = useState(false);
 
   useEffect(() => {
@@ -39,36 +43,51 @@ export default function Home() {
 
   return (
     <Router>
+      <MainContent />
+    </Router>
+  );
+}
 
+function MainContent() {
+  const location = useLocation();
+  const showHeaderAndSideNavbar = location.pathname !== "/Login";
+
+  return (
+    <>
       <div className='fixed w-full'>
-        <Header_page />
+        {showHeaderAndSideNavbar && <Header_page />}
       </div>
-
       <Routes>
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Signup" element={<Signup />} />
         <Route exact path="/" element={<HomePage />} />
+        <Route path="/SubscriptionPlans" element={<Subscription />} />
+        
+        
+   
       </Routes>
-      <div className="flex flex-row">
-        <div className="mt-20 fixed basis-1/5">
-          <SideNavbar />
+      {showHeaderAndSideNavbar && (
+        <div className="flex flex-row">
+          <div className="mt-20 fixed basis-1/5">
+            <SideNavbar />
+          </div>
+          <div className="mt-20 ml-auto basis-4/5">
+            <Routes>
+              <Route path="/CustomizeSettings" element={<CustomizeSettings />} />
+              <Route path="/CloneRepository" element={<CloneRepository />} />
+              <Route path="/RunTest" element={<RunTest />} />
+              <Route path="/CreateDockerFile" element={<CreateDockerFile />} />
+              <Route path="/Results" element={<Results />} />
+              <Route path="/ContactUs" element={<ContactUs />} />
+              <Route path="/Logs" element={<Logs />} />
+              {<Route path="/Payment" element={<Payment />} /> }
+              <Route path="/Screenshots" element={<Screenshots />} />
+              <Route path="/Videos" element={<Videos />} />
+              <Route path="/EndTest" element={<EndTest />} />
+            </Routes>
+          </div>
         </div>
-
-        <div className="mt-20 ml-auto basis-4/5">
-          <Routes>
-            <Route path="/CustomizeSettings" element={<CustomizeSettings />} />
-            <Route path="/CloneRepository" element={<CloneRepository />} />
-            <Route path="/RunTest" element={<RunTest />} />
-            <Route path="/CreateDockerFile" element={<CreateDockerFile />} />
-            <Route path="/Results" element={<Results />} />
-            <Route path="/ContactUs" element={<ContactUs />} />
-
-            <Route path="/Logs" element={<Logs />} />
-            <Route path="/Screenshots" element={<Screenshots />} />
-            <Route path="/Videos" element={<Videos />} />
-            <Route path="/EndTest" element={<EndTest />} />
-          </Routes>
-        </div>
-      </div>
-      
-    </Router >
+      )}
+    </>
   );
 }

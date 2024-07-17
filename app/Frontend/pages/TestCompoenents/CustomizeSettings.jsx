@@ -86,8 +86,10 @@ const CustomizeSettings = () => {
 
   return (
     <>
+   
       <div className="bg-white p-8 rounded-md w-full mt-5">
-        <div className="flex flex-col border border-gray-300 rounded bg-gray-100 p-4">
+      <div className="flex flex-col border border-purple-900 rounded  bg-white p-4" style={{ borderRadius: '50px' }}>
+
           <label className="flex items-center">
             <input
               type="radio"
@@ -96,11 +98,11 @@ const CustomizeSettings = () => {
               checked={selectedOption === "default"}
               onChange={handleRadioChange}
             />
-            <span className="ml-4 whitespace-nowrap ">
+            <span className="ml-4 whitespace-nowrap text-black ">
               Run the test with default settings
             </span>
           </label>
-          <label className="flex items-center">
+          <label className="flex items-center" marginleft="150px">
             <input
               type="radio"
               name="config"
@@ -108,19 +110,20 @@ const CustomizeSettings = () => {
               checked={selectedOption === "configure"}
               onChange={handleRadioChange}
             />
-            <span className="ml-4">Configure your own settings</span>
+            <span className="ml-4  text-black ">Configure your own settings</span>
           </label>
 
           <div className="flex">
-            <button
-              className="h-10 mt-20 px-4 py-2 font-bold text-white bg-blue-500 rounded 
-                        hover:bg-blue-700 disabled:bg-gray-400 ${isClickable1 ? 'cursor-pointer' : 'cursor-default'"
-              onClick={submitted}
-              disabled={!isClickable1}
-            >
-              Confirm
-            </button>
-            <img src="setting.png" alt="" className="ml-auto w-40" />
+          <button
+  className={`h-10 mt-20 px-4 py-2 font-bold text-white bg-blue-500 rounded 
+    hover:bg-blue-700 disabled:bg-gray-400 ${isClickable1 ? 'cursor-pointer' : 'cursor-default'}`}
+  onClick={submitted}
+  disabled={!isClickable1}
+  style={{  backgroundColor: 'purple', marginLeft: '450px', borderRadius: '50px'}}
+>
+  Confirm
+</button>
+            <img src="set.jpeg" alt="" className="ml-auto w-40" />
           </div>
         </div>
 

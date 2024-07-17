@@ -104,16 +104,19 @@ const CloneRepository = (props) => {
             <input
               type="text"
               id="first_name"
+              name="email"
               className=" border border-gray-300 text-red-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Github email address..."
               required
               onChange={(e) => setuserGithubemail(e.target.value)}
+           
               value={userGithubemail}
             />
           </div>
           <div style={{ width: "500px", height: "50px" }}>
             <input
               id="first_name"
+              name="test"
               className=" border border-gray-300 text-red-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Project name..."
               required
@@ -125,8 +128,9 @@ const CloneRepository = (props) => {
           <div style={{ width: "500px", height: "50px" }}>
             <input
               id="first_name"
+              name="number"
               className=" border border-gray-300 text-red-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="No of test cases..."
+              placeholder="No of test cases you want to execute"
               required
               onChange={(e) => settotalnooftestcases(e.target.value)}
               value={totalnooftestcases}
@@ -136,6 +140,7 @@ const CloneRepository = (props) => {
           <div style={{ width: "500px", height: "50px" }}>
             <input
               id="first_name"
+              name="fname"
               className=" border border-gray-300 text-red-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="TestCase filename..."
               required
@@ -146,6 +151,7 @@ const CloneRepository = (props) => {
           <div style={{ width: "500px", height: "50px" }}>
             <input
               id="first_name"
+              name="projectlang"
               className=" border border-gray-300 text-red-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Poject Language..."
               required
@@ -154,15 +160,17 @@ const CloneRepository = (props) => {
             />
           </div>
           <div className="flex justify-start">
-            <button
-              onClick={handleAddFinalClick}
-              disabled={isdone}
-              className="bg-teal-600 hover:bg-teal-500 focus:bg-teal-700 active:bg-teal-800 disabled:bg-gray-400 px-4 py-2 rounded-md text-white font-semibold tracking-wide
-                                ${isdone ? 'cursor-pointer' : 'cursor-default'}
-                                "
-            >
-              Save Details
-            </button>
+          <button
+  onClick={handleAddFinalClick}
+  disabled={isdone}
+  className={`hover:bg-teal-500 focus:bg-teal-700 active:bg-teal-800 disabled:bg-gray-400 px-4 py-2 rounded-md text-white font-semibold tracking-wide
+              ${isdone ? 'cursor-default' : 'cursor-pointer'}`}
+  style={{ backgroundColor: 'Purple', borderRadius: '50px' }}  // Blue color code: #3b82f6
+  
+  
+>
+  Save Details
+</button>
           </div>
         </div>
         <div className=" flex items-center justify-between pb-6">
@@ -203,7 +211,9 @@ const CloneRepository = (props) => {
                 className="bg-teal-600 hover:bg-teal-500 focus:bg-teal-700 active:bg-teal-800 disabled:bg-gray-400 px-4 py-2 rounded-md text-white font-semibold tracking-wide
                                 ${isdone ? 'cursor-pointer' : 'cursor-default'}
                                 "
+                                style={{ borderRadius: '50px' }}
               >
+                
                 Add Repository
               </button>
             </div>
@@ -212,10 +222,10 @@ const CloneRepository = (props) => {
 
         {showModal === false ? (
           <div>
-            <div className="mt-5 -mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-              <div className="text-center p-10 border border-gray-300 rounded bg-gray-100">
-                <h2 className="text-2xl text-gray-900">No projects found</h2>
-                <p className="text-gray-600">Please add one.</p>
+            <div className="mt-5 -mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto text-white"style={{ borderRadius: '50px' }}>
+              <div className="text-center p-10 border border-purple-800 rounded bg-white text-white" style={{ borderRadius: '50px' }}>
+                <h2 className="text-2xl text-black">No projects found</h2>
+                <p className="text-black">Please add one.</p>
               </div>
             </div>
           </div>

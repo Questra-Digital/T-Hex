@@ -1,0 +1,88 @@
+.fullScreen {
+    display: flex;
+    background-position: cover;
+    background-color:#8e42eb;
+    height: 100vh;
+    overflow: hidden;
+    position: relative; /* Position relative for pseudo-element */
+}
+
+.backgroundSection {
+    flex: 1;
+    background-size: cover;
+    background-repeat: no-repeat;
+  
+    position: relative; /* Ensure z-index works properly */
+}
+
+.loginSection {
+    flex: 1;
+    display: flex;
+    justify-content: center; /* Center the content horizontally */
+    align-items: center; /* Center the content vertically */
+}
+
+.loginContainer {
+    width: 900px;
+    height: 770px;
+    background-color: rgba(0, 0, 0, 0.8); /* Increase the opacity to 80% */
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Stack elements vertically */
+    justify-content: center; /* Center content vertically */
+}
+
+/* Change the text color for "Don't have an account? Sign up here" */
+.signupLink {
+    color: #fff; /* Change text color to white */
+}
+
+.loginContent {
+    text-align: center;
+    padding: 20px;
+}
+
+.welcomeText {
+    font-family: italic;
+    font-size: 60px;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.inputField {
+    display: block;
+    width: 330px;
+    padding: 10px;
+    margin: 10px auto;
+    border: 1px solid white;
+    border-radius: 15px;
+    background-color: white;
+    color: #fff;
+}
+
+.loginButton {
+    display: block;
+    width: 100%;
+    max-width: 150px;
+    padding: 10px;
+    margin: 20px auto 10px;
+    border: none;
+    border-radius: 15px;
+    background-color: #8e42eb;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.4s ease;
+}
+
+.loginButton:hover {
+    background-color: rgb(238, 235, 235);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+
+.logoImage {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 20px; /* Adjust margin as needed */
+    z-index: 999; /* Ensure it's above other content */
+}
