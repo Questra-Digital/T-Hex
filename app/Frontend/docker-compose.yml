@@ -3,7 +3,7 @@ version: '3.3'
 services:
   web:
     build:
-      context: ./frontend
+      context: .
       dockerfile: Dockerfile
       target: dev
     container_name: web
@@ -14,25 +14,9 @@ services:
       - "traefik.http.routers.web.tls=true"
       - "traefik.http.services.web.loadbalancer.server.port=3000"  # Port exposed by the frontend service
     volumes:
-      - ./frontend:/app
+      - ./:/app
       - /app/node_modules
     ports:
-      - "3000:3000"
+      - 3000:3000
     depends_on:
       - traefik
-
-  go-app:
-    build:
-      context: ./backend/test_executor
-      dockerfile: Dockerfile
-    ports:
-      - "8181:8181"
-    container_name: go-app-container
-
-  go-app-settings:
-    build:
-      context: ./backend/settings
-      dockerfile: Dockerfile
-    ports:
-      - "9090:9090"
-    container_name: go-app-container-settings
