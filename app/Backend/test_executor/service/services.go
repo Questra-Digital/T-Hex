@@ -49,17 +49,10 @@ func DeleteAllTests(ctx context.Context) error {
 	fmt.Println("\nLast Record in Projectinfos Table: \n", lastProj)
 	fmt.Println(lastProj.ID)
 
-<<<<<<< HEAD
 	username := lastProj.GitEmail
 	filename := lastProj.GitTestCaseFileName
 	nooftestcases := lastProj.GitNoOfTestCases
 	language := lastProj.GitLanguage
-=======
-	username := lastProj.GitEmail             
-	filename := lastProj.GitTestCaseFileName   
-	nooftestcases := lastProj.GitNoOfTestCases 
-	language := lastProj.GitLanguage          
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 
 	basePath := "example/" + username + "/"
 	folderPath := basePath
@@ -72,10 +65,6 @@ func DeleteAllTests(ctx context.Context) error {
 
 	fmt.Println("Folder removed successfully.")
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 	fmt.Println("Stop and Removing the fluentd containe")
 
 	for i := 1; i < nooftestcases+1; i++ {
@@ -138,11 +127,7 @@ func SaveTestResult(ctx context.Context, input model.SaveTestResultInput) (*mode
 	sqlDB, _ := db.DB()
 	defer sqlDB.Close()
 
-<<<<<<< HEAD
 	tests := model.Test{
-=======
-	tests := model.Test{ 
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 		Username: input.Username,
 		Project:  input.Project,
 		Type:     input.Type,
@@ -158,10 +143,6 @@ func SaveTestResult(ctx context.Context, input model.SaveTestResultInput) (*mode
 	return &tests, nil
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 func InitiateTest(ctx context.Context, ID int, GitEmail string, GitProjectName string, GitLanguage string, GitNoOfTestCases int, GitTestCaseFileName string) (string, error) {
 
 	fmt.Println(ID)
@@ -176,24 +157,13 @@ func InitiateTest(ctx context.Context, ID int, GitEmail string, GitProjectName s
 		log.Fatalf("Unable to create docker client: %s", err)
 	}
 
-<<<<<<< HEAD
 	username := GitEmail
 	projectname := GitProjectName
 	filename := GitTestCaseFileName
 	nooftestcases := GitNoOfTestCases
 	language := GitLanguage
-=======
-	
 
-	username := GitEmail              
-	projectname := GitProjectName   
-	filename := GitTestCaseFileName  
-	nooftestcases := GitNoOfTestCases
-	language := GitLanguage        
-
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
-
-	baseDir := "C:/Users/abdul/Desktop/Work By Waleed FYP/sideby_fyp_project/"
+	baseDir := "/home/nafees/projects/qd/T-Hex/app/"
 	basePath := "example/" + username + "/" + projectname + "/"
 
 	start_time := make([]time.Time, nooftestcases)
@@ -282,7 +252,7 @@ func InitiateTest(ctx context.Context, ID int, GitEmail string, GitProjectName s
 		tags1 := []string{tag_string}
 		dockerfile1 := "Dockerfile"
 		dockerfile1 += strconv.Itoa(i)
-		contextPath1 := "example\\" + username + "\\" + projectname
+		contextPath1 := "example/" + username + "/" + projectname
 		err = f.BuildImageforDockerFile2(client, tags1, dockerfile1, contextPath1)
 		if err != nil {
 			log.Println(err)
@@ -562,19 +532,10 @@ func functionToPushToDrive(username string, projectname string, nooftestcases in
 					username, projectname, "screenshot", file.Id, testfile+strconv.Itoa(i+1), duration[i])
 
 				_, err = SaveResult(db, username, projectname, "screenshot", file.Id, testfile+strconv.Itoa(i+1), duration[i], test_result[i])
-<<<<<<< HEAD
-
-=======
-		
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 				if err != nil {
 					return "Error", err
 				}
 
-<<<<<<< HEAD
-=======
-			
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 			}
 
 		}
@@ -613,10 +574,6 @@ func functionToPushToDrive(username string, projectname string, nooftestcases in
 		fmt.Printf("File '%s' successfully uploaded", file.Name)
 		fmt.Printf("\nFile Id: '%s' ", file.Id)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 		fmt.Printf("\nusername %s, project %s, type %s, URLid %s, testfile %s, duration %s\n",
 			username, projectname, "video", file.Id, testfile+strconv.Itoa(i+1), duration[i])
 
@@ -635,11 +592,7 @@ func functionToPushToDrive(username string, projectname string, nooftestcases in
 }
 func SaveResult(db *gorm.DB, username string, projectname string, file_type string, url_id string, testfile string, duration string, testresult string) (*model.Test, error) {
 
-<<<<<<< HEAD
 	tests := model.Test{
-=======
-	tests := model.Test{ 
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 		Username: username,
 		Project:  projectname,
 		Type:     file_type,
@@ -667,23 +620,11 @@ func CreateDockerFile(ctx context.Context, input model.CreateDockerFileInput) (s
 	fmt.Println("\nLast Record in Projectinfos Table: \n", lastProj)
 	fmt.Println(lastProj.ID)
 
-<<<<<<< HEAD
 	username := lastProj.GitEmail
 	projectname := lastProj.GitProjectName
 	filename := lastProj.GitTestCaseFileName
 	nooftestcases := lastProj.GitNoOfTestCases
 	language := lastProj.GitLanguage
-=======
-	
-
-	username := lastProj.GitEmail              
-	projectname := lastProj.GitProjectName    
-	filename := lastProj.GitTestCaseFileName  
-	nooftestcases := lastProj.GitNoOfTestCases 
-	language := lastProj.GitLanguage          
-
-
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 
 	dockerfilecontent := result
 	if language == "Python" || language == "python" {
@@ -718,17 +659,9 @@ func CreateDockerFile(ctx context.Context, input model.CreateDockerFileInput) (s
 
 	}
 
-<<<<<<< HEAD
 	return result, nil
 }
 
-=======
-
-	return result, nil
-}
-
-
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 func GetAllTest(ctx context.Context) ([]*model.Test, error) {
 	db := configdb.ConnectCockroachDB()
 	sqlDB, _ := db.DB()
@@ -760,10 +693,6 @@ func UpdateTestByID(ctx context.Context, input model.UpdateTestInput) (*model.Te
 	sqlDB, _ := db.DB()
 	defer sqlDB.Close()
 
-<<<<<<< HEAD
-=======
-	
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 	if err := db.Table("tests").Where("id = ?", input.ID).Update("status", input.Status).Error; err != nil {
 		return nil, err
 	}

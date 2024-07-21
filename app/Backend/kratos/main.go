@@ -13,10 +13,12 @@ import (
 )
 
 func main() {
+
 	defer profilex.Profile().Stop()
 	dbal.RegisterDriver(func() dbal.Driver {
 		return driver.NewRegistryDefault()
 	})
 
 	cmd.Execute()
+
 }

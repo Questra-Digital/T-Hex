@@ -21,10 +21,7 @@ func RunVideoContainer(client *client.Client, imagename string, containername st
 	config := &container.Config{
 		Image:    imagename,
 		Hostname: fmt.Sprintf("%s-hostnameexample", imagename),
-<<<<<<< HEAD
-=======
 
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 	}
 
 	platform := &v1.Platform{}
@@ -33,11 +30,7 @@ func RunVideoContainer(client *client.Client, imagename string, containername st
 		context.Background(),
 		config,
 		hostConfig,
-<<<<<<< HEAD
-		nil,
-=======
 		nil, 
->>>>>>> 85a3ff8396edf15420149ecce8110aaa01c0dac9
 		platform,
 		containername,
 	)

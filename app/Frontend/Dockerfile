@@ -7,8 +7,11 @@ RUN npm install
 
 # For development environment
 FROM deps AS dev
+WORKDIR /app
 
-ENV NODE_ENV development
+RUN mkdir /app/.next
+
+ENV NODE_ENV dev
 ENV PORT 3000
 
 EXPOSE 3000

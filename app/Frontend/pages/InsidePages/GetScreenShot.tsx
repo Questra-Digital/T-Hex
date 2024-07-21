@@ -75,9 +75,6 @@ const GetScreenShot = ({ data }: any) => {
 
                 </div>
               </li></div>
-
-
-
           </ul>
 
         );

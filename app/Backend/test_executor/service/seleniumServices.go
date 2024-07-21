@@ -24,16 +24,6 @@ func PullImageSelenium(client *client.Client, image string) error {
 	io.Copy(os.Stdout, reader)
 	return nil
 }
-func PullImageSeleniumForEdge(client *client.Client) error {
-	ctx := context.Background()
-
-	reader, err := client.ImagePull(ctx, image, types.ImagePullOptions{})
-	if err != nil {
-		return err
-	}
-	io.Copy(os.Stdout, reader)
-	return nil
-}
 
 func RunContainerSelenium(client *client.Client, imagename string, containername string, port string, inputEnv []string) error {
 

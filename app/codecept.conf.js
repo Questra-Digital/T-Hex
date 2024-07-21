@@ -13,7 +13,7 @@ exports.config = {
   helpers: {
     WebDriver: {
       url: 'http://localhost',
-      browser: 'chrome'
+      browser: 'firefox'
     }
   },
   include: {

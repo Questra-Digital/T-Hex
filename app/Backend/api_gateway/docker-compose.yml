@@ -1,0 +1,49 @@
+version: '3.3'
+
+services:
+  traefik:
+    image: "traefik:v3.0"
+    container_name: "traefik"
+    command:
+      - --api.insecure=true
+      - "--providers.docker=true"
+      - "--api.dashboard=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+
+      #- "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      #- "--certificatesresolvers.myresolver.acme.email=yourEmail@example.com"
+      #- "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+      #- "./letsencrypt:/letsencrypt"
+
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Path(`/`)"
+      - "traefik.http.services.app.loadbalancer.server.port=4000"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      
+      #- "traefik.http.routers.traefik.service=api@internal"
+      #- "traefik.http.routers.traefik.tls.certresolver=myresolver"      
+      #- "traefik.http.routers.traefik.middlewares=traefik-auth"
+      #- "traefik.http.middlewares.traefik-auth.basicauth.users= "
+    volumes:
+      - .:/app
+      - "node_modules:/app/node_modules"
+    depends_on:
+      - traefik
+
+volumes:
+  node_modules:

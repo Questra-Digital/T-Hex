@@ -1,16 +1,33 @@
-version: "3"
+version: '3'
 
 services:
   web:
     build:
-      context: .
+      context: ./Frontend
       dockerfile: Dockerfile
       target: dev
     container_name: web
     volumes:
-      - ./:/app
+      - ./Frontend:/app
       - /app/node_modules
+      - next_data:/app/.next
 
-    
+    # command: npm run dev -- --inspect
     ports:
       - 3000:3000
+  service1:
+    build:
+      context: ./backend/settings
+      dockerfile: Dockerfile
+    ports:
+      - "8181:8181"
+
+  service2:
+    build:
+      context: ./backend/test_executor
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+
+volumes:
+  next_data:

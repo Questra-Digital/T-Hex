@@ -5,11 +5,13 @@ import client from "../../appolo-client";
 
 import Link from 'next/link';
 import GetResults from "../InsidePages/GetResults";
+
 const Results = () => {
-  
+
   console.log("resultpage");
 
   const [dataToPass, setDataToPass] = useState(null);
+
   const handleResultPageLoad = async () => {
     const { data } = await client.query({
       query: gql`
@@ -29,28 +31,17 @@ const Results = () => {
     });
 
     console.log(data);
-    let list = [];
-
-    let visited = [];
-    for (let i = 0; i < data.tests.length; i++) {
-      let value = data["tests"][i].testfile;
-      if (!visited.includes(value)) {
-          visited.push(value);
-          list.push(data["tests"][i])
-      }
-    }
-
-    console.log(data);
-    setDataToPass(list);
-    
+    setDataToPass(data.tests); // Pass all test data
   };
+
   useEffect(() => {
     handleResultPageLoad();
-  }, []); 
+  }, []);
 
   return (
     <>
       <GetResults data={dataToPass} />
+      {/* Remove or update this Link component if not intended */}
       <Link href="/results">Show Result</Link>
     </>
   );
