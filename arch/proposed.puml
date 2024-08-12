@@ -1,0 +1,36 @@
+@startuml
+
+[Frontend] as FE
+
+package "Backend"{
+	package "Top Level"{
+		[ApiGateway] as ApiGateway
+		[RunSwitch] as RunSwitch
+		[DBQuery] as DBQuery
+	}
+	[CodeceptJSRunner] as CodeceptJSRunner
+
+	database "PGSQL" {
+		[ProjectInfos] as ProjectInfos
+		[TestsRunning] as TestsRunning
+		[TestResults] as TestResults
+	}
+
+	ApiGateway --> RunSwitch
+	ApiGateway --> DBQuery
+
+	DBQuery --> ProjectInfos
+	DBQuery --> TestsRunning
+	DBQuery --> TestResults
+
+	RunSwitch --> CodeceptJSRunner
+	RunSwitch --> ProjectInfos
+
+	CodeceptJSRunner --> ProjectInfos
+	CodeceptJSRunner ---> TestsRunning
+	CodeceptJSRunner ---> TestResults
+}
+
+FE --> ApiGateway
+
+@enduml
