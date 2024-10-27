@@ -1,36 +1,39 @@
 @startuml
 
-[Frontend] as FE
+skinparam linetype ortho
 
-package "Backend"{
-	package "Top Level"{
-		[ApiGateway] as ApiGateway
-		[RunSwitch] as RunSwitch
-		[DBQuery] as DBQuery
+package "Grid" {
+	database "GridEvents" {
+		[Events]
+		[Keys]
 	}
-	[CodeceptJSRunner] as CodeceptJSRunner
-
-	database "PGSQL" {
-		[ProjectInfos] as ProjectInfos
-		[TestsRunning] as TestsRunning
-		[TestResults] as TestResults
-	}
-
-	ApiGateway --> RunSwitch
-	ApiGateway --> DBQuery
-
-	DBQuery --> ProjectInfos
-	DBQuery --> TestsRunning
-	DBQuery --> TestResults
-
-	RunSwitch --> CodeceptJSRunner
-	RunSwitch --> ProjectInfos
-
-	CodeceptJSRunner --> ProjectInfos
-	CodeceptJSRunner ---> TestsRunning
-	CodeceptJSRunner ---> TestResults
+	[SeleniumGrid]
+	[GridNodes]
+	[GridProxy]
+	GridProxy <-> "GridEvents"
+	GridProxy <-> SeleniumGrid
+	GridNodes <--> SeleniumGrid
 }
 
-FE --> ApiGateway
+package "Web" {
+	database "PGSQL" {
+		[Users]
+		[Results]
+		[ProjInfos]
+	}
+	[Frontend] as WFE
+	[WebBackend] as WBE
+	WBE <-> "PGSQL"
+	WBE <--> Keys
+	WFE <-> WBE
+}
+
+package "Client" {
+	[Client]
+	[ClientProxy]
+	Client <-> ClientProxy
+	ClientProxy <-> GridProxy
+	Client <-> WFE
+}
 
 @enduml
