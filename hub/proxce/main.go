@@ -13,7 +13,7 @@ func main() {
 	local := os.Getenv("LOCAL")
 	key := os.Getenv("THEX_KEY")
 	proj := os.Getenv("THEX_PROJ")
-	if key == "" {
+	if !KeyIsValid(key) {
 		log.Fatalf("Cannot run with invalid key")
 	}
 	if endpoint == "" {
