@@ -34,6 +34,9 @@ func main() {
 		// TODO: log to DB
 		key := r.Header.Get("thex-key")
 		proj := r.Header.Get("thex-proj")
+		if proj == "" {
+			proj = "UNNAMED PROJECT"
+		}
 		log.Printf("key: `%s`, proj: `%s`", key, proj)
 
 		if !KeyIsValid(key) {
