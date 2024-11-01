@@ -11,6 +11,10 @@ import (
 func main() {
 	endpoint := os.Getenv("THEX_URL")
 	local := os.Getenv("LOCAL")
+	dbStr := os.Getenv("DB_CONSTR")
+	if dbStr == "" {
+		dbStr = "postgres://thex:thex1234@db/thex"
+	}
 	if endpoint == "" {
 		endpoint = "http://localhost:4444"
 	}
