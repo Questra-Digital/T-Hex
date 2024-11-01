@@ -12,6 +12,7 @@ func main() {
 	endpoint := os.Getenv("THEX_URL")
 	local := os.Getenv("LOCAL")
 	key := os.Getenv("THEX_KEY")
+	proj := os.Getenv("THEX_PROJ")
 	if key == "" {
 		log.Fatalf("Cannot run with invalid key")
 	}
@@ -20,6 +21,11 @@ func main() {
 	}
 	if local == "" {
 		local = ":4444"
+	}
+	if proj == "" {
+		proj = "UNNAMED PROJECT"
+		log.Println("Using default `UNNAMED PROJECT` for name.")
+		log.Println("Consider setting the THEX_PROJ env var")
 	}
 	targetURL, err := url.Parse(endpoint)
 	if err != nil {
@@ -30,6 +36,7 @@ func main() {
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
 	proxy.Director = func(req *http.Request) {
 		req.Header.Add("thex-key", key)
+		req.Header.Add("thex-proj", proj)
 		req.URL.Scheme = targetURL.Scheme
 		req.URL.Host = targetURL.Host
 	}
@@ -38,8 +45,8 @@ func main() {
 		proxy.ServeHTTP(w, r)
 	})
 
-	log.Printf("Starting proxy server:\n\tRemote: `%s`\n\tLocal: `%s`",
-		endpoint, local)
+	log.Printf("Starting proxy server:\n\tRemote: `%s`\n\tLocal: `%s`\n\tProject: `%s`",
+		endpoint, local, proj)
 	if err := http.ListenAndServe(local, nil); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
