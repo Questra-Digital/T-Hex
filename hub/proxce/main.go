@@ -29,8 +29,7 @@ func main() {
 	}
 	targetURL, err := url.Parse(endpoint)
 	if err != nil {
-		log.Printf("Error parsing THEX_URL `%s`:\n\t%s", endpoint, err.Error())
-		os.Exit(1)
+		log.Fatalf("Error parsing THEX_URL `%s`:\n\t%s", endpoint, err.Error())
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)

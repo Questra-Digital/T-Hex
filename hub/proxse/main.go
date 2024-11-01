@@ -19,8 +19,7 @@ func main() {
 	}
 	targetURL, err := url.Parse(endpoint)
 	if err != nil {
-		log.Printf("Error parsing THEX_URL `%s`:\n\t%s", endpoint, err.Error())
-		os.Exit(1)
+		log.Fatalf("Error parsing THEX_URL `%s`:\n\t%s", endpoint, err.Error())
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
@@ -48,8 +47,9 @@ func main() {
 		proxy.ServeHTTP(w, r)
 	})
 
-	log.Println("Starting proxy server on :8081...")
-	if err := http.ListenAndServe(":8081", nil); err != nil {
+	log.Printf("Starting proxy server:\n\tRemote: `%s`\n\tLocal: `%s`",
+		endpoint, local)
+	if err := http.ListenAndServe(local, nil); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }
