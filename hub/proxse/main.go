@@ -16,7 +16,7 @@ func main() {
 		dbStr = "postgres://thex:thex1234@db/thex"
 	}
 	if endpoint == "" {
-		endpoint = "http://localhost:4444"
+		endpoint = "http://selenium-hub:4444"
 	}
 	if local == "" {
 		local = ":4445"
