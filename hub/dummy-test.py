@@ -9,7 +9,7 @@ chrome_options = Options()
 chrome_options.add_argument("--start-maximized")
 
 driver = webdriver.Remote(
-	command_executor="http://localhost:8888/wd/hub",
+	command_executor="http://localhost:8888/",
 	options=chrome_options
 )
 
