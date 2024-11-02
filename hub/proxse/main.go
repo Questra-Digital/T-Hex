@@ -28,9 +28,9 @@ func main() {
 
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
 	proxy.Director = func(req *http.Request) {
-
 		req.URL.Scheme = targetURL.Scheme
 		req.URL.Host = targetURL.Host
+		req.URL.Path = "/wd/hub" + req.URL.Path
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
