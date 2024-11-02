@@ -41,6 +41,10 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf(
+			"Request received: %s %s\n\tkey: `%s`\n\tproj: `%s`\n\tHeaders: %v\n",
+			r.Method, r.URL.Path, key, proj, r.Header,
+		)
 		proxy.ServeHTTP(w, r)
 	})
 

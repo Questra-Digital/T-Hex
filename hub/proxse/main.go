@@ -40,7 +40,10 @@ func main() {
 		if proj == "" {
 			proj = "UNNAMED PROJECT"
 		}
-		log.Printf("key: `%s`, proj: `%s`", key, proj)
+		log.Printf(
+			"Request received: %s %s\n\tkey: `%s`\n\tproj: `%s`\n\tHeaders: %v\n",
+			r.Method, r.URL.Path, key, proj, r.Header,
+		)
 
 		if !KeyIsValid(key) {
 			log.Print("Dropped due to Unauthorized")
