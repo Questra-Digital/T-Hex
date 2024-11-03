@@ -6,12 +6,18 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"strconv"
+	"time"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func main() {
 	endpoint := os.Getenv("THEX_URL")
 	local := os.Getenv("LOCAL")
 	dbStr := os.Getenv("DB_CONSTR")
+	ttlStr := os.Getenv("TTL")
 	if dbStr == "" {
 		dbStr = "postgres://thex:thex1234@db/thex"
 	}
@@ -21,10 +27,28 @@ func main() {
 	if local == "" {
 		local = ":4445"
 	}
+	if ttlStr == "" {
+		ttlStr = "120" // 2 minutes
+	}
+
 	targetURL, err := url.Parse(endpoint)
 	if err != nil {
 		log.Fatalf("Error parsing THEX_URL `%s`:\n\t%s", endpoint, err.Error())
 	}
+	{
+		i, err := strconv.Atoi(ttlStr)
+		if err != nil {
+			log.Fatalf("Faled to parse TTL: %s", err.Error())
+		}
+		ttl = int32(i)
+	}
+
+	db, err = gorm.Open(postgres.Open(dbStr), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %s", err.Error())
+	}
+	db.AutoMigrate(&ApiKey{})
+	kcache = make(map[string]KCacheEntry)
 
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
 	proxy.Director = func(req *http.Request) {
@@ -61,10 +85,49 @@ func main() {
 	}
 }
 
+type ApiKey struct {
+	gorm.Model
+	Key string
+}
+
+type Tabler interface {
+	TableName() string
+}
+func (ApiKey) TableName() string {
+	return "api_keys"
+}
+
+/// API Key cache entry
+type KCacheEntry struct {
+	time int64
+	valid bool
+}
+
+// TimeToLive, in seconds, for caching keys
+var ttl int32
+// database
+var db *gorm.DB
+// api keys cache
+var kcache map[string]KCacheEntry
+
+// whether a key is valid or not
+// checks the following: key format and cache, and finally DB (if necessary)
 func KeyIsValid(key string) bool {
 	if key == "" {
 		return false
 	}
-	// TODO check in DB
-	return true
+	entry, ok := kcache[key]
+
+	if !ok || time.Now().Unix() - entry.time > int64(ttl) {
+		// refresh cache
+		exist := false
+		_ = db.Model(&ApiKey{}).
+			Select("count(*) > 0").
+			Where("key = ?", key).
+			Find(&exist).
+			Error
+		kcache[key] = KCacheEntry{ time: time.Now().Unix(), valid: exist }
+		return exist
+	}
+	return entry.valid
 }
