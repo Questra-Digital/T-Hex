@@ -28,10 +28,17 @@ services:
       POSTGRES_USER: thex
       POSTGRES_PASSWORD: thex1234
       POSTGRES_DB: thex
+      PGUSER: thex
     ports:
       - "5432:5432"
     networks:
       - selenium-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "thex", "-d", "thex", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 80s
 
   proxse:
     image: proxse:latest
@@ -40,7 +47,8 @@ services:
     networks:
       - selenium-network
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 networks:
   selenium-network:
