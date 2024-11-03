@@ -39,6 +39,8 @@ services:
       - "4445:4445"
     networks:
       - selenium-network
+    depends_on:
+      - db
 
 networks:
   selenium-network:
