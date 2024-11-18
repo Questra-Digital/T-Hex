@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -58,16 +60,22 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// TODO: log to DB
 		key := r.Header.Get("thex-key")
 		proj := r.Header.Get("thex-proj")
 		if proj == "" {
 			proj = "UNNAMED PROJECT"
 		}
-		log.Printf(
-			"Request received: %s %s\n\tkey: `%s`\n\tproj: `%s`\n\tHeaders: %v\n",
-			r.Method, r.URL.Path, key, proj, r.Header,
-		)
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			log.Printf(
+				"Erroneous Request: %s %s Headers:\n\t%v\n\n",
+				r.Method, r.URL.Path, r.Header)
+			log.Printf("Error reading body")
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		r.Body.Close()
+		r.Body = io.NopCloser(bytes.NewBuffer(body))
 
 		if !KeyIsValid(key) {
 			log.Print("Dropped due to Unauthorized")
@@ -75,7 +83,21 @@ func main() {
 			return
 		}
 
-		proxy.ServeHTTP(w, r)
+		sw := &ResponseWriterSaver{ResponseWriter: w, statusCode: http.StatusOK}
+		proxy.ServeHTTP(sw, r)
+
+		entry := ReqResPair{
+			reqMethod: r.Method,
+			reqPath: r.URL.Path,
+			reqBody: body,
+			reqHeaders: r.Header,
+			apiKey: key,
+			proj: proj,
+			resStatus: sw.statusCode,
+			resBody: sw.body.String(),
+		}
+		log.Printf("%+v\n\n", entry)
+		// TODO: log entry to db
 	})
 
 	log.Printf("Starting proxy server:\n\tRemote: `%s`\n\tLocal: `%s`",
@@ -83,6 +105,34 @@ func main() {
 	if err := http.ListenAndServe(local, nil); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
+}
+
+// Request and Response pair, for logging
+type ReqResPair struct {
+	reqMethod  string
+	reqPath    string
+	reqBody    []byte
+	reqHeaders map[string][]string
+	apiKey     string
+	proj       string
+	resStatus  int
+	resBody    string
+}
+
+// http.ResponseWriter but saves statusCode and body
+type ResponseWriterSaver struct {
+	http.ResponseWriter
+	statusCode int
+	body       bytes.Buffer
+}
+func (w *ResponseWriterSaver) WriteHeader(code int) {
+	w.statusCode = code
+	w.ResponseWriter.WriteHeader(code)
+}
+
+func (w *ResponseWriterSaver) Write(data []byte) (int, error) {
+	w.body.Write(data)
+	return w.ResponseWriter.Write(data)
 }
 
 type ApiKey struct {
