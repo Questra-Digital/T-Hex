@@ -1,0 +1,39 @@
+@startuml
+
+skinparam linetype ortho
+
+package "Grid" {
+	database "GridEvents" {
+		[Events]
+		[Keys]
+	}
+	[SeleniumGrid]
+	[GridNodes]
+	[GridProxy]
+	GridProxy <-> "GridEvents"
+	GridProxy <-> SeleniumGrid
+	GridNodes <--> SeleniumGrid
+}
+
+package "Web" {
+	database "PGSQL" {
+		[Users]
+		[Results]
+		[ProjInfos]
+	}
+	[Frontend] as WFE
+	[WebBackend] as WBE
+	WBE <-> "PGSQL"
+	WBE <--> Keys
+	WFE <-> WBE
+}
+
+package "Client" {
+	[Client]
+	[ClientProxy]
+	Client <-> ClientProxy
+	ClientProxy <-> GridProxy
+	Client <-> WFE
+}
+
+@enduml

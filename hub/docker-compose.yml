@@ -1,0 +1,55 @@
+services:
+  selenium-hub:
+    image: selenium/hub:latest
+    ports:
+      - "4444:4444"
+    networks:
+      - selenium-network
+
+  chrome:
+    image: selenium/node-chrome:latest
+    container_name: node-chrome
+    depends_on:
+      - selenium-hub
+    volumes:
+      - /dev/shm:/dev/shm
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+    networks:
+      - selenium-network
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: thex
+      POSTGRES_PASSWORD: thex1234
+      POSTGRES_DB: thex
+      PGUSER: thex
+    ports:
+      - "5432:5432"
+    networks:
+      - selenium-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "thex", "-d", "thex", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 80s
+
+  proxse:
+    image: proxse:latest
+    ports:
+      - "4445:4445"
+    networks:
+      - selenium-network
+    depends_on:
+      db:
+        condition: service_healthy
+
+networks:
+  selenium-network:
+    driver: bridge

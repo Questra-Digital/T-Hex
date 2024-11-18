@@ -1,0 +1,4 @@
+export THEX_URL="http://localhost:4445"
+export LOCAL=":8888"
+export THEX_KEY="abcd1234"
+export THEX_PROJ="Dummy Project"
