@@ -83,18 +83,18 @@ func main() {
 			return
 		}
 
-		sw := &ResponseWriterSaver{ResponseWriter: w, statusCode: http.StatusOK}
+		sw := &ResponseWriterSaver{ResponseWriter: w}
 		proxy.ServeHTTP(sw, r)
 
 		entry := ReqResPair{
-			reqMethod: r.Method,
-			reqPath: r.URL.Path,
-			reqBody: body,
+			reqMethod:  r.Method,
+			reqPath:    r.URL.Path,
+			reqBody:    body,
 			reqHeaders: r.Header,
-			apiKey: key,
-			proj: proj,
-			resStatus: sw.statusCode,
-			resBody: sw.body.String(),
+			apiKey:     key,
+			proj:       proj,
+			resStatus:  sw.statusCode,
+			resBody:    sw.body.String(),
 		}
 		log.Printf("%+v\n\n", entry)
 		// TODO: log entry to db
@@ -119,22 +119,6 @@ type ReqResPair struct {
 	resBody    string
 }
 
-// http.ResponseWriter but saves statusCode and body
-type ResponseWriterSaver struct {
-	http.ResponseWriter
-	statusCode int
-	body       bytes.Buffer
-}
-func (w *ResponseWriterSaver) WriteHeader(code int) {
-	w.statusCode = code
-	w.ResponseWriter.WriteHeader(code)
-}
-
-func (w *ResponseWriterSaver) Write(data []byte) (int, error) {
-	w.body.Write(data)
-	return w.ResponseWriter.Write(data)
-}
-
 type ApiKey struct {
 	gorm.Model
 	Key string
@@ -143,20 +127,23 @@ type ApiKey struct {
 type Tabler interface {
 	TableName() string
 }
+
 func (ApiKey) TableName() string {
 	return "api_keys"
 }
 
-/// API Key cache entry
+// API Key cache entry
 type KCacheEntry struct {
-	time int64
+	time  int64
 	valid bool
 }
 
 // TimeToLive, in seconds, for caching keys
 var ttl int32
+
 // database
 var db *gorm.DB
+
 // api keys cache
 var kcache map[string]KCacheEntry
 
@@ -168,7 +155,7 @@ func KeyIsValid(key string) bool {
 	}
 	entry, ok := kcache[key]
 
-	if !ok || time.Now().Unix() - entry.time > int64(ttl) {
+	if !ok || time.Now().Unix()-entry.time > int64(ttl) {
 		// refresh cache
 		exist := false
 		_ = db.Model(&ApiKey{}).
@@ -176,7 +163,7 @@ func KeyIsValid(key string) bool {
 			Where("key = ?", key).
 			Find(&exist).
 			Error
-		kcache[key] = KCacheEntry{ time: time.Now().Unix(), valid: exist }
+		kcache[key] = KCacheEntry{time: time.Now().Unix(), valid: exist}
 		return exist
 	}
 	return entry.valid
