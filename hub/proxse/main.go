@@ -1,4 +1,4 @@
-package proxse
+package main
 
 import (
 	"bytes"

@@ -1,4 +1,4 @@
-package proxse
+package main
 
 import (
 	"log"
@@ -17,20 +17,8 @@ func DBInit(connectionStr string) *gorm.DB {
 		log.Fatalf("Failed to connect to database: %s", err.Error())
 	}
 	db.AutoMigrate(&ApiKey{})
+	db.AutoMigrate(&EventLogEntry{})
 	return db
-}
-
-type ApiKey struct {
-	gorm.Model
-	Key string
-}
-
-type Tabler interface {
-	TableName() string
-}
-
-func (ApiKey) TableName() string {
-	return "api_keys"
 }
 
 // API Key cache entry
