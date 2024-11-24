@@ -15,28 +15,39 @@ import (
 	"gorm.io/gorm"
 )
 
+const ENV_END = "GRID"
+const ENV_END_DEF = "http://selenium-hub:4444"
+
+const ENV_LISTEN = "LISTEN"
+const ENV_LISTEN_DEF = ":4445"
+
+const ENV_DB = "DB"
+const ENV_DB_DEF = "postgres://thex:thex1234@db/thex"
+
+const ENV_TTL = "TTL"
+const ENV_TTL_DEF = "120"
+
+// Get env var, or default val
+func Getenv(key string, def string) string {
+	ret := os.Getenv(key)
+	if ret == "" {
+		return def
+	}
+	return ret
+}
+
 func main() {
-	endpoint := os.Getenv("THEX_URL")
-	local := os.Getenv("LOCAL")
-	dbStr := os.Getenv("DB_CONSTR")
-	ttlStr := os.Getenv("TTL")
-	if dbStr == "" {
-		dbStr = "postgres://thex:thex1234@db/thex"
-	}
-	if endpoint == "" {
-		endpoint = "http://selenium-hub:4444"
-	}
-	if local == "" {
-		local = ":4445"
-	}
-	if ttlStr == "" {
-		ttlStr = "120" // 2 minutes
-	}
+	endpoint := Getenv(ENV_END, ENV_END_DEF)
+	local := Getenv(ENV_LISTEN, ENV_LISTEN_DEF)
+	dbStr := Getenv(ENV_DB, ENV_DB_DEF)
+	ttlStr := Getenv(ENV_TTL, ENV_TTL_DEF)
 
 	targetURL, err := url.Parse(endpoint)
 	if err != nil {
-		log.Fatalf("Error parsing THEX_URL `%s`:\n\t%s", endpoint, err.Error())
+		log.Fatalf("Error parsing THEX_URL `%s`:\n\t%s",
+			endpoint, err.Error())
 	}
+
 	{
 		i, err := strconv.Atoi(ttlStr)
 		if err != nil {
@@ -59,7 +70,19 @@ func main() {
 		req.URL.Path = "/wd/hub" + req.URL.Path
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/", proxyReqHandler(proxy))
+
+	log.Printf("Starting proxy server:\n\tRemote: `%s`\n\tLocal: `%s`",
+		endpoint, local)
+	if err := http.ListenAndServe(local, nil); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+}
+
+// Reverse proxy handler
+func proxyReqHandler(proxy *httputil.ReverseProxy) func(
+		http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		key := r.Header.Get("thex-key")
 		proj := r.Header.Get("thex-proj")
 		if proj == "" {
@@ -98,12 +121,6 @@ func main() {
 		}
 		log.Printf("%+v\n\n", entry)
 		// TODO: log entry to db
-	})
-
-	log.Printf("Starting proxy server:\n\tRemote: `%s`\n\tLocal: `%s`",
-		endpoint, local)
-	if err := http.ListenAndServe(local, nil); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
 	}
 }
 
