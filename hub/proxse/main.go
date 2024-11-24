@@ -1,4 +1,4 @@
-package main
+package proxse
 
 import (
 	"bytes"
@@ -9,10 +9,6 @@ import (
 	"net/url"
 	"os"
 	"strconv"
-	"time"
-
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 const ENV_END = "GRID"
@@ -26,6 +22,18 @@ const ENV_DB_DEF = "postgres://thex:thex1234@db/thex"
 
 const ENV_TTL = "TTL"
 const ENV_TTL_DEF = "120"
+
+const SUB_URL = "/wd/hub"
+
+const HEAD_KEY = "thex-key"
+const HEAD_NAME = "thex-proj"
+const HEAD_NAME_DEF = "UNNAMED PROJECT"
+
+// TimeToLive, in seconds, for caching keys
+var ttl int32
+
+// api keys cache
+var kcache map[string]KCacheEntry
 
 // Get env var, or default val
 func Getenv(key string, def string) string {
@@ -56,18 +64,14 @@ func main() {
 		ttl = int32(i)
 	}
 
-	db, err = gorm.Open(postgres.Open(dbStr), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("Failed to connect to database: %s", err.Error())
-	}
-	db.AutoMigrate(&ApiKey{})
+	db = DBInit(dbStr)
 	kcache = make(map[string]KCacheEntry)
 
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
 	proxy.Director = func(req *http.Request) {
 		req.URL.Scheme = targetURL.Scheme
 		req.URL.Host = targetURL.Host
-		req.URL.Path = "/wd/hub" + req.URL.Path
+		req.URL.Path = SUB_URL + req.URL.Path
 	}
 
 	http.HandleFunc("/", proxyReqHandler(proxy))
@@ -83,10 +87,10 @@ func main() {
 func proxyReqHandler(proxy *httputil.ReverseProxy) func(
 		http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		key := r.Header.Get("thex-key")
-		proj := r.Header.Get("thex-proj")
+		key := r.Header.Get(HEAD_KEY)
+		proj := r.Header.Get(HEAD_NAME)
 		if proj == "" {
-			proj = "UNNAMED PROJECT"
+			proj = HEAD_NAME_DEF
 		}
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -134,54 +138,4 @@ type ReqResPair struct {
 	proj       string
 	resStatus  int
 	resBody    string
-}
-
-type ApiKey struct {
-	gorm.Model
-	Key string
-}
-
-type Tabler interface {
-	TableName() string
-}
-
-func (ApiKey) TableName() string {
-	return "api_keys"
-}
-
-// API Key cache entry
-type KCacheEntry struct {
-	time  int64
-	valid bool
-}
-
-// TimeToLive, in seconds, for caching keys
-var ttl int32
-
-// database
-var db *gorm.DB
-
-// api keys cache
-var kcache map[string]KCacheEntry
-
-// whether a key is valid or not
-// checks the following: key format and cache, and finally DB (if necessary)
-func KeyIsValid(key string) bool {
-	if key == "" {
-		return false
-	}
-	entry, ok := kcache[key]
-
-	if !ok || time.Now().Unix()-entry.time > int64(ttl) {
-		// refresh cache
-		exist := false
-		_ = db.Model(&ApiKey{}).
-			Select("count(*) > 0").
-			Where("key = ?", key).
-			Find(&exist).
-			Error
-		kcache[key] = KCacheEntry{time: time.Now().Unix(), valid: exist}
-		return exist
-	}
-	return entry.valid
 }
