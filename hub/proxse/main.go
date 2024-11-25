@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"time"
 )
 
 const ENV_END = "GRID"
@@ -113,29 +114,20 @@ func proxyReqHandler(proxy *httputil.ReverseProxy) func(
 		sw := &ResponseWriterSaver{ResponseWriter: w}
 		proxy.ServeHTTP(sw, r)
 
-		entry := ReqResPair{
-			reqMethod:  r.Method,
-			reqPath:    r.URL.Path,
-			reqBody:    body,
-			reqHeaders: r.Header,
-			apiKey:     key,
-			proj:       proj,
-			resStatus:  sw.statusCode,
-			resBody:    sw.body.String(),
+		entry := &EventLogEntry{
+			time: time.Now().Unix(),
+			method: r.Method,
+			path: r.URL.Path,
+			reqBody: string(body),
+			key: key,
+			proj: proj,
+			status: sw.statusCode,
+			res: sw.body.String(),
 		}
 		log.Printf("%+v\n\n", entry)
-		// TODO: log entry to db
+		err = EventLogToDB(entry)
+		if err != nil {
+			log.Fatalf("Failed to log to DB: %s", err.Error())
+		}
 	}
-}
-
-// Request and Response pair, for logging
-type ReqResPair struct {
-	reqMethod  string
-	reqPath    string
-	reqBody    []byte
-	reqHeaders map[string][]string
-	apiKey     string
-	proj       string
-	resStatus  int
-	resBody    string
 }

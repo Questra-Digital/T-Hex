@@ -48,3 +48,12 @@ func KeyIsValid(key string) bool {
 	}
 	return entry.valid
 }
+
+// Inserts a log entry
+func EventLogToDB(event *EventLogEntry) error {
+	res := db.Create(event)
+	if res.Error != nil {
+		return res.Error
+	}
+	return nil
+}
