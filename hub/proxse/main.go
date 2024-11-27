@@ -75,7 +75,15 @@ func main() {
 		req.URL.Path = SUB_URL + req.URL.Path
 	}
 
-	http.HandleFunc("/", proxyReqHandler(proxy))
+	//http.HandleFunc("/", proxyReqHandler(proxy))
+	handler := proxyReqHandler(proxy)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
+		handler(w, r)
+	})
+	http.HandleFunc("/session", func(w http.ResponseWriter,
+		r *http.Request) {
+		handler(w, r)
+	})
 
 	log.Printf("Starting proxy server:\n\tRemote: `%s`\n\tLocal: `%s`",
 		endpoint, local)
@@ -115,14 +123,14 @@ func proxyReqHandler(proxy *httputil.ReverseProxy) func(
 		proxy.ServeHTTP(sw, r)
 
 		entry := &EventLogEntry{
-			time: time.Now().Unix(),
-			method: r.Method,
-			path: r.URL.Path,
-			reqBody: string(body),
-			key: key,
-			proj: proj,
-			status: sw.statusCode,
-			res: sw.body.String(),
+			Time: time.Now().Unix(),
+			Method: r.Method,
+			Path: r.URL.Path,
+			ReqBody: string(body),
+			Key: key,
+			Proj: proj,
+			Status: sw.statusCode,
+			Res: sw.body.String(),
 		}
 		log.Printf("%+v\n\n", entry)
 		err = EventLogToDB(entry)

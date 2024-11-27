@@ -21,14 +21,14 @@ func (ApiKey) TableName() string {
 // Event log entry
 type EventLogEntry struct {
 	gorm.Model
-	time    int64
-	method  string
-	path    string
-	reqBody string
-	key     string
-	proj    string
-	status  int
-	res     string
+	Time    int64
+	Method  string
+	Path    string
+	ReqBody string
+	Key     string
+	Proj    string
+	Status  int
+	Res     string
 }
 
 func (EventLogEntry) TableName() string {
