@@ -104,7 +104,7 @@ func KeySessMakeValid(key string, sessId string, proj string) error {
 	return nil
 }
 
-/// makes a key invalid for a session id
+// makes a key invalid for a session id
 func KeySessMakeInvalid(key string, sessId string) error {
 	if key == "" || sessId == "" {
 		return errors.New("key or session Id is empty")
