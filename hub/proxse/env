@@ -1,4 +1,4 @@
-export THEX_URL="http://localhost:4444"
-export LOCAL=":4445"
-export DB_CONSTR="postgres://thex:thex1234@localhost/thex"
+export GRID="http://localhost:4444"
+export LISTEN=":4445"
+export DB="postgres://thex:thex1234@localhost/thex"
 export TTL="5"
