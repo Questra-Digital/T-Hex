@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"io"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -86,11 +84,8 @@ func main() {
 func ProxyReqHandler(proxy *httputil.ReverseProxy) func(
 	http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		key, proj := ReqGetKeyProj(r)
-		log.Printf("%s %s; proj: `%s`; key: `%s`", r.Method, r.URL.String(),
-			proj, key)
-		if !KeyIsValid(key) {
-			log.Printf("\tDropped due to Unauthorized Key: `%s`", key)
+		_, _, valid := GetKeyProjValidate(r)
+		if !valid {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
@@ -103,31 +98,17 @@ func ProxyReverseHandlerSessionSetup(proxy *httputil.ReverseProxy) func(
 	http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Session Setup Handler")
-		key, proj := ReqGetKeyProj(r)
-		log.Printf("%s %s; proj: `%s`; key: `%s`", r.Method, r.URL.String(),
-			proj, key)
-		if !KeyIsValid(key) {
-			log.Printf("\tDropped due to Unauthorized Key: `%s`", key)
+		key, proj, valid := GetKeyProjValidate(r)
+		if !valid {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
-		body, err := io.ReadAll(r.Body)
-		if err != nil {
-			log.Printf("\tFailed to parse body: %s", err.Error())
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
-		r.Body.Close()
-		r.Body = io.NopCloser(bytes.NewBuffer(body))
-
 		sw := &ResponseWriterSaver{ResponseWriter: w}
 		proxy.ServeHTTP(sw, r)
-		sessId := ""
 		if r.URL.Path == "/session" && r.Method == "POST" {
-			sessId, err = JSONGetSessId(string(sw.body.Bytes()))
+			sessId, err := JSONGetSessId(string(sw.body.Bytes()))
 			if err != nil {
-				sessId = ""
 				log.Printf("\tError in getting New SessionId: %s", err.Error())
 			} else {
 				db.Create(&KeySession{
@@ -145,22 +126,7 @@ func ProxyReverseHandlerSessionSetup(proxy *httputil.ReverseProxy) func(
 			return
 		}
 
-		entry := &EventLogEntry{
-			Time:    time.Now().Unix(),
-			Method:  r.Method,
-			Path:    r.URL.Path,
-			ReqBody: string(body),
-			Key:     key,
-			Proj:    proj,
-			Status:  sw.statusCode,
-			Res:     sw.body.String(),
-		}
-		err = EventLogToDB(entry)
-		if err != nil {
-			log.Fatalf("Failed to log to DB: %s", err.Error())
-		}
-		log.Printf("\tresponded to: %s %s; proj: `%s`; key: `%s`: %d",
-			r.Method, r.URL.String(), proj, key, sw.statusCode)
+		LogReqRes(r, sw.statusCode, sw.body.String(), key, proj)
 	}
 }
 
@@ -169,11 +135,8 @@ func ProxyReverseHandlerSession(proxy *httputil.ReverseProxy) func(
 	http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Session Handler")
-		key, proj := ReqGetKeyProj(r)
-		log.Printf("%s %s; proj: `%s`; key: `%s`", r.Method, r.URL.String(),
-			proj, key)
-		if !KeyIsValid(key) {
-			log.Printf("\tDropped due to Unauthorized Key: `%s`", key)
+		key, proj, valid := GetKeyProjValidate(r)
+		if !valid {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
@@ -191,33 +154,12 @@ func ProxyReverseHandlerSession(proxy *httputil.ReverseProxy) func(
 			return
 		}
 
-		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			log.Printf("\tFailed to parse body: %s", err.Error())
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
-		r.Body.Close()
-		r.Body = io.NopCloser(bytes.NewBuffer(body))
-
 		sw := &ResponseWriterSaver{ResponseWriter: w}
 		proxy.ServeHTTP(sw, r)
-
-		entry := &EventLogEntry{
-			Time:    time.Now().Unix(),
-			Method:  r.Method,
-			Path:    r.URL.Path,
-			ReqBody: string(body),
-			Key:     key,
-			Proj:    proj,
-			Status:  sw.statusCode,
-			Res:     sw.body.String(),
-		}
-		err = EventLogToDB(entry)
-		if err != nil {
-			log.Fatalf("Failed to log to DB: %s", err.Error())
-		}
-		log.Printf("\tresponded to: %s %s; proj: `%s`; key: `%s`: %d",
-			r.Method, r.URL.String(), proj, key, sw.statusCode)
+		LogReqRes(r, sw.statusCode, sw.body.String(), key, proj)
 	}
 }

@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"io"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -163,4 +166,54 @@ func ReqGetKeyProj(r *http.Request) (string, string) {
 		proj = HEAD_NAME_DEF
 	}
 	return key, proj
+}
+
+// Gets key and project name. Does logging, and key validation
+func GetKeyProjValidate(r *http.Request) (string, string, bool) {
+	key, proj := ReqGetKeyProj(r)
+	log.Printf("%s %s; proj: `%s`; key: `%s`", r.Method, r.URL.String(),
+	proj, key)
+	if !KeyIsValid(key) {
+		log.Printf("\tDropped due to Unauthorized Key: `%s`", key)
+		return key, proj, false
+	}
+	return key, proj, true
+}
+
+// reads body from request
+func GetReqBody(r *http.Request) ([]byte, error) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Printf("\tFailed to parse body: %s", err.Error())
+		return nil, err
+	}
+	r.Body.Close()
+	r.Body = io.NopCloser(bytes.NewBuffer(body))
+	return body, nil
+}
+
+// logs request response
+func LogReqRes(r *http.Request, statusCode int, res string, key string,
+		proj string) error {
+	body, err := GetReqBody(r)
+	if err != nil {
+		return err
+	}
+	entry := &EventLogEntry{
+		Time:    time.Now().Unix(),
+		Method:  r.Method,
+		Path:    r.URL.Path,
+		ReqBody: string(body),
+		Key:     key,
+		Proj:    proj,
+		Status:  statusCode,
+		Res:     string(res),
+	}
+	err = EventLogToDB(entry)
+	if err != nil {
+		log.Fatalf("Failed to log to DB: %s", err.Error())
+	}
+	log.Printf("\tresponded to: %s %s; proj: `%s`; key: `%s`: %d",
+		r.Method, r.URL.String(), proj, key, statusCode)
+	return nil
 }
