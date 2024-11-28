@@ -142,22 +142,21 @@ func ProxyReverseHandlerSession(proxy *httputil.ReverseProxy) func(
 		}
 
 		sessId, err := URLGetSessId(r.URL.Path)
-		if err != nil {
-			// TODO: figure out what to actually do here
-			log.Printf("\tFailed to extract session ID from URL: %s", err.Error())
-			sessId = ""
-		}
-		// make sure key for this sess is valid
-		if !KeySessIsValid(key, sessId) {
+		if err != nil || !KeySessIsValid(key, sessId) {
 			log.Printf("\tDropped due to Key not valid for SessionId")
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
-		if err != nil {
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
+		// handle DELETe
+		if r.Method == "DELETE" && r.URL.Path == "/session/" + sessId {
+			log.Printf("\tDeleting session %s", sessId)
+			err := KeySessMakeInvalid(key, sessId)
+			if err != nil {
+				log.Printf("\tFailed to Invalidate in DB")
+			}
 		}
+
 		sw := &ResponseWriterSaver{ResponseWriter: w}
 		proxy.ServeHTTP(sw, r)
 		LogReqRes(r, sw.statusCode, sw.body.String(), key, proj)
