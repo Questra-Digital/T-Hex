@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"time"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -18,42 +17,6 @@ func DBInit(connectionStr string) *gorm.DB {
 	}
 	db.AutoMigrate(&ApiKey{})
 	db.AutoMigrate(&EventLogEntry{})
+	db.AutoMigrate(&KeySession{})
 	return db
-}
-
-// API Key cache entry
-type KCacheEntry struct {
-	time  int64
-	valid bool
-}
-
-// whether a key is valid or not
-// checks the following: key format and cache, and finally DB (if necessary)
-func KeyIsValid(key string) bool {
-	if key == "" {
-		return false
-	}
-	entry, ok := kcache[key]
-
-	if !ok || time.Now().Unix()-entry.time > int64(ttl) {
-		// refresh cache
-		exist := false
-		_ = db.Model(&ApiKey{}).
-			Select("count(*) > 0").
-			Where("key = ?", key).
-			Find(&exist).
-			Error
-		kcache[key] = KCacheEntry{time: time.Now().Unix(), valid: exist}
-		return exist
-	}
-	return entry.valid
-}
-
-// Inserts a log entry
-func EventLogToDB(event *EventLogEntry) error {
-	res := db.Create(event)
-	if res.Error != nil {
-		return res.Error
-	}
-	return nil
 }

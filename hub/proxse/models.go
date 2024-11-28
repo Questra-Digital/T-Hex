@@ -34,3 +34,17 @@ type EventLogEntry struct {
 func (EventLogEntry) TableName() string {
 	return "event_logs"
 }
+
+// Session ID to Key mapping
+type KeySession struct {
+	gorm.Model
+	Time int64
+	Key string
+	Proj string
+	SessionId string
+	Valid bool
+}
+
+func (KeySession) TableName() string {
+	return "key_sessions"
+}
