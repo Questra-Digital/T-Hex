@@ -13,20 +13,25 @@ func main() {
 	if dbStr == "" {
 		dbStr = ENV_DB_DEF
 	}
-	DBInit(dbStr)
-	if err := db.AutoMigrate(&ApiKey{}); err != nil {
+	db := DBInit(dbStr)
+	err := db.AutoMigrate(&ApiKey{})
+	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
 	}
-	if err := db.AutoMigrate(&User{}); err != nil {
+	err = db.AutoMigrate(&User{})
+	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
 	}
-	if err := db.AutoMigrate(&UserKey{}); err != nil {
+	err = db.AutoMigrate(&UserKey{})
+	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
 	}
-	if err := db.AutoMigrate(&EventLogEntry{}); err != nil {
+	err = db.AutoMigrate(&EventLogEntry{})
+	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
 	}
-	if err := db.AutoMigrate(&KeySession{}); err != nil {
+	err = db.AutoMigrate(&KeySession{})
+	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
 	}
 	log.Printf("AutoMigrate done")

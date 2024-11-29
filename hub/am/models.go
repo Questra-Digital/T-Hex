@@ -6,9 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// database
-var db *gorm.DB
-
 // initializes DB
 func DBInit(connectionStr string) *gorm.DB {
 	db, err := gorm.Open(postgres.Open(connectionStr), &gorm.Config{})
