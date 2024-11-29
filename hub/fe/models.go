@@ -15,11 +15,6 @@ func DBInit(connectionStr string) *gorm.DB {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %s", err.Error())
 	}
-	db.AutoMigrate(&ApiKey{})
-	db.AutoMigrate(&User{})
-	db.AutoMigrate(&UserKey{})
-	db.AutoMigrate(&EventLogEntry{})
-	db.AutoMigrate(&KeySession{})
 	return db
 }
 
