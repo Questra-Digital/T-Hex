@@ -48,7 +48,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - selenium-network
+      - web-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready", "-U", "thex", "-d", "thex", "-h", "localhost"]
       interval: 10s
@@ -62,10 +62,13 @@ services:
       - "4445:4445"
     networks:
       - selenium-network
+      - web-network
     depends_on:
       db:
         condition: service_healthy
 
 networks:
   selenium-network:
+    driver: bridge
+  web-network:
     driver: bridge
