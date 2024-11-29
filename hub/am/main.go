@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"log"
 )
 
 const ENV_DB = "DB"
@@ -13,4 +14,5 @@ func main() {
 		dbStr = ENV_DB_DEF
 	}
 	DBInit(dbStr)
+	log.Printf("AutoMigrate done")
 }
