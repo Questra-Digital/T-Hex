@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"net/http/httputil"
+	"gorm.io/gorm"
 	"net/url"
 	"os"
 	"strconv"
@@ -26,10 +27,13 @@ const SUB_URL = "/wd/hub"
 
 const HEAD_KEY = "thex-key"
 const HEAD_NAME = "thex-proj"
+const HEAD_TEST = "thex-test"
 const HEAD_NAME_DEF = "UNNAMED PROJECT"
 
 // TimeToLive, in seconds, for caching keys
 var ttl int32
+
+var db *gorm.DB
 
 // Get env var, or default val
 func Getenv(key string, def string) string {
@@ -93,40 +97,66 @@ func ProxyReqHandler(proxy *httputil.ReverseProxy) func(
 	}
 }
 
+// thex/test, for setting up test session
+func THexTestSessSetupHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("/thex/test Handler")
+	key, proj, valid := GetKeyProjValidate(r)
+	if !valid {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if r.Method == "POST" {
+		testId, err := TestSessCreate(key, proj)
+		if err != nil {
+			log.Printf("\tError setting up test session: %s", err.Error())
+			http.Error(w, "error", http.StatusInternalServerError)
+			return
+		}
+		w.Header().Add("thex-test", strconv.FormatInt(testId, 10))
+		log.Printf("\tassigned testId: %s %s; proj: `%s`; key: `%s`; testId: `%d",
+			r.Method, r.URL.String(), proj, key, testId)
+		return
+	} else
+	if r.Method == "DELETE" {
+		// TODO implement closing session
+	} else {
+		http.Error(w, "bad", http.StatusBadRequest)
+	}
+}
+
 // Reverse proxy handler, for setting up session
 func ProxyReverseHandlerSessionSetup(proxy *httputil.ReverseProxy) func(
 	http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Session Setup Handler")
-		key, proj, valid := GetKeyProjValidate(r)
-		if !valid {
+		key, proj, testId, valid := GetKeyProjTestIdValidate(r)
+		if !valid || !KeyIsValidForTest(key, testId){
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
-		sw := &ResponseWriterSaver{ResponseWriter: w}
-		proxy.ServeHTTP(sw, r)
-		if r.URL.Path == "/session" && r.Method == "POST" {
-			sessId, err := JSONGetSessId(string(sw.body.Bytes()))
-			if err != nil {
-				log.Printf("\tError in getting New SessionId: %s", err.Error())
-			} else {
-				db.Create(&KeySession{
-					Time:      time.Now().Unix(),
-					Key:       key,
-					Proj:      proj,
-					SessionId: sessId,
-					Valid:     true,
-				})
-				log.Printf("\tNew SessionId: `%s`", sessId)
-			}
-		} else {
+		if r.Method != "POST" {
 			log.Printf("\tUnsupported method. Only POST supported")
 			http.Error(w, "Invalid request", http.StatusBadRequest)
 			return
 		}
 
-		LogReqRes(r, sw.statusCode, sw.body.String(), key, proj)
+		sw := &ResponseWriterSaver{ResponseWriter: w}
+		proxy.ServeHTTP(sw, r)
+		sessId, err := JSONGetSessId(string(sw.body.Bytes()))
+		if err != nil {
+			log.Printf("\tError in getting New SessionId: %s", err.Error())
+		} else {
+			// TODO get current test Id
+			db.Create(&Session{
+				Time:      time.Now().Unix(),
+				TestId:    testId,
+				SessionId: sessId,
+				Valid:     true,
+			})
+			log.Printf("\tNew SessionId: `%s`", sessId)
+		}
+		LogReqRes(r, sw.statusCode, sw.body.String(), key, proj, sessId)
 	}
 }
 
@@ -142,16 +172,16 @@ func ProxyReverseHandlerSession(proxy *httputil.ReverseProxy) func(
 		}
 
 		sessId, err := URLGetSessId(r.URL.Path)
-		if err != nil || !KeySessIsValid(key, sessId) {
+		if err != nil || !KeyIsValidForSess(key, sessId) {
 			log.Printf("\tDropped due to Key not valid for SessionId")
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
-		// handle DELETe
+		// handle DELETE
 		if r.Method == "DELETE" && r.URL.Path == "/session/" + sessId {
 			log.Printf("\tDeleting session %s", sessId)
-			err := KeySessMakeInvalid(key, sessId)
+			err := KeyMakeInvalidForSess(key, sessId)
 			if err != nil {
 				log.Printf("\tFailed to Invalidate in DB")
 			}
@@ -159,6 +189,6 @@ func ProxyReverseHandlerSession(proxy *httputil.ReverseProxy) func(
 
 		sw := &ResponseWriterSaver{ResponseWriter: w}
 		proxy.ServeHTTP(sw, r)
-		LogReqRes(r, sw.statusCode, sw.body.String(), key, proj)
+		LogReqRes(r, sw.statusCode, sw.body.String(), key, proj, sessId)
 	}
 }
