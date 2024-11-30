@@ -74,6 +74,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", ProxyReqHandler(proxy))
+	http.HandleFunc("/thex/test", THexTestSessSetupHandler)
 	http.HandleFunc("/session", ProxyReverseHandlerSessionSetup(proxy))
 	http.HandleFunc("/session/", ProxyReverseHandlerSession(proxy))
 
