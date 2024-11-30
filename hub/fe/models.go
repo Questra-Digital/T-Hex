@@ -6,6 +6,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// database
+var db *gorm.DB
+
 // initializes DB
 func DBInit(connectionStr string) *gorm.DB {
 	db, err := gorm.Open(postgres.Open(connectionStr), &gorm.Config{})
@@ -21,7 +24,8 @@ type Tabler interface {
 
 // Row from api_keys database table. Only currently valid Key will exist
 type ApiKey struct {
-	Key string `gorm:"primaryKey"`
+	gorm.Model
+	Key string
 }
 
 func (ApiKey) TableName() string {
@@ -30,8 +34,8 @@ func (ApiKey) TableName() string {
 
 // User
 type User struct {
-	Username string `gorm:"primaryKey"`
-	Password string
+	Username string `gorm:"primaryKey;not null"`
+	Password string `gorm:"not null"`
 }
 
 func (User) TableName() string {
@@ -49,44 +53,32 @@ func (UserKey) TableName() string {
 }
 
 // Event log entry
-type Event struct {
-	Id        int64 `gorm:"primaryKey"`
-	Time      int64
-	SessionId string
-	Method    string
-	Path      string
-	ReqBody   string
-	Status    int
-	Res       string
-}
-
-func (Event) TableName() string {
-	return "events"
-}
-
-// Session ID to test Id mapping
-type Session struct {
-	SessionId string `gorm:"primaryKey"`
-	TestId    int64
-	Time      int64
-	Valid     bool
-	Status    bool
-	Message   string
-}
-
-func (Session) TableName() string {
-	return "sessions"
-}
-
-/// Session Id to Test Id mapping
-type TestSession struct {
-	TestId  int64 `gorm:"primaryKey;autoIncrement"`
+type EventLogEntry struct {
+	gorm.Model
 	Time    int64
+	Method  string
+	Path    string
+	ReqBody string
 	Key     string
 	Proj    string
-	Current bool
+	Status  int
+	Res     string
 }
 
-func (TestSession) TableName() string {
-	return "test_sessions"
+func (EventLogEntry) TableName() string {
+	return "event_logs"
+}
+
+// Session ID to Key mapping
+type KeySession struct {
+	gorm.Model
+	Time      int64
+	Key       string
+	Proj      string
+	SessionId string
+	Valid     bool
+}
+
+func (KeySession) TableName() string {
+	return "key_sessions"
 }

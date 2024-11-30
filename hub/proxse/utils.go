@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"strconv"
 	"io"
 	"log"
 	"net/http"
@@ -52,12 +53,17 @@ type StringPair struct {
 	B string
 }
 
+type StringInt struct {
+	A string
+	B int64
+}
+
 // cache for Key to Session Id mapping
 var ksessCache map[StringPair]KSessCacheEntry =
 	make(map[StringPair]KSessCacheEntry)
 
 // whether a key is valid for a session or not
-func KeySessIsValid(key string, sessId string) bool {
+func KeyIsValidForSess(key string, sessId string) bool {
 	if key == "" || sessId == "" {
 		return false
 	}
@@ -65,14 +71,16 @@ func KeySessIsValid(key string, sessId string) bool {
 
 	if !ok || time.Now().Unix()-entry.Time > int64(ttl) {
 		// refresh cache
-		exist := false
-		_ = db.Model(&KeySession{}).
-			Select("count(*) > 0").
-			Where("key = ?", key).
-			Where("session_id = ?", sessId).
-			Where("valid = ?", true).
-			Find(&exist).
-			Error
+		var result bool
+		err := db.Table("sessions").
+			Select("COUNT(*) > 0").
+			Joins("JOIN test_sessions ON sessions.test_id = test_sessions.test_id").
+			Where("sessions.session_id = ?", sessId).
+			Where("sessions.valid = ?", true).
+			Where("test_sessions.key = ?", key).
+			Where("test_sessions.current = ?", true).
+			Find(&result).Error
+		exist := err != nil && result
 		ksessCache[StringPair{key, sessId}] =
 			KSessCacheEntry{Time: time.Now().Unix(), Valid: exist}
 		return exist
@@ -80,8 +88,37 @@ func KeySessIsValid(key string, sessId string) bool {
 	return entry.Valid
 }
 
+// cache for Key to test Id mapping
+var ktestCache map[StringInt]KSessCacheEntry =
+	make(map[StringInt]KSessCacheEntry)
+
+// whether a key is valid for a test or not
+func KeyIsValidForTest(key string, testId int64) bool {
+	if key == "" {
+		return false
+	}
+	entry, ok := ktestCache[StringInt{key, testId}]
+
+	if !ok || time.Now().Unix()-entry.Time > int64(ttl) {
+		// refresh cache
+		var result bool
+		err := db.Table("test_sessions").
+			Select("COUNT(*) > 0").
+			Where("test_id = ?", testId).
+			Where("key = ?", key).
+			Where("current = ?", true).
+			Find(&result).Error
+		exist := err != nil && result
+		ktestCache[StringInt{key, testId}] =
+			KSessCacheEntry{Time: time.Now().Unix(), Valid: exist}
+		return exist
+	}
+	return entry.Valid
+}
+
 // makes a key valid for a session id, with a project name
-func KeySessMakeValid(key string, sessId string, proj string) error {
+func KeyMakeValidForSess(testId int64, key string, sessId string, proj string,
+		) error {
 	if key == "" || sessId == "" {
 		return errors.New("key or session Id is empty")
 	}
@@ -90,30 +127,28 @@ func KeySessMakeValid(key string, sessId string, proj string) error {
 		Valid: true,
 	}
 	ksessCache[StringPair{key, sessId}] = cacheEntry
-	entry := KeySession{
+	entry := Session{
 		Time: cacheEntry.Time,
-		Key: key,
-		Proj: proj,
+		TestId: testId,
 		SessionId: sessId,
 		Valid: true,
 	}
-	res := db.Create(entry)
-	if res.Error != nil {
-		return res.Error
+	err := db.Create(entry).Error
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
-/// makes a key invalid for a session id
-func KeySessMakeInvalid(key string, sessId string) error {
+// makes a key invalid for a session id
+func KeyMakeInvalidForSess(key string, sessId string) error {
 	if key == "" || sessId == "" {
 		return errors.New("key or session Id is empty")
 	}
 	// invalidate in cache
 	ksessCache[StringPair{key, sessId}] = KSessCacheEntry{0, false}
 	// invalidate in db
-	err := db.Model(&KeySession{}).
-		Where("key = ?", key).
+	err := db.Model(&Session{}).
 		Where("session_id = ?", sessId).
 		Update("valid", false).
 		Error
@@ -123,11 +158,29 @@ func KeySessMakeInvalid(key string, sessId string) error {
 	return nil
 }
 
-// Inserts a log entry
-func EventLogToDB(event *EventLogEntry) error {
-	res := db.Create(event)
-	if res.Error != nil {
-		return res.Error
+// makes a new Testing Session for a key and proj
+func TestSessCreate(key string, proj string) (int64, error) {
+	test := TestSession{
+		Time: time.Now().Unix(),
+		Key: key,
+		Proj: proj,
+		Current: true,
+	}
+	err := db.Create(&test).Error
+	if err != nil {
+		return 0, err
+	}
+	return test.TestId, nil
+}
+
+// ends a testing session
+func TestSessEnd(testId int64) error {
+	err := db.Model(&TestSession{}).
+		Where("test_id = ?", testId).
+		Update("current", false).
+		Error
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -140,6 +193,20 @@ func URLGetSessId(URL string) (string, error) {
 	s, _ := strings.CutPrefix(URL, "/session/")
 	s, _, _ = strings.Cut(s, "/")
 	return s, nil
+}
+
+// Extracts test id from url
+func URLGetTestId(URL string) (int64, error) {
+	if !strings.HasPrefix(URL, "/thex/test/") {
+		return 0, errors.New("Not a /thex/test/<id> url")
+	}
+	s, _ := strings.CutPrefix(URL, "/session/")
+	s, _, _ = strings.Cut(s, "/")
+	i, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		return 0, err
+	}
+	return i, nil
 }
 
 // Extracts session id from json response
@@ -158,26 +225,42 @@ func JSONGetSessId(stream string) (string, error) {
 	return body.Value.SessionId, nil
 }
 
-// Returns: (key, project name)
-func ReqGetKeyProj(r *http.Request) (string, string) {
+// Gets key and project name. Does logging, and key validation
+func GetKeyProjValidate(r *http.Request) (string, string, bool) {
 	key := r.Header.Get(HEAD_KEY)
 	proj := r.Header.Get(HEAD_NAME)
 	if proj == "" {
 		proj = HEAD_NAME_DEF
 	}
-	return key, proj
-}
-
-// Gets key and project name. Does logging, and key validation
-func GetKeyProjValidate(r *http.Request) (string, string, bool) {
-	key, proj := ReqGetKeyProj(r)
 	log.Printf("%s %s; proj: `%s`; key: `%s`", r.Method, r.URL.String(),
-	proj, key)
+		proj, key)
 	if !KeyIsValid(key) {
 		log.Printf("\tDropped due to Unauthorized Key: `%s`", key)
 		return key, proj, false
 	}
 	return key, proj, true
+}
+
+// Gets key, project name, and test Id. Does logging, and key validation
+func GetKeyProjTestIdValidate(r *http.Request) (string, string, int64, bool) {
+	key := r.Header.Get(HEAD_KEY)
+	proj := r.Header.Get(HEAD_NAME)
+	if proj == "" {
+		proj = HEAD_NAME_DEF
+	}
+	testStr := r.Header.Get(HEAD_TEST)
+	testId, err := strconv.ParseInt(testStr, 10, 64)
+	if err != nil {
+		log.Printf("Invalid test Id provided: `%s`", testStr)
+		return key, proj, 0, false
+	}
+	log.Printf("%s %s; proj: `%s`; test: `%d` key: `%s`", r.Method, r.URL.String(),
+		proj, testId, key)
+	if !KeyIsValid(key) {
+		log.Printf("\tDropped due to Unauthorized Key: `%s`", key)
+		return key, proj, testId, false
+	}
+	return key, proj, testId, true
 }
 
 // reads body from request
@@ -193,23 +276,22 @@ func GetReqBody(r *http.Request) ([]byte, error) {
 }
 
 // logs request response
-func LogReqRes(r *http.Request, statusCode int, res string, key string,
-		proj string) error {
+func LogReqRes(r *http.Request, statusCode int,
+		res, key, proj, sessId string) error {
 	body, err := GetReqBody(r)
 	if err != nil {
 		return err
 	}
-	entry := &EventLogEntry{
+	entry := &Event{
 		Time:    time.Now().Unix(),
 		Method:  r.Method,
 		Path:    r.URL.Path,
 		ReqBody: string(body),
-		Key:     key,
-		Proj:    proj,
 		Status:  statusCode,
 		Res:     string(res),
+		SessionId: sessId,
 	}
-	err = EventLogToDB(entry)
+	err = db.Create(&entry).Error
 	if err != nil {
 		log.Fatalf("Failed to log to DB: %s", err.Error())
 	}

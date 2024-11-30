@@ -22,6 +22,22 @@ services:
     networks:
       - selenium-network
 
+  firefox:
+    image: selenium/node-firefox:latest
+    container_name: node-firefox
+    depends_on:
+      - selenium-hub
+    volumes:
+      - /dev/shm:/dev/shm
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+    networks:
+      - selenium-network
+
   db:
     image: postgres:latest
     environment:
@@ -32,7 +48,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - selenium-network
+      - web-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready", "-U", "thex", "-d", "thex", "-h", "localhost"]
       interval: 10s
@@ -40,16 +56,29 @@ services:
       retries: 5
       start_period: 80s
 
+  am:
+    image: am:latest
+    networks:
+      - web-network
+    depends_on:
+      db:
+        condition: service_healthy
+
   proxse:
     image: proxse:latest
     ports:
       - "4445:4445"
     networks:
       - selenium-network
+      - web-network
     depends_on:
       db:
         condition: service_healthy
+      am:
+        condition: service_completed_successfully
 
 networks:
   selenium-network:
+    driver: bridge
+  web-network:
     driver: bridge
