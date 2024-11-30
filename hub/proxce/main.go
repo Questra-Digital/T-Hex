@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -36,10 +37,29 @@ func main() {
 		log.Fatalf("Error parsing THEX_URL `%s`:\n\t%s", endpoint, err.Error())
 	}
 
+	// get new testId
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/thex/test", endpoint), nil)
+	if err != nil {
+		log.Fatalf("Failed to request TestId from THex: %s", err.Error())
+	}
+	req.Header.Add("thex-key", key)
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatalf("Failed to request TestId from THex: %s", err.Error())
+	}
+	testId := resp.Header.Get("thex-test")
+	if testId == "" {
+		log.Fatalf("THex refused to send TestId")
+	}
+	resp.Body.Close()
+	log.Printf("Received TestId: %s", testId)
+
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
 	proxy.Director = func(req *http.Request) {
 		req.Header.Add("thex-key", key)
 		req.Header.Add("thex-proj", proj)
+		req.Header.Add("thex-test", testId)
 		req.URL.Scheme = targetURL.Scheme
 		req.URL.Host = targetURL.Host
 	}
