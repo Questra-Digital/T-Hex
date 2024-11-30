@@ -26,11 +26,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
 	}
-	err = db.AutoMigrate(&EventLogEntry{})
+	err = db.AutoMigrate(&Event{})
 	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
 	}
-	err = db.AutoMigrate(&KeySession{})
+	err = db.AutoMigrate(&Session{})
+	if err != nil {
+		log.Fatalf("Error: %s", err.Error())
+	}
+	err = db.AutoMigrate(&TestSession{})
 	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
 	}
