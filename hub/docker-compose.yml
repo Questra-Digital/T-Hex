@@ -60,6 +60,8 @@ services:
     image: am:latest
     networks:
       - web-network
+    environment:
+      - AM_DEMO=1
     depends_on:
       db:
         condition: service_healthy
