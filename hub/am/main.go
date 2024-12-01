@@ -2,20 +2,12 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-const ENV_DB = "DB"
-const ENV_DB_DEF = "postgres://thex:thex1234@db/thex"
-
 func main() {
-	dbStr := os.Getenv(ENV_DB)
-	if dbStr == "" {
-		dbStr = ENV_DB_DEF
-	}
-	db := DBInit(dbStr)
+	db := DBInit()
 	err := db.AutoMigrate(&ApiKey{})
 	if err != nil {
 		log.Fatalf("Error: %s", err.Error())

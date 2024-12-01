@@ -2,13 +2,19 @@ package main
 
 import (
 	"log"
+	"os"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 // initializes DB
-func DBInit(connectionStr string) *gorm.DB {
-	db, err := gorm.Open(postgres.Open(connectionStr), &gorm.Config{})
+func DBInit() *gorm.DB {
+	dbStr := os.Getenv("DB")
+	if dbStr == "" {
+		dbStr = "postgres://thex:thex1234@db/thex"
+	}
+	db, err := gorm.Open(postgres.Open(dbStr), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %s", err.Error())
 	}
