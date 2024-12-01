@@ -1,0 +1,277 @@
+/*Default, elements are for phone*/
+/*for desktop, define after phone's definition*/
+
+body{
+	background-color: #282A36;
+	color: #F8F8F2;
+	font-family: Cantarell;
+	margin: 0px;
+	width: 100%;
+	font-weight: 400;
+	font-size: 14pt;
+	max-width: none;
+}
+@media only screen and (min-width: 800px){
+	body{
+		margin: auto;
+		width: 100%;
+		max-width: 1280px;
+	}
+}
+
+header{
+	height: 80px;
+	width: 100%;
+	padding-left: 10%;
+	padding-right: 10%;
+	margin: auto;
+	padding-top: 20px;
+	font-weight: 500;
+	font-size: 26pt;
+}
+
+header img.icon{
+	max-width: 100%;
+	max-height: 100%;
+}
+/*<BUTTONS>*/
+.btn{
+	background-color: #BD93F9;
+	color: #191A21;
+	border: none;
+	height: auto;
+	line-height: 24px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 14pt;
+	padding: 6px;
+	margin-bottom: 5px;
+}
+
+.btn:hover{
+	background-color: #6272A4;
+}
+
+.blockBtn{
+	background-color: #BD93F9;
+	color: #191A21;
+	border: none;
+	height: auto;
+	width: 100%;
+	line-height: 24px;
+	text-align: center;
+	text-decoration: none;
+	display: block;
+	font-size: 14pt;
+	padding: 6px;
+	margin-bottom: 5px;
+}
+
+.blockBtn:hover{
+	background-color: #6272A4;
+}
+
+hr{
+	border: 0;
+	border-bottom: 1px dashed #F8F8F2;
+	background: #BD93F9;
+}
+/*</BUTTONS>*/
+/*links*/
+a, a:link, a:visited, a:hover, a:active{
+	color: #BD93F9;
+	text-decoration: none;
+}
+a.btn:link, a.btn:visited, a.btn:hover, a.btn:active{
+	color: #282A36;
+	text-decoration: none;
+}
+a.blockBtn:link, a.blockBtn:visited, a.blockBtn:hover, a.blockBtn:active{
+	color: #282A36;
+	text-decoration: none;
+}
+
+header a, header a:link, header a:visited, header a:hover, header a:active{
+	color: #F8F8F2;
+	text-decoration: none;
+}
+/*Page sections*/
+/*body, nav, and header have already been defined*/
+content{
+	margin: auto;
+	margin-top: 5px;
+	padding: 5px;
+	width: 90%;
+	font-size: 14pt;
+}
+
+content header, article header{
+	line-height: auto;
+	height: auto;
+	font-size: 24pt;
+	font-weight: 500;
+	display: block;
+	text-align: left;
+	padding: 0;
+}
+
+article{
+	background-color: #44475A;
+	color: #F8F8F2;
+	width: 100%;
+	padding: 10px;
+	border-style: solid;
+	border-color: #6272A4;
+	border-width: 1px;
+	margin: auto;
+	margin-bottom: 5px;
+}
+@media only screen and (min-width: 800px){
+	content{
+		width: 70%;
+		float: left;
+	}
+}
+
+aside{
+	width: 90%;
+	padding: 5px;
+	margin: auto;
+	margin-top: 5px;
+}
+@media only screen and (min-width: 800px){
+	aside{
+		width: 25%;
+		float: right;
+	}
+}
+
+aside header{
+	background-color: #191A21;
+	color: #F8F8F2;
+	line-height: 24px;
+	height: auto;
+	font-size: 16pt;
+	font-weight: 500;
+	display: block;
+	text-align: center;
+	/*remove inherited stuff*/
+	padding: 5px;
+	margin: 0px;
+	width: 100%;
+	margin-bottom: 2px;
+}
+
+aside content{
+	width: 100%;
+	padding: 5px;
+	background-color: #44475A;
+	color: #191A21
+	height: auto;
+	display: block;
+	margin-bottom: 4px;
+}
+
+span.small{
+	font-size: 12pt;
+}
+code{
+	background-color: #282A36;
+	color: #F8F8F2;
+	width: 90%;
+	display: block;
+}
+/*FORMS*/
+form{
+	background-color: #44475A;
+	color: #191A21;
+	width: 90%;
+	margin: auto;
+	max-width: 300px;
+}
+
+form label{
+	margin-bottom: 5px;
+	display: block;
+}
+
+input[type=text], input[type=password], input[type=number], input[type=time],select{
+	background-color: #282A36;
+	color: #F8F8F2;
+	width: 100%;
+	max-width: 280px;
+	padding: 5px;
+	border: 3px solid #6272A4;
+	margin: auto;
+	margin-bottom: 5px;
+	display: block;
+}
+
+input[type=text]:hover, input[type=password]:hover, input[type=number]:hover,
+input[type=time]:hover, select:hover{
+	border: 3px solid #6272A4;
+}
+
+input[type=submit]{
+	border: none;
+	height: auto;
+	line-height: 30px;
+	text-align: center;
+	text-decoration: none;
+	display: block;
+	background-color: #BD93F9;
+	color: #191A21;
+	width: 80%;
+	margin: auto;
+	margin-top: 5px;
+	font-size: 12pt;
+}
+
+input[type=submit]:hover{
+	background-color: #6272A4;
+}
+
+/*</FORMS>*/
+div.warning{
+	background-color: #FF5555;
+	color: #191A21;
+	text-align: center;
+	line-height: 20px;
+	padding: 5px;
+	width: 100%;
+	margin: auto;
+	margin-bottom: 5px;
+}
+
+div.message{
+	background-color: #50FA7B;
+	color: #191A21;
+	text-align: center;
+	line-height: 20px;
+	padding: 5px;
+	width: 100%;
+	margin: auto;
+	margin-bottom: 5px;
+}
+
+table{
+	width: 100%;
+	margin: auto;
+	max-width: 100%;
+	table-layout: fixed;
+	word-break: break-word;
+	color: #F8F8F2;
+}
+
+th, td{
+	text-align: left;
+	padding: 5px;
+	margin: auto;
+}
+
+/*this must be at the end, i dont know why, but it must be*/
+*{
+	box-sizing: border-box;
+	border-radius: 5px;
+}

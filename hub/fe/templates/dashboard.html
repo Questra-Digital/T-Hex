@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Dashboard</title>
+	</head>
+	<body>
+		<h1>Dashboard</h1>
+		<h2>Your Test Sessions</h2>
+		<table border="1">
+			<thead>
+				<tr>
+					<th>Test ID</th>
+					<th>Project</th>
+					<th>Current</th>
+					<th>Time</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{range .}}
+				<tr>
+					<td>{{.TestId}}</td>
+					<td>{{.Proj}}</td>
+					<td>{{.Current}}</td>
+					<td>{{.Time}}</td>
+				</tr>
+				{{else}}
+				<tr>
+					<td colspan="4">No test sessions found.</td>
+				</tr>
+				{{end}}
+			</tbody>
+		</table>
+		<a href="/logout">Logout</a>
+	</body>
+</html>

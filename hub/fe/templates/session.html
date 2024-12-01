@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Session Details</title>
+	</head>
+	<body>
+		<h1>Session Details</h1>
+		<table border="1">
+			<thead>
+				<tr>
+					<th>Time</th>
+					<th>Method</th>
+					<th>Path</th>
+					<th>Request Body</th>
+					<th>Status</th>
+					<th>Response</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{range .}}
+				<tr>
+					<td>{{.Time}}</td>
+					<td>{{.Method}}</td>
+					<td>{{.Path}}</td>
+					<td>{{.ReqBody}}</td>
+					<td>{{.Status}}</td>
+					<td>{{.Res}}</td>
+				</tr>
+				{{else}}
+				<tr>
+					<td colspan="6">No events found for this session.</td>
+				</tr>
+				{{end}}
+			</tbody>
+		</table>
+		<a href="/dashboard">Back to Dashboard</a>
+	</body>
+</html>
