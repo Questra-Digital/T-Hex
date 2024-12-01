@@ -79,6 +79,18 @@ services:
       am:
         condition: service_completed_successfully
 
+  fe:
+    image: fe:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - web-network
+    depends_on:
+      db:
+        condition: service_healthy
+      am:
+        condition: service_completed_successfully
+
 networks:
   selenium-network:
     driver: bridge
