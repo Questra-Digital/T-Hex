@@ -1,19 +1,14 @@
 package main
 
 import (
-	"os"
 	"log"
+	"os"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
-const ENV_DB = "DB"
-const ENV_DB_DEF = "postgres://thex:thex1234@db/thex"
-
 func main() {
-	dbStr := os.Getenv(ENV_DB)
-	if dbStr == "" {
-		dbStr = ENV_DB_DEF
-	}
-	db := DBInit(dbStr)
+	db := DBInit()
 	err := db.AutoMigrate(&ApiKey{})
 	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
@@ -39,4 +34,28 @@ func main() {
 		log.Fatalf("Error: %s", err.Error())
 	}
 	log.Printf("AutoMigrate done")
+
+	if os.Getenv("AM_DEMO") == "" {
+		return
+	}
+
+	bytes, err := bcrypt.GenerateFromPassword([]byte("abcd1234"),
+		bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatalf("Failed hashing password: %s", err.Error())
+	}
+	user := User{Username: "nafees", Password: string(bytes)}
+	err = db.Create(&user).Error
+	if err != nil {
+		log.Fatalf("Failed to add user: %s", err.Error())
+	}
+
+	if err := db.Create(&ApiKey{Key: "abcd1234"}).Error; err != nil {
+		log.Fatalf("Failed to add API Key: %s", err.Error())
+	}
+
+	if err := db.Create(&UserKey{"nafees", "abcd1234"}).Error; err != nil {
+		log.Fatalf("Failed to add User-Key relation: %s", err.Error())
+	}
+
 }

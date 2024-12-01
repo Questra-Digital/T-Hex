@@ -17,9 +17,6 @@ const ENV_END_DEF = "http://selenium-hub:4444"
 const ENV_LISTEN = "LISTEN"
 const ENV_LISTEN_DEF = ":4445"
 
-const ENV_DB = "DB"
-const ENV_DB_DEF = "postgres://thex:thex1234@db/thex"
-
 const ENV_TTL = "TTL"
 const ENV_TTL_DEF = "120"
 
@@ -47,7 +44,6 @@ func Getenv(key string, def string) string {
 func main() {
 	endpoint := Getenv(ENV_END, ENV_END_DEF)
 	local := Getenv(ENV_LISTEN, ENV_LISTEN_DEF)
-	dbStr := Getenv(ENV_DB, ENV_DB_DEF)
 	ttlStr := Getenv(ENV_TTL, ENV_TTL_DEF)
 
 	targetURL, err := url.Parse(endpoint)
@@ -64,7 +60,7 @@ func main() {
 		ttl = int32(i)
 	}
 
-	db = DBInit(dbStr)
+	db = DBInit()
 
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
 	proxy.Director = func(req *http.Request) {

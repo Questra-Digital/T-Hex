@@ -80,7 +80,7 @@ func KeyIsValidForSess(key string, sessId string) bool {
 			Where("test_sessions.key = ?", key).
 			Where("test_sessions.current = ?", true).
 			Find(&result).Error
-		exist := err != nil && result
+		exist := err == nil && result
 		ksessCache[StringPair{key, sessId}] =
 			KSessCacheEntry{Time: time.Now().Unix(), Valid: exist}
 		return exist
@@ -108,7 +108,7 @@ func KeyIsValidForTest(key string, testId int64) bool {
 			Where("key = ?", key).
 			Where("current = ?", true).
 			Find(&result).Error
-		exist := err != nil && result
+		exist := err == nil && result
 		ktestCache[StringInt{key, testId}] =
 			KSessCacheEntry{Time: time.Now().Unix(), Valid: exist}
 		return exist

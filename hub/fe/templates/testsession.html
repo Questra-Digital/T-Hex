@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Test Sessions</title>
+	</head>
+	<body>
+		<h1>Test Sessions</h1>
+		<table border="1">
+			<thead>
+				<tr>
+					<th>Session ID</th>
+					<th>Time</th>
+					<th>Valid</th>
+					<th>Status</th>
+					<th>Message</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{range .}}
+				<tr>
+					<td>{{.SessionId}}</td>
+					<td>{{.Time}}</td>
+					<td>{{.Valid}}</td>
+					<td>{{.Status}}</td>
+					<td>{{.Message}}</td>
+				</tr>
+				{{else}}
+				<tr>
+					<td colspan="5">No sessions found for this test.</td>
+				</tr>
+				{{end}}
+			</tbody>
+		</table>
+		<a href="/dashboard">Back to Dashboard</a>
+	</body>
+</html>
