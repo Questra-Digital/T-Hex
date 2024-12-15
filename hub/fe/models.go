@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -14,10 +15,16 @@ func DBInit() *gorm.DB {
 	if dbStr == "" {
 		dbStr = "postgres://thex:thex1234@db/thex"
 	}
-	db, err := gorm.Open(postgres.Open(dbStr), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dbStr), &gorm.Config{
+		PrepareStmt: true,
+	})
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %s", err.Error())
 	}
+	sqlDB, _ := db.DB()
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(100)
+	sqlDB.SetConnMaxLifetime(10 * time.Minute)
 	return db
 }
 
