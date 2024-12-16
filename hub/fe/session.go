@@ -72,7 +72,7 @@ func SetSessionUser(w http.ResponseWriter, username string) {
 		Value:    token,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true,
+		//Secure:   true,
 	})
 }
 

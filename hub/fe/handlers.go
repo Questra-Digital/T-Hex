@@ -18,7 +18,7 @@ var cssFS embed.FS
 var templates = template.Must(template.ParseFS(templatesFS, "templates/*.html"))
 
 func ServeCSS(w http.ResponseWriter, r *http.Request) {
-	cssFile, err := cssFS.ReadFile("static/qs.css")
+	cssFile, err := cssFS.ReadFile("qs.css")
 	if err != nil {
 		http.Error(w, "Error loading CSS file", http.StatusInternalServerError)
 		return
