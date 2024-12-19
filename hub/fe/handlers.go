@@ -28,6 +28,11 @@ func ServeCSS(w http.ResponseWriter, r *http.Request) {
 	w.Write(cssFile)
 }
 
+func ServeLandingPage(w http.ResponseWriter, r *http.Request) {
+	templates.ExecuteTemplate(w, "landing.html",
+		"© 2024 T-Hex. All rights reserved.")
+}
+
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		templates.ExecuteTemplate(w, "login.html", nil)

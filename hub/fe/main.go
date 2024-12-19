@@ -30,7 +30,7 @@ func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/qs.css", ServeCSS).Methods("GET")
-	r.HandleFunc("/", LoginHandler).Methods("GET", "POST")
+	r.HandleFunc("/", ServeLandingPage).Methods("GET")
 	r.HandleFunc("/login", LoginHandler).Methods("GET", "POST")
 	r.HandleFunc("/logout", LogoutHandler).Methods("GET")
 	r.Handle("/dashboard", AuthMiddleware(http.HandlerFunc(DashboardHandler)))
