@@ -18,11 +18,11 @@
 			<tbody>
 				{{range .}}
 				<tr>
-					<td>{{.SessionId}}</td>
-					<td>{{.Time}}</td>
-					<td>{{.Valid}}</td>
-					<td>{{.Status}}</td>
-					<td>{{.Message}}</td>
+					<td><a href="/session/{{urlquery .SessionId}}">{{.SessionId}}</a></td>
+					<td><a href="/session/{{urlquery .SessionId}}">{{.Time}}</a></td>
+					<td><a href="/session/{{urlquery .SessionId}}">{{.Valid}}</a></td>
+					<td><a href="/session/{{urlquery .SessionId}}">{{.Status}}</a></td>
+					<td><a href="/session/{{urlquery .SessionId}}">{{.Message}}</a></td>
 				</tr>
 				{{else}}
 				<tr>
