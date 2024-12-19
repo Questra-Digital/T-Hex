@@ -18,7 +18,7 @@ var cssFS embed.FS
 var templates = template.Must(template.ParseFS(templatesFS, "templates/*.html"))
 
 func ServeCSS(w http.ResponseWriter, r *http.Request) {
-	cssFile, err := cssFS.ReadFile("static/qs.css")
+	cssFile, err := cssFS.ReadFile("qs.css")
 	if err != nil {
 		http.Error(w, "Error loading CSS file", http.StatusInternalServerError)
 		return
@@ -26,6 +26,11 @@ func ServeCSS(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/css")
 	w.Write(cssFile)
+}
+
+func ServeLandingPage(w http.ResponseWriter, r *http.Request) {
+	templates.ExecuteTemplate(w, "landing.html",
+		"© 2024 T-Hex. All rights reserved.")
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +63,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {
-	username := GetSessionUser(r)
+	username := r.Context().Value("username")
 
 	var userKeys []UserKey
 	db.Where("username = ?", username).Find(&userKeys)

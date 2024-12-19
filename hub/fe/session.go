@@ -2,73 +2,103 @@ package main
 
 import (
 	"crypto/rand"
-	"encoding/base64"
+	"encoding/hex"
 	"net/http"
 	"sync"
+	"time"
 )
 
-var sessionStore = struct {
-	sync.Mutex
-	data map[string]string
-}{data: make(map[string]string)}
+type SessionData struct {
+	Username  string
+	ExpiresAt time.Time
+}
 
-// Generate a secure random token
-func generateToken() string {
-	bytes := make([]byte, 32)
-	_, err := rand.Read(bytes)
-	if err != nil {
-		panic("Unable to generate secure token")
+var tokenStore = make(map[string]SessionData)
+var tokenStoreMu sync.RWMutex
+
+func SessionCreate(username string) string {
+	for {
+		tokenBytes := make([]byte, 64)
+		_, err := rand.Read(tokenBytes)
+		if err != nil {
+			panic("Error generating random token:")
+		}
+		token := hex.EncodeToString(tokenBytes)
+		tokenStoreMu.RLock()
+		if _, exists := tokenStore[token]; exists {
+			tokenStoreMu.RUnlock()
+			continue
+		}
+		tokenStoreMu.RUnlock()
+		expiresAt := time.Now().Add(24 * time.Hour)
+		session := SessionData{
+			Username:  username,
+			ExpiresAt: expiresAt,
+		}
+		tokenStoreMu.Lock()
+		tokenStore[token] = session
+		tokenStoreMu.Unlock()
+		return token
 	}
-	return base64.URLEncoding.EncodeToString(bytes)
+}
+
+func SessionInvalidate(token string) {
+	tokenStoreMu.Lock()
+	delete(tokenStore, token)
+	tokenStoreMu.Unlock()
+}
+
+func SessionAutoInvalidate() {
+	for token, session := range tokenStore {
+		if time.Now().After(session.ExpiresAt) {
+			SessionInvalidate(token)
+		}
+	}
+}
+
+func startSessionAutoInvalidation() {
+	ticker := time.NewTicker(30 * time.Minute)
+	defer ticker.Stop()
+	for range ticker.C {
+		SessionAutoInvalidate()
+	}
 }
 
 // Set a secure session for a user
 func SetSessionUser(w http.ResponseWriter, username string) {
-	token := generateToken()
-
-	// Save the username in the server-side session store
-	sessionStore.Lock()
-	sessionStore.data[token] = username
-	sessionStore.Unlock()
-
-	// Set a secure, HTTP-only cookie
+	token := SessionCreate(username)
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_token",
 		Value:    token,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true, // Use Secure only with HTTPS
+		//Secure:   true,
 	})
 }
 
-// Get the logged-in user from the session
+// Get the logged-in user from the session, or empty string
 func GetSessionUser(r *http.Request) string {
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
 		return ""
 	}
-
 	token := cookie.Value
-
-	// Retrieve the username from the session store
-	sessionStore.Lock()
-	username, exists := sessionStore.data[token]
-	sessionStore.Unlock()
-
+	tokenStoreMu.Lock()
+	session, exists := tokenStore[token]
+	tokenStoreMu.Unlock()
 	if !exists {
 		return ""
 	}
-	return username
+	return session.Username
 }
 
 // Clear the session for a user
 func ClearSessionUser(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session_token")
 	if err == nil {
-		// Remove the session from the store
-		sessionStore.Lock()
-		delete(sessionStore.data, cookie.Value)
-		sessionStore.Unlock()
+		tokenStoreMu.Lock()
+		delete(tokenStore, cookie.Value)
+		tokenStoreMu.Unlock()
 	}
 
 	// Invalidate the cookie

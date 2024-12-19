@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"context"
 
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
@@ -18,7 +19,9 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(
+			context.WithValue(r.Context(), "username", sessionUsername),
+		))
 	})
 }
 
@@ -27,7 +30,7 @@ func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/qs.css", ServeCSS).Methods("GET")
-	r.HandleFunc("/", LoginHandler).Methods("GET", "POST")
+	r.HandleFunc("/", ServeLandingPage).Methods("GET")
 	r.HandleFunc("/login", LoginHandler).Methods("GET", "POST")
 	r.HandleFunc("/logout", LogoutHandler).Methods("GET")
 	r.Handle("/dashboard", AuthMiddleware(http.HandlerFunc(DashboardHandler)))

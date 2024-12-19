@@ -18,10 +18,10 @@
 			<tbody>
 				{{range .}}
 				<tr>
-					<td>{{.TestId}}</td>
-					<td>{{.Proj}}</td>
-					<td>{{.Current}}</td>
-					<td>{{.Time}}</td>
+					<td><a href="/testsession/{{urlquery .TestId}}">{{.TestId}}</a></td>
+					<td><a href="/testsession/{{urlquery .TestId}}">{{.Proj}}</a></td>
+					<td><a href="/testsession/{{urlquery .TestId}}">{{.Current}}</a></td>
+					<td><a href="/testsession/{{urlquery .TestId}}">{{.Time}}</a></td>
 				</tr>
 				{{else}}
 				<tr>
