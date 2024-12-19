@@ -58,7 +58,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {
-	username := GetSessionUser(r)
+	username := r.Context().Value("username")
 
 	var userKeys []UserKey
 	db.Where("username = ?", username).Find(&userKeys)

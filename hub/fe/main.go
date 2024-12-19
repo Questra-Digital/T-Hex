@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"context"
 
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
@@ -18,7 +19,9 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(
+			context.WithValue(r.Context(), "username", sessionUsername),
+		))
 	})
 }
 
