@@ -23,7 +23,7 @@ func PasswordHashMatch(hash, plain string) bool {
 // whether a string is a valid email address
 func EmailIsValid(email string) bool {
 	_, err := mail.ParseAddress(email)
-	return err != nil
+	return err == nil
 }
 
 func UsernameIsValid(username string) bool {
@@ -37,6 +37,14 @@ func UsernameIsValid(username string) bool {
 		if r == '_' && i > 0 && i < len(username)-1 {
 			continue
 		}
+		return false
+	}
+	return true
+}
+
+func UsernameExists(username string) bool {
+	var user User
+	if err := db.First(&user, "username = ?", username).Error; err != nil {
 		return false
 	}
 	return true

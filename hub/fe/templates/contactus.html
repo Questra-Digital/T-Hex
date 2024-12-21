@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Contact Us</title>
+	</head>
+	<body>
+		<h1>Contact Us</h1>
+		<form action="/contactus" method="POST">
+			<input type="email" name="email" placeholder="Email" required>
+			<textarea name="message" placeholder="Message"></textarea>
+			<button type="submit">Submit</button>
+		</form>
+		{{if .}}
+		<p>{{.}}</p>
+		{{end}}
+	</body>
+</html>

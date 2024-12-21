@@ -96,6 +96,26 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }
 
+func ContactusHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		templates.ExecuteTemplate(w, "contactus.html", nil)
+		return
+	}
+	email := r.FormValue("email")
+	message := r.FormValue("message")
+	if !EmailIsValid(email) {
+		templates.ExecuteTemplate(w, "contactus.html", "Email is not valid")
+		return
+	}
+	if message == "" {
+		templates.ExecuteTemplate(w, "contactus.html", "Please fill the Message field")
+		return
+	}
+	// TODO log to DB
+	templates.ExecuteTemplate(w, "contactus.html", "Thank you for your message")
+	return
+}
+
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	ClearSessionUser(w, r)
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
