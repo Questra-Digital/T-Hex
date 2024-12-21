@@ -111,7 +111,13 @@ func ContactusHandler(w http.ResponseWriter, r *http.Request) {
 		templates.ExecuteTemplate(w, "contactus.html", "Please fill the Message field")
 		return
 	}
-	// TODO log to DB
+	var msg ContactUsMessage
+	msg.Email = email
+	msg.Message = message
+	if err := db.Save(&msg).Error; err != nil {
+		templates.ExecuteTemplate(w, "error.html", nil)
+		return
+	}
 	templates.ExecuteTemplate(w, "contactus.html", "Thank you for your message")
 	return
 }
