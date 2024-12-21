@@ -33,6 +33,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
 	}
+	err = db.AutoMigrate(&ContactUsMessage{})
+	if err != nil {
+		log.Fatalf("Error: %s", err.Error())
+	}
 	log.Printf("AutoMigrate done")
 
 	if os.Getenv("AM_DEMO") == "" {
