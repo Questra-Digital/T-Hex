@@ -143,6 +143,22 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "dashboard.html", testSessions)
 }
 
+func ApiKeyHandler(w http.ResponseWriter, r *http.Request) {
+	username := r.Context().Value("username").(string)
+	var userKeys []UserKey
+	db.Where("username = ?", username).Find(&userKeys)
+	type TemplateDate struct {
+		KeysAll     []string
+		KeyValid    string
+	}
+	var data TemplateDate
+	for _, key := range userKeys {
+		data.KeysAll = append(data.KeysAll, key.Key)
+	}
+	data.KeyValid = UserGetCurrentKey(username)
+	templates.ExecuteTemplate(w, "apikeys.html", data)
+}
+
 func TestSessionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	testId, _ := strconv.ParseInt(vars["testId"], 10, 64)

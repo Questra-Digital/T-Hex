@@ -49,3 +49,18 @@ func UsernameExists(username string) bool {
 	}
 	return true
 }
+
+func UserGetCurrentKey(username string) string {
+	var result struct {
+		Key string
+	}
+	err := db.Table("users_keys").
+		Select("api_keys.key").
+		Joins("JOIN api_keys ON users_keys.key = api_keys.key").
+		Where("users_keys.username = ?", username).
+		Scan(&result).Error
+	if err != nil {
+		return ""
+	}
+	return result.Key
+}
