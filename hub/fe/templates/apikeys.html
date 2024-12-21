@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>T-Hex API Keys</title>
+	</head>
+	<body>
+		{{if .KeyValid}}
+		<p>Currently Valid Key: {{.KeyValid}}</p>
+		{{end}}
+		<h1>All Keys</h1>
+		<table border="1">
+			<thead>
+				<tr>
+					<th>Key</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{range .KeysAll}}
+				<tr>
+					<td>{{.}}</td>
+				</tr>
+				{{else}}
+				<tr>
+					<td colspan="1">No API Keys</td>
+				</tr>
+				{{end}}
+			</tbody>
+		</table>
+		<a href="/dashboard">Back to Dashboard</a>
+	</body>
+</html>
