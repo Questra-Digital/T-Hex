@@ -1,10 +1,10 @@
 package main
 
 import (
+	"embed"
 	"html/template"
 	"net/http"
 	"strconv"
-	"embed"
 
 	"github.com/gorilla/mux"
 )
@@ -53,6 +53,45 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	SetSessionUser(w, username)
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+}
+
+func SignupHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		templates.ExecuteTemplate(w, "signup.html", nil)
+		return
+	}
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+	cpassword := r.FormValue("cpassword")
+	if !UsernameIsValid(username) {
+		templates.ExecuteTemplate(w, "signup.html", "Username is not valid. " +
+			"Username must be alphanumeric, at least 4 characters long.")
+		return
+	}
+	if password != cpassword {
+		templates.ExecuteTemplate(w, "signup.html", "Passwords do not match.")
+		return
+	}
+	if UsernameExists(username) {
+		templates.ExecuteTemplate(w, "signup.html", "Username is taken.")
+		return
+	}
+	// create
+	var user User
+	user.Username = username
+	var err error
+	user.Password, err = PasswordHash(password)
+	if err != nil {
+		templates.ExecuteTemplate(w, "error.html", nil)
+		return
+	}
+	err = db.Save(&user).Error
+	if err != nil {
+		templates.ExecuteTemplate(w, "error.html", nil)
+		return
+	}
 	SetSessionUser(w, username)
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }
