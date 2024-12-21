@@ -103,3 +103,14 @@ type TestSession struct {
 func (TestSession) TableName() string {
 	return "test_sessions"
 }
+
+// ContactUs message
+type ContactUsMessage struct {
+	Id      int64 `gorm:"primaryKey;autoIncrement"`
+	Email   string
+	Message string
+}
+
+func (ContactUsMessage) TableName() string {
+	return "contactus_messages"
+}

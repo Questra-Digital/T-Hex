@@ -6,12 +6,13 @@
 	<body>
 		<h1>Login</h1>
 		<form action="/login" method="POST">
-			<input type="text" name="username" placeholder="Username">
-			<input type="password" name="password" placeholder="Password">
+			<input type="text" name="username" placeholder="Username" required>
+			<input type="password" name="password" placeholder="Password" required>
 			<button type="submit">Login</button>
 		</form>
 		{{if .}}
 		<p>{{.}}</p>
 		{{end}}
+		<p>Don't have an account? <a href="/signup">Sign Up</a></p>
 	</body>
 </html>

@@ -9,7 +9,6 @@
 		<table border="1">
 			<thead>
 				<tr>
-					<th>Test ID</th>
 					<th>Project</th>
 					<th>Current</th>
 					<th>Time</th>
@@ -18,14 +17,13 @@
 			<tbody>
 				{{range .}}
 				<tr>
-					<td><a href="/testsession/{{urlquery .TestId}}">{{.TestId}}</a></td>
 					<td><a href="/testsession/{{urlquery .TestId}}">{{.Proj}}</a></td>
 					<td><a href="/testsession/{{urlquery .TestId}}">{{.Current}}</a></td>
 					<td><a href="/testsession/{{urlquery .TestId}}">{{.Time}}</a></td>
 				</tr>
 				{{else}}
 				<tr>
-					<td colspan="4">No test sessions found.</td>
+					<td colspan="3">No test sessions found.</td>
 				</tr>
 				{{end}}
 			</tbody>

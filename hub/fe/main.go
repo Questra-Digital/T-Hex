@@ -32,8 +32,11 @@ func main() {
 	r.HandleFunc("/qs.css", ServeCSS).Methods("GET")
 	r.HandleFunc("/", ServeLandingPage).Methods("GET")
 	r.HandleFunc("/login", LoginHandler).Methods("GET", "POST")
+	r.HandleFunc("/signup", SignupHandler).Methods("GET", "POST")
+	r.HandleFunc("/contactus", ContactusHandler).Methods("GET", "POST")
 	r.HandleFunc("/logout", LogoutHandler).Methods("GET")
 	r.Handle("/dashboard", AuthMiddleware(http.HandlerFunc(DashboardHandler)))
+	r.Handle("/apikey", AuthMiddleware(http.HandlerFunc(ApiKeyHandler)))
 	r.Handle("/testsession/{testId:[0-9]+}", AuthMiddleware(http.HandlerFunc(TestSessionHandler)))
 	r.Handle("/session/{sessionId}", AuthMiddleware(http.HandlerFunc(SessionHandler)))
 
