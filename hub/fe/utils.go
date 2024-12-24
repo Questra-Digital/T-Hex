@@ -158,7 +158,7 @@ func ApiKeyGenerate(username string) (string, error) {
 		if err != nil {
 			panic("Error generating random key:" + err.Error())
 		}
-		newKey := hex.EncodeToString(keyBytes)
+		newKey = hex.EncodeToString(keyBytes)
 		var count int64
 		err = db.Model(&ApiKey{}).Where("key = ?", newKey).Count(&count).Error
 		if err != nil {
