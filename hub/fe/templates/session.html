@@ -1,38 +1,109 @@
 <!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 	<head>
-		<title>Session Details</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Sessions - T-Hex</title>
+		<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 	</head>
-	<body>
-		<h1>Session Details</h1>
-		<table border="1">
-			<thead>
-				<tr>
-					<th>Time</th>
-					<th>Method</th>
-					<th>Path</th>
-					<th>Request Body</th>
-					<th>Status</th>
-					<th>Response</th>
-				</tr>
-			</thead>
-			<tbody>
-				{{range .}}
-				<tr>
-					<td>{{.Time}}</td>
-					<td>{{.Method}}</td>
-					<td>{{.Path}}</td>
-					<td>{{.ReqBody}}</td>
-					<td>{{.Status}}</td>
-					<td>{{.Res}}</td>
-				</tr>
-				{{else}}
-				<tr>
-					<td colspan="6">No events found for this session.</td>
-				</tr>
-				{{end}}
-			</tbody>
-		</table>
-		<a href="/dashboard">Back to Dashboard</a>
+	<body class="bg-gray-50">
+		<nav class="bg-white shadow-sm fixed w-full z-10">
+			<div class="container mx-auto px-4">
+				<div class="flex justify-between items-center h-16">
+					<a href="/" class="text-2xl font-bold text-blue-600">T-Hex</a>
+					<div class="flex space-x-4 items-center">
+						<a href="/contactus" class="text-gray-600 hover:text-blue-600 transition">Contact Us</a>
+						<a href="/signup" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">Sign Up</a>
+					</div>
+				</div>
+			</div>
+		</nav>
+		<main class="pt-16">
+			<div class="py-10">
+				<div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+					<h1 class="text-3xl font-bold text-gray-900 mb-8">Session Details</h1>
+
+					<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+						<div class="overflow-x-auto">
+							<table class="min-w-full divide-y divide-gray-200">
+								<thead class="bg-gray-50">
+									<tr>
+										<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+										<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
+										<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Path</th>
+										<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request Body</th>
+										<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+										<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Response</th>
+									</tr>
+								</thead>
+								<tbody class="bg-white divide-y divide-gray-200">
+									{{range .}}
+									<tr class="hover:bg-gray-50">
+										<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{.Time}}</td>
+										<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{.Method}}</td>
+										<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{.Path}}</td>
+										<td class="px-6 py-4 text-sm text-gray-500">
+											<div class="max-w-xs overflow-hidden overflow-ellipsis">{{.ReqBody}}</div>
+										</td>
+										<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{.Status}}</td>
+										<td class="px-6 py-4 text-sm text-gray-500">
+											<div class="max-w-xs overflow-hidden overflow-ellipsis">{{.Res}}</div>
+										</td>
+									</tr>
+									{{else}}
+									<tr>
+										<td colspan="6" class="px-6 py-4 text-center text-gray-500">No events found for this session.</td>
+									</tr>
+									{{end}}
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div class="mt-6">
+						<a href="/dashboard"
+							 class="text-sm font-medium text-blue-600 hover:text-blue-500">
+							&larr; Back to Dashboard
+						</a>
+					</div>
+				</div>
+			</div>
+		</main>
+		<footer class="bg-gray-800 text-gray-300 py-12 mt-auto">
+			<div class="container mx-auto px-4">
+				<div class="grid md:grid-cols-2 gap-8">
+					<div>
+						<h3 class="text-xl font-semibold mb-4">About T-Hex</h3>
+						<p class="mb-4">
+						T-Hex is built on and works with Selenium WebDriver™, an open source project made possible
+						by the Selenium community. Selenium™ and WebDriver™ are trademarks of the Software
+						Freedom Conservancy.
+						</p>
+						<p>We are not affiliated with or endorsed by the Selenium project or Software Freedom Conservancy.</p>
+					</div>
+					<div class="md:text-right">
+						<h3 class="text-xl font-semibold mb-4">Connect With Us</h3>
+						<div class="flex flex-col items-end space-y-3">
+							<a href="https://github.com/Questra-Digital/t-hex" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 text-gray-300 hover:text-white transition">
+								<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+									<path d="M12 .5a11.5 11.5 0 00-3.636 22.435c.575.105.784-.25.784-.554v-2.166c-3.17.689-3.839-1.532-3.839-1.532a3.024 3.024 0 00-1.263-1.662c-1.035-.707.08-.693.08-.693a2.394 2.394 0 011.744 1.175 2.426 2.426 0 003.324.947 2.437 2.437 0 01.727-1.55c-2.532-.289-5.2-1.266-5.2-5.638a4.406 4.406 0 011.172-3.047 4.13 4.13 0 01.111-3.003s.957-.306 3.137 1.164a10.878 10.878 0 015.713 0c2.179-1.47 3.135-1.164 3.135-1.164a4.13 4.13 0 01.112 3.003 4.406 4.406 0 011.172 3.047c0 4.384-2.675 5.344-5.219 5.628a2.738 2.738 0 01.778 2.12v3.145c0 .306.209.66.79.55A11.5 11.5 0 0012 .5z"></path>
+								</svg>
+								<span>View on GitHub</span>
+							</a>
+							<a href="/contactus" class="inline-flex items-center space-x-2 text-gray-300 hover:text-white transition">
+								<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+									<path d="M12 12a2.5 2.5 0 11-2.5-2.5A2.5 2.5 0 0112 12zm0 0h4m0 0H12a7 7 0 007-7h0a7 7 0 00-7 7z"></path>
+								</svg>
+								<span>Contact Us</span>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="border-t border-gray-700 mt-8 pt-8 text-center">
+					<p>&copy; {{.Year}} T-Hex. All rights reserved.</p>
+				</div>
+			</div>
+		</footer>
 	</body>
 </html>
