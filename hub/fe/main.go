@@ -35,10 +35,11 @@ func main() {
 	r.HandleFunc("/signup", SignupHandler).Methods("GET", "POST")
 	r.HandleFunc("/contactus", ContactusHandler).Methods("GET", "POST")
 	r.HandleFunc("/logout", LogoutHandler).Methods("GET")
-	r.Handle("/dashboard", AuthMiddleware(http.HandlerFunc(DashboardHandler)))
-	r.Handle("/apikey", AuthMiddleware(http.HandlerFunc(ApiKeyHandler)))
-	r.Handle("/testsession/{testId:[0-9]+}", AuthMiddleware(http.HandlerFunc(TestSessionHandler)))
-	r.Handle("/session/{sessionId}", AuthMiddleware(http.HandlerFunc(SessionHandler)))
+	r.Handle("/dashboard", AuthMiddleware(http.HandlerFunc(DashboardHandler))).Methods("GET")
+	r.Handle("/apikey", AuthMiddleware(http.HandlerFunc(ApiKeyHandler))).Methods("GET")
+	r.Handle("/apikeygen", AuthMiddleware(http.HandlerFunc(ApiKeyGenHandler))).Methods("POST")
+	r.Handle("/testsession/{testId:[0-9]+}", AuthMiddleware(http.HandlerFunc(TestSessionHandler))).Methods("GET")
+	r.Handle("/session/{sessionId}", AuthMiddleware(http.HandlerFunc(SessionHandler))).Methods("GET")
 
 	listen := os.Getenv("LISTEN")
 	if listen == "" {
