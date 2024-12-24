@@ -160,6 +160,17 @@ func ApiKeyHandler(w http.ResponseWriter, r *http.Request) {
 
 func ApiKeyGenHandler(w http.ResponseWriter, r *http.Request) {
 	username := r.Context().Value("username").(string)
+	token := r.PostFormValue("token")
+	if username == "" || token == "" || SingleUseTokenGet(username) != token {
+		http.Error(w, "Bad Token", http.StatusUnauthorized)
+		return
+	}
+	key, err := ApiKeyGenerate(username)
+	if err != nil {
+		templates.ExecuteTemplate(w, "apikeyres.html", "ERROR GENERATING KEY")
+		return
+	}
+	templates.ExecuteTemplate(w, "apikeyres.html", key)
 }
 
 func TestSessionHandler(w http.ResponseWriter, r *http.Request) {

@@ -3,12 +3,14 @@ package main
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"net/mail"
 	"sync"
 	"time"
 	"unicode"
 
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 // hashes the password using bcrypt
@@ -125,4 +127,65 @@ func SingleUseTokenInvalidationStart(timer time.Duration) {
 			}
 		}
 	}
+}
+
+var keyGenMu sync.Mutex
+
+func ApiKeyGenerate(username string) (string, error) {
+	currentKey := UserGetCurrentKey(username)
+	if currentKey != "" {
+		err := db.Transaction(func(tx *gorm.DB) error {
+			if err := tx.Delete(&ApiKey{}, "key = ?", currentKey).Error; err != nil {
+				return err
+			}
+			if err := tx.Delete(&UserKey{}, "username = ? AND key = ?", username,
+					currentKey).Error; err != nil {
+				return err
+			}
+			return nil
+		})
+		if err != nil {
+			return "", fmt.Errorf("error deleting current key: %w", err)
+		}
+	}
+
+	var newKey string
+	keyGenMu.Lock()
+	defer keyGenMu.Unlock()
+	for {
+		keyBytes := make([]byte, 64)
+		_, err := rand.Read(keyBytes)
+		if err != nil {
+			panic("Error generating random key:" + err.Error())
+		}
+		newKey := hex.EncodeToString(keyBytes)
+		var count int64
+		err = db.Model(&ApiKey{}).Where("key = ?", newKey).Count(&count).Error
+		if err != nil {
+			return "", fmt.Errorf("error checking ApiKey table: %w", err)
+		}
+		if count == 0 {
+			err = db.Model(&UserKey{}).Where("key = ?", newKey).Count(&count).Error
+			if err != nil {
+				return "", fmt.Errorf("error checking UserKey table: %w", err)
+			}
+		}
+		if count == 0 {
+			break
+		}
+	}
+
+	err := db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&ApiKey{Key: newKey}).Error; err != nil {
+			return err
+		}
+		if err := tx.Create(&UserKey{Username: username, Key: newKey}).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return "", fmt.Errorf("error inserting new key: %w", err)
+	}
+	return newKey, nil
 }
