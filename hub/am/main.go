@@ -33,13 +33,17 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
 	}
+	err = db.AutoMigrate(&ContactUsMessage{})
+	if err != nil {
+		log.Fatalf("Error: %s", err.Error())
+	}
 	log.Printf("AutoMigrate done")
 
 	if os.Getenv("AM_DEMO") == "" {
 		return
 	}
 
-	bytes, err := bcrypt.GenerateFromPassword([]byte("abcd1234"),
+	/*bytes, err := bcrypt.GenerateFromPassword([]byte("abcd1234"),
 		bcrypt.DefaultCost)
 	if err != nil {
 		log.Fatalf("Failed hashing password: %s", err.Error())
@@ -56,6 +60,6 @@ func main() {
 
 	if err := db.Create(&UserKey{"nafees", "abcd1234"}).Error; err != nil {
 		log.Fatalf("Failed to add User-Key relation: %s", err.Error())
-	}
+	}*/
 
 }

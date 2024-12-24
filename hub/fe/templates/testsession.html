@@ -8,7 +8,6 @@
 		<table border="1">
 			<thead>
 				<tr>
-					<th>Session ID</th>
 					<th>Time</th>
 					<th>Valid</th>
 					<th>Status</th>
@@ -18,7 +17,6 @@
 			<tbody>
 				{{range .}}
 				<tr>
-					<td><a href="/session/{{urlquery .SessionId}}">{{.SessionId}}</a></td>
 					<td><a href="/session/{{urlquery .SessionId}}">{{.Time}}</a></td>
 					<td><a href="/session/{{urlquery .SessionId}}">{{.Valid}}</a></td>
 					<td><a href="/session/{{urlquery .SessionId}}">{{.Status}}</a></td>
@@ -26,7 +24,7 @@
 				</tr>
 				{{else}}
 				<tr>
-					<td colspan="5">No sessions found for this test.</td>
+					<td colspan="4">No sessions found for this test.</td>
 				</tr>
 				{{end}}
 			</tbody>

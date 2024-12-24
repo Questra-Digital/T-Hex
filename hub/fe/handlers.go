@@ -1,10 +1,10 @@
 package main
 
 import (
+	"embed"
 	"html/template"
 	"net/http"
 	"strconv"
-	"embed"
 
 	"github.com/gorilla/mux"
 )
@@ -57,6 +57,71 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }
 
+func SignupHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		templates.ExecuteTemplate(w, "signup.html", nil)
+		return
+	}
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+	cpassword := r.FormValue("cpassword")
+	if !UsernameIsValid(username) {
+		templates.ExecuteTemplate(w, "signup.html", "Username is not valid. " +
+			"Username must be alphanumeric, at least 4 characters long.")
+		return
+	}
+	if password != cpassword {
+		templates.ExecuteTemplate(w, "signup.html", "Passwords do not match.")
+		return
+	}
+	if UsernameExists(username) {
+		templates.ExecuteTemplate(w, "signup.html", "Username is taken.")
+		return
+	}
+	// create
+	var user User
+	user.Username = username
+	var err error
+	user.Password, err = PasswordHash(password)
+	if err != nil {
+		templates.ExecuteTemplate(w, "error.html", nil)
+		return
+	}
+	err = db.Save(&user).Error
+	if err != nil {
+		templates.ExecuteTemplate(w, "error.html", nil)
+		return
+	}
+	SetSessionUser(w, username)
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+}
+
+func ContactusHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		templates.ExecuteTemplate(w, "contactus.html", nil)
+		return
+	}
+	email := r.FormValue("email")
+	message := r.FormValue("message")
+	if !EmailIsValid(email) {
+		templates.ExecuteTemplate(w, "contactus.html", "Email is not valid")
+		return
+	}
+	if message == "" {
+		templates.ExecuteTemplate(w, "contactus.html", "Please fill the Message field")
+		return
+	}
+	var msg ContactUsMessage
+	msg.Email = email
+	msg.Message = message
+	if err := db.Save(&msg).Error; err != nil {
+		templates.ExecuteTemplate(w, "error.html", nil)
+		return
+	}
+	templates.ExecuteTemplate(w, "contactus.html", "Thank you for your message")
+	return
+}
+
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	ClearSessionUser(w, r)
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -76,6 +141,36 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	templates.ExecuteTemplate(w, "dashboard.html", testSessions)
+}
+
+func ApiKeyHandler(w http.ResponseWriter, r *http.Request) {
+	username := r.Context().Value("username").(string)
+	type TemplateData struct {
+		Error string
+		Token string
+	}
+	var data TemplateData
+	data.Token = SingleUseTokenGenerate(username)
+	if data.Token == "" {
+		data.Error = "You have already visited this page within last 2 minutes. " +
+			"Try again later";
+	}
+	templates.ExecuteTemplate(w, "apikeys.html", data)
+}
+
+func ApiKeyGenHandler(w http.ResponseWriter, r *http.Request) {
+	username := r.Context().Value("username").(string)
+	token := r.PostFormValue("token")
+	if username == "" || token == "" || SingleUseTokenGet(username) != token {
+		http.Error(w, "Bad Token", http.StatusUnauthorized)
+		return
+	}
+	key, err := ApiKeyGenerate(username)
+	if err != nil {
+		templates.ExecuteTemplate(w, "apikeyres.html", "ERROR GENERATING KEY")
+		return
+	}
+	templates.ExecuteTemplate(w, "apikeyres.html", key)
 }
 
 func TestSessionHandler(w http.ResponseWriter, r *http.Request) {

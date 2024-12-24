@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>T-Hex API Key</title>
+	</head>
+	<body>
+		<h1>T-Hex API Key</h1>
+		{{if .Error}}
+		<p style="color: red;">
+			{{.Error}}
+		</p>
+		{{else}}
+		<p>
+		You can regenerate your T-Hex API Key here.<br>
+		This page will expire within two minutes.<br>
+		Generating a new key will invalidate your existing key.
+		</p>
+		<form action="/apikeygen" method="POST">
+			<input hidden name="token" value="{{.Token}}">
+			<input type="submit" value="Generate Key">
+		</form>
+		{{end}}
+		<a href="/dashboard">Back to Dashboard</a>
+	</body>
+</html>
