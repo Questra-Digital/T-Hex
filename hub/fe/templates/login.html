@@ -41,8 +41,8 @@
 							Login
 						</button>
 					</form>
-					{{if .}}
-					<p class="text-red-500 text-center mt-4">{{.}}</p>
+					{{if .Error}}
+					<p class="text-red-500 text-center mt-4">{{.Error}}</p>
 					{{end}}
 					<p class="text-center mt-6 text-gray-700">
 					Don't have an account?

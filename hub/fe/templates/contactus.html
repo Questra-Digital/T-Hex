@@ -60,7 +60,12 @@
 						</form>
 						{{if .}}
 						<div class="mt-4 text-center text-sm text-green-600">
-							{{.}}
+							{{if .Error}}
+							{{.Error}}
+							{{end}}
+							{{if .Message}}
+							{{.Message}}
+							{{end}}
 						</div>
 						{{end}}
 					</div>

@@ -3,8 +3,10 @@ package main
 import (
 	"embed"
 	"html/template"
+	"io"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -16,6 +18,15 @@ var templatesFS embed.FS
 var cssFS embed.FS
 
 var templates = template.Must(template.ParseFS(templatesFS, "templates/*.html"))
+
+func TemplateExec(w io.Writer, tmpl string, vals map[string]interface{}) {
+	if vals == nil {
+		templates.ExecuteTemplate(w, tmpl, map[string]interface{}{"Year": time.Now().Year()})
+		return
+	}
+	vals["Year"] = time.Now().Year()
+	templates.ExecuteTemplate(w, tmpl, vals)
+}
 
 func ServeCSS(w http.ResponseWriter, r *http.Request) {
 	cssFile, err := cssFS.ReadFile("qs.css")
@@ -29,13 +40,12 @@ func ServeCSS(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServeLandingPage(w http.ResponseWriter, r *http.Request) {
-	templates.ExecuteTemplate(w, "landing.html",
-		"© 2024 T-Hex. All rights reserved.")
+	TemplateExec(w, "landing.html", nil)
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		templates.ExecuteTemplate(w, "login.html", nil)
+		TemplateExec(w, "login.html", nil)
 		return
 	}
 
@@ -44,12 +54,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var user User
 	if err := db.First(&user, "username = ?", username).Error; err != nil {
-		templates.ExecuteTemplate(w, "login.html", "Invalid credentials")
+		TemplateExec(w, "login.html", map[string]interface{}{
+			"Error": "Invalid credentials"})
 		return
 	}
 
 	if !PasswordHashMatch(user.Password, password) {
-		templates.ExecuteTemplate(w, "login.html", "Invalid credentials")
+		TemplateExec(w, "login.html", map[string]interface{}{
+			"Error": "Invalid credentials"})
 		return
 	}
 
@@ -59,23 +71,29 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		templates.ExecuteTemplate(w, "signup.html", nil)
+		TemplateExec(w, "signup.html", nil)
 		return
 	}
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 	cpassword := r.FormValue("cpassword")
 	if !UsernameIsValid(username) {
-		templates.ExecuteTemplate(w, "signup.html", "Username is not valid. " +
-			"Username must be alphanumeric, at least 4 characters long.")
+		TemplateExec(w, "signup.html", map[string]interface{}{
+				"Error": "Username is not valid. " +
+					"Username must be alphanumeric, at least 4 characters long.",
+			})
 		return
 	}
 	if password != cpassword {
-		templates.ExecuteTemplate(w, "signup.html", "Passwords do not match.")
+		TemplateExec(w, "signup.html", map[string]interface{}{
+				"Error": "Passwords do not match.",
+			})
 		return
 	}
 	if UsernameExists(username) {
-		templates.ExecuteTemplate(w, "signup.html", "Username is taken.")
+		TemplateExec(w, "signup.html", map[string]interface{}{
+				"Error": "Username is taken.",
+			})
 		return
 	}
 	// create
@@ -84,12 +102,12 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	var err error
 	user.Password, err = PasswordHash(password)
 	if err != nil {
-		templates.ExecuteTemplate(w, "error.html", nil)
+		TemplateExec(w, "error.html", nil)
 		return
 	}
 	err = db.Save(&user).Error
 	if err != nil {
-		templates.ExecuteTemplate(w, "error.html", nil)
+		TemplateExec(w, "error.html", nil)
 		return
 	}
 	SetSessionUser(w, username)
@@ -98,27 +116,33 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 func ContactusHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		templates.ExecuteTemplate(w, "contactus.html", nil)
+		TemplateExec(w, "contactus.html", nil)
 		return
 	}
 	email := r.FormValue("email")
 	message := r.FormValue("message")
 	if !EmailIsValid(email) {
-		templates.ExecuteTemplate(w, "contactus.html", "Email is not valid")
+		TemplateExec(w, "contactus.html", map[string]interface{}{
+				"Error": "Email is not valid.",
+			})
 		return
 	}
 	if message == "" {
-		templates.ExecuteTemplate(w, "contactus.html", "Please fill the Message field")
+		TemplateExec(w, "contactus.html", map[string]interface{}{
+				"Error": "Please fill the Message field",
+			})
 		return
 	}
 	var msg ContactUsMessage
 	msg.Email = email
 	msg.Message = message
 	if err := db.Save(&msg).Error; err != nil {
-		templates.ExecuteTemplate(w, "error.html", nil)
+		TemplateExec(w, "error.html", nil)
 		return
 	}
-	templates.ExecuteTemplate(w, "contactus.html", "Thank you for your message")
+	TemplateExec(w, "contactus.html", map[string]interface{}{
+		"Message": "Thank you for your message",
+	})
 	return
 }
 
@@ -140,22 +164,23 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 		testSessions = append(testSessions, sessions...)
 	}
 
-	templates.ExecuteTemplate(w, "dashboard.html", testSessions)
+	TemplateExec(w, "dashboard.html", map[string]interface{}{
+		"TestSessions": testSessions,
+	})
 }
 
 func ApiKeyHandler(w http.ResponseWriter, r *http.Request) {
 	username := r.Context().Value("username").(string)
-	type TemplateData struct {
-		Error string
-		Token string
+	token := SingleUseTokenGenerate(username)
+	if token == "" {
+		TemplateExec(w, "apikeys.html", map[string]interface{}{
+			"Error": "You have already visited this page within last 2 minutes. " +
+			"Try again later",
+		})
 	}
-	var data TemplateData
-	data.Token = SingleUseTokenGenerate(username)
-	if data.Token == "" {
-		data.Error = "You have already visited this page within last 2 minutes. " +
-			"Try again later";
-	}
-	templates.ExecuteTemplate(w, "apikeys.html", data)
+	TemplateExec(w, "apikeys.html", map[string]interface{}{
+		"Token": token,
+	})
 }
 
 func ApiKeyGenHandler(w http.ResponseWriter, r *http.Request) {
@@ -167,10 +192,14 @@ func ApiKeyGenHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	key, err := ApiKeyGenerate(username)
 	if err != nil {
-		templates.ExecuteTemplate(w, "apikeyres.html", "ERROR GENERATING KEY")
+		TemplateExec(w, "apikeyres.html", map[string]interface{}{
+			"key": "ERROR GENERATING KEY",
+		})
 		return
 	}
-	templates.ExecuteTemplate(w, "apikeyres.html", key)
+	TemplateExec(w, "apikeyres.html", map[string]interface{}{
+		"key": key,
+	})
 }
 
 func TestSessionHandler(w http.ResponseWriter, r *http.Request) {
@@ -180,7 +209,9 @@ func TestSessionHandler(w http.ResponseWriter, r *http.Request) {
 	var sessions []Session
 	db.Where("test_id = ?", testId).Order("time DESC").Find(&sessions)
 
-	templates.ExecuteTemplate(w, "testsession.html", sessions)
+	TemplateExec(w, "testsession.html", map[string]interface{}{
+		"Sessions": sessions,
+	})
 }
 
 func SessionHandler(w http.ResponseWriter, r *http.Request) {
@@ -190,5 +221,7 @@ func SessionHandler(w http.ResponseWriter, r *http.Request) {
 	var events []Event
 	db.Where("session_id = ?", sessionId).Order("time DESC").Find(&events)
 
-	templates.ExecuteTemplate(w, "session.html", events)
+	TemplateExec(w, "session.html", map[string]interface{}{
+		"Events": events,
+	})
 }
