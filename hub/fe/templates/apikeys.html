@@ -1,25 +1,101 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
-		<title>T-Hex API Key</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>API Key - T-Hex</title>
+		<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 	</head>
-	<body>
-		<h1>T-Hex API Key</h1>
-		{{if .Error}}
-		<p style="color: red;">
-			{{.Error}}
-		</p>
-		{{else}}
-		<p>
-		You can regenerate your T-Hex API Key here.<br>
-		This page will expire within two minutes.<br>
-		Generating a new key will invalidate your existing key.
-		</p>
-		<form action="/apikeygen" method="POST">
-			<input hidden name="token" value="{{.Token}}">
-			<input type="submit" value="Generate Key">
-		</form>
-		{{end}}
-		<a href="/dashboard">Back to Dashboard</a>
+	<body class="bg-gray-50">
+		<nav class="bg-white shadow-sm fixed w-full z-10">
+			<div class="container mx-auto px-4">
+				<div class="flex justify-between items-center h-16">
+					<a href="/" class="text-2xl font-bold text-blue-600">T-Hex</a>
+					<div class="flex space-x-4 items-center">
+						<a href="/contactus" class="text-gray-600 hover:text-blue-600 transition">Contact Us</a>
+						<a href="/signup" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">Sign Up</a>
+					</div>
+				</div>
+			</div>
+		</nav>
+		<main class="pt-16">
+			<div class="py-10">
+				<div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+					<div class="bg-white overflow-hidden shadow rounded-lg">
+						<div class="px-4 py-5 sm:p-6">
+							<h1 class="text-2xl font-bold text-gray-900 mb-4">T-Hex API Key</h1>
+
+							{{if .Error}}
+							<div class="rounded-md bg-red-50 p-4 mb-4">
+								<div class="flex">
+									<div class="text-sm text-red-700">
+										{{.Error}}
+									</div>
+								</div>
+							</div>
+							{{else}}
+							<div class="space-y-4">
+								<p class="text-gray-600">
+								You can regenerate your T-Hex API Key here.<br>
+								This page will expire within two minutes.<br>
+								Generating a new key will invalidate your existing key.
+								</p>
+
+								<form action="/apikeygen" method="POST">
+									<input type="hidden" name="token" value="{{.Token}}">
+									<button type="submit"
+													class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+										Generate Key
+									</button>
+								</form>
+							</div>
+							{{end}}
+
+							<div class="mt-6">
+								<a href="/dashboard"
+									 class="text-sm font-medium text-blue-600 hover:text-blue-500">
+									&larr; Back to Dashboard
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<footer class="bg-gray-800 text-gray-300 py-12 mt-auto">
+			<div class="container mx-auto px-4">
+				<div class="grid md:grid-cols-2 gap-8">
+					<div>
+						<h3 class="text-xl font-semibold mb-4">About T-Hex</h3>
+						<p class="mb-4">
+						T-Hex is built on and works with Selenium WebDriver™, an open source project made possible
+						by the Selenium community. Selenium™ and WebDriver™ are trademarks of the Software
+						Freedom Conservancy.
+						</p>
+						<p>We are not affiliated with or endorsed by the Selenium project or Software Freedom Conservancy.</p>
+					</div>
+					<div class="md:text-right">
+						<h3 class="text-xl font-semibold mb-4">Connect With Us</h3>
+						<div class="flex flex-col items-end space-y-3">
+							<a href="https://github.com/Questra-Digital/t-hex" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 text-gray-300 hover:text-white transition">
+								<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+									<path d="M12 .5a11.5 11.5 0 00-3.636 22.435c.575.105.784-.25.784-.554v-2.166c-3.17.689-3.839-1.532-3.839-1.532a3.024 3.024 0 00-1.263-1.662c-1.035-.707.08-.693.08-.693a2.394 2.394 0 011.744 1.175 2.426 2.426 0 003.324.947 2.437 2.437 0 01.727-1.55c-2.532-.289-5.2-1.266-5.2-5.638a4.406 4.406 0 011.172-3.047 4.13 4.13 0 01.111-3.003s.957-.306 3.137 1.164a10.878 10.878 0 015.713 0c2.179-1.47 3.135-1.164 3.135-1.164a4.13 4.13 0 01.112 3.003 4.406 4.406 0 011.172 3.047c0 4.384-2.675 5.344-5.219 5.628a2.738 2.738 0 01.778 2.12v3.145c0 .306.209.66.79.55A11.5 11.5 0 0012 .5z"></path>
+								</svg>
+								<span>View on GitHub</span>
+							</a>
+							<a href="/contactus" class="inline-flex items-center space-x-2 text-gray-300 hover:text-white transition">
+								<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+									<path d="M12 12a2.5 2.5 0 11-2.5-2.5A2.5 2.5 0 0112 12zm0 0h4m0 0H12a7 7 0 007-7h0a7 7 0 00-7 7z"></path>
+								</svg>
+								<span>Contact Us</span>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="border-t border-gray-700 mt-8 pt-8 text-center">
+					<p>&copy; {{.Year}} T-Hex. All rights reserved.</p>
+				</div>
+			</div>
+		</footer>
 	</body>
 </html>
