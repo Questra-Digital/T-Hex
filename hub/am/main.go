@@ -43,7 +43,7 @@ func main() {
 		return
 	}
 
-	bytes, err := bcrypt.GenerateFromPassword([]byte("abcd1234"),
+	/*bytes, err := bcrypt.GenerateFromPassword([]byte("abcd1234"),
 		bcrypt.DefaultCost)
 	if err != nil {
 		log.Fatalf("Failed hashing password: %s", err.Error())
@@ -60,6 +60,6 @@ func main() {
 
 	if err := db.Create(&UserKey{"nafees", "abcd1234"}).Error; err != nil {
 		log.Fatalf("Failed to add User-Key relation: %s", err.Error())
-	}
+	}*/
 
 }
