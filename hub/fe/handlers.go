@@ -198,7 +198,7 @@ func ApiKeyGenHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	TemplateExec(w, "apikeyres.html", map[string]interface{}{
-		"key": key,
+		"Key": key,
 	})
 }
 
