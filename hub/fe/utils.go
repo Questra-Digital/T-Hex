@@ -78,7 +78,7 @@ var SingleUseTokens = struct {
 
 func SingleUseTokenGenerate(username string) string {
 	if data, exists := SingleUseTokens.data[username]; exists &&
-			time.Now().After(data.Time) {
+			time.Now().Before(data.Time) {
 		return "" // refuse to generate new if previous not expired
 	}
 	for {
