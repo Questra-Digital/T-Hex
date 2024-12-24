@@ -21,7 +21,7 @@ func SessionCreate(username string) string {
 		tokenBytes := make([]byte, 64)
 		_, err := rand.Read(tokenBytes)
 		if err != nil {
-			panic("Error generating random token:")
+			panic("Error generating random token:" + err.Error())
 		}
 		token := hex.EncodeToString(tokenBytes)
 		tokenStoreMu.RLock()
@@ -48,19 +48,15 @@ func SessionInvalidate(token string) {
 	tokenStoreMu.Unlock()
 }
 
-func SessionAutoInvalidate() {
-	for token, session := range tokenStore {
-		if time.Now().After(session.ExpiresAt) {
-			SessionInvalidate(token)
-		}
-	}
-}
-
-func startSessionAutoInvalidation() {
-	ticker := time.NewTicker(30 * time.Minute)
+func SessionAutoInvalidationStart(timer time.Duration) {
+	ticker := time.NewTicker(timer)
 	defer ticker.Stop()
 	for range ticker.C {
-		SessionAutoInvalidate()
+		for token, session := range tokenStore {
+			if time.Now().After(session.ExpiresAt) {
+				SessionInvalidate(token)
+			}
+		}
 	}
 }
 
