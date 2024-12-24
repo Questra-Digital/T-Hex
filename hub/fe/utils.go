@@ -75,6 +75,10 @@ var SingleUseTokens = struct {
 }{data: make(map[string]struct{Time time.Time; Key string})}
 
 func SingleUseTokenGenerate(username string) string {
+	if data, exists := SingleUseTokens.data[username]; exists &&
+			time.Now().After(data.Time) {
+		return "" // refuse to generate new if previous not expired
+	}
 	for {
 		tokenBytes := make([]byte, 64)
 		_, err := rand.Read(tokenBytes)

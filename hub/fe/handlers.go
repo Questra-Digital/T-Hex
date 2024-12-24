@@ -145,18 +145,21 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 
 func ApiKeyHandler(w http.ResponseWriter, r *http.Request) {
 	username := r.Context().Value("username").(string)
-	var userKeys []UserKey
-	db.Where("username = ?", username).Find(&userKeys)
-	type TemplateDate struct {
-		KeysAll     []string
-		KeyValid    string
+	type TemplateData struct {
+		Error string
+		Token string
 	}
-	var data TemplateDate
-	for _, key := range userKeys {
-		data.KeysAll = append(data.KeysAll, key.Key)
+	var data TemplateData
+	data.Token = SingleUseTokenGenerate(username)
+	if data.Token == "" {
+		data.Error = "You have already visited this page within last 2 minutes. " +
+			"Try again later";
 	}
-	data.KeyValid = UserGetCurrentKey(username)
 	templates.ExecuteTemplate(w, "apikeys.html", data)
+}
+
+func ApiKeyGenHandler(w http.ResponseWriter, r *http.Request) {
+	username := r.Context().Value("username").(string)
 }
 
 func TestSessionHandler(w http.ResponseWriter, r *http.Request) {
