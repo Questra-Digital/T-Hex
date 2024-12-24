@@ -1,31 +1,19 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>T-Hex API Keys</title>
+		<title>T-Hex API Key</title>
 	</head>
 	<body>
-		{{if .KeyValid}}
-		<p>Currently Valid Key: {{.KeyValid}}</p>
-		{{end}}
-		<h1>All Keys</h1>
-		<table border="1">
-			<thead>
-				<tr>
-					<th>Key</th>
-				</tr>
-			</thead>
-			<tbody>
-				{{range .KeysAll}}
-				<tr>
-					<td>{{.}}</td>
-				</tr>
-				{{else}}
-				<tr>
-					<td colspan="1">No API Keys</td>
-				</tr>
-				{{end}}
-			</tbody>
-		</table>
+		<h1>T-Hex API Key</h1>
+		<p>
+		You can regenerate your T-Hex API Key here.<br>
+		This page will expire within two minutes.<br>
+		Generating a new key will invalidate your existing key.
+		</p>
+		<form action="/apikeygen" method="POST">
+			<input hidden name="token" value="{{.}}">
+			<input type="submit" value="Generate Key">
+		</form>
 		<a href="/dashboard">Back to Dashboard</a>
 	</body>
 </html>
