@@ -1,14 +1,14 @@
 services:
   selenium-hub:
     image: selenium/hub:latest
-    #ports:
-    #  - "4444:4444"
+    restart: always
     networks:
       - selenium-network
 
   chrome:
     image: selenium/node-chrome:latest
     container_name: node-chrome
+    restart: always
     depends_on:
       - selenium-hub
     volumes:
@@ -25,6 +25,7 @@ services:
   firefox:
     image: selenium/node-firefox:latest
     container_name: node-firefox
+    restart: always
     depends_on:
       - selenium-hub
     volumes:
@@ -40,13 +41,14 @@ services:
 
   db: # TODO: add volume
     image: postgres:latest
+    restart: always
     environment:
       POSTGRES_USER: thex
       POSTGRES_PASSWORD: thex1234 # TODO password
       POSTGRES_DB: thex
       PGUSER: thex
-    #ports:
-    #  - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     networks:
       - web-network
     healthcheck:
@@ -58,6 +60,7 @@ services:
 
   am: # TODO manual run
     image: am:latest
+    restart: no
     networks:
       - web-network
     environment:
@@ -68,6 +71,7 @@ services:
 
   proxse:
     image: proxse:latest
+    restart: always
     ports:
       - "4445:4445"
     networks:
@@ -81,6 +85,7 @@ services:
 
   fe:
     image: fe:latest
+    restart: always
     ports:
       - "80:8080"
     networks:
@@ -96,3 +101,6 @@ networks:
     driver: bridge
   web-network:
     driver: bridge
+
+volumes:
+  pgdata:
