@@ -1,12 +1,12 @@
 services:
   selenium-hub:
-    image: selenium/hub:latest
+    image: selenium/hub:4.27.0
     restart: always
     networks:
       - selenium-network
 
   chrome:
-    image: selenium/node-chrome:latest
+    image: selenium/node-chrome:131.0
     container_name: node-chrome
     restart: always
     depends_on:
@@ -23,7 +23,7 @@ services:
       - selenium-network
 
   firefox:
-    image: selenium/node-firefox:latest
+    image: selenium/node-firefox:133.0
     container_name: node-firefox
     restart: always
     depends_on:
@@ -40,7 +40,7 @@ services:
       - selenium-network
 
   db: # TODO: add volume
-    image: postgres:latest
+    image: postgres:14-alpine
     restart: always
     environment:
       POSTGRES_USER: thex
@@ -98,9 +98,7 @@ services:
 
 networks:
   selenium-network:
-    driver: bridge
   web-network:
-    driver: bridge
 
 volumes:
   pgdata:
