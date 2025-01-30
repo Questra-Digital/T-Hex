@@ -31,7 +31,7 @@ func KeyIsValid(key string) bool {
 	if !ok || time.Now().Unix()-entry.time > int64(ttl) {
 		// refresh cache
 		exist := false
-		_ = db.Model(&ApiKey{}).
+		_ = db.Model(&UserKey{}).
 			Select("count(*) > 0").
 			Where("key = ?", key).
 			Find(&exist).
@@ -72,11 +72,11 @@ func KeyIsValidForSess(key string, sessId string) bool {
 	if !ok || time.Now().Unix()-entry.Time > int64(ttl) {
 		// refresh cache
 		var result bool
-		err := db.Table("sessions").
+		err := db.Table("sessions_selenium").
 			Select("COUNT(*) > 0").
-			Joins("JOIN test_sessions ON sessions.test_id = test_sessions.test_id").
-			Where("sessions.session_id = ?", sessId).
-			Where("sessions.valid = ?", true).
+			Joins("JOIN test_sessions ON sessions_selenium.test_id = test_sessions.test_id").
+			Where("sessions_selenium.session_id = ?", sessId).
+			Where("sessions_selenium.valid = ?", true).
 			Where("test_sessions.key = ?", key).
 			Where("test_sessions.current = ?", true).
 			Find(&result).Error
@@ -127,7 +127,7 @@ func KeyMakeValidForSess(testId int64, key string, sessId string, proj string,
 		Valid: true,
 	}
 	ksessCache[StringPair{key, sessId}] = cacheEntry
-	entry := Session{
+	entry := SessionSelenium{
 		Time: cacheEntry.Time,
 		TestId: testId,
 		SessionId: sessId,
@@ -148,7 +148,7 @@ func KeyMakeInvalidForSess(key string, sessId string) error {
 	// invalidate in cache
 	ksessCache[StringPair{key, sessId}] = KSessCacheEntry{0, false}
 	// invalidate in db
-	err := db.Model(&Session{}).
+	err := db.Model(&SessionSelenium{}).
 		Where("session_id = ?", sessId).
 		Update("valid", false).
 		Error

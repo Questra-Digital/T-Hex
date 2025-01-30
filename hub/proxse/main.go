@@ -145,7 +145,7 @@ func ProxyReverseHandlerSessionSetup(proxy *httputil.ReverseProxy) func(
 			log.Printf("\tError in getting New SessionId: %s", err.Error())
 		} else {
 			// TODO get current test Id
-			db.Create(&Session{
+			db.Create(&SessionSelenium{
 				Time:      time.Now().Unix(),
 				TestId:    testId,
 				SessionId: sessId,

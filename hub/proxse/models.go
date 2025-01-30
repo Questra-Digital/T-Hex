@@ -28,19 +28,6 @@ func DBInit() *gorm.DB {
 	return db
 }
 
-type Tabler interface {
-	TableName() string
-}
-
-// Row from api_keys database table. Only currently valid Key will exist
-type ApiKey struct {
-	Key string `gorm:"primaryKey"`
-}
-
-func (ApiKey) TableName() string {
-	return "api_keys"
-}
-
 // User
 type User struct {
 	Username string `gorm:"primaryKey"`
@@ -51,7 +38,7 @@ func (User) TableName() string {
 	return "users"
 }
 
-// User to API Key relations. Invalidated keys will also exist here
+// User to API Key relations. Only valid keys stored
 type UserKey struct {
 	Username string `gorm:"primaryKey"`
 	Key      string `gorm:"primaryKey"`
@@ -77,8 +64,7 @@ func (Event) TableName() string {
 	return "events"
 }
 
-// Session ID to test Id mapping
-type Session struct {
+type SessionSelenium struct {
 	SessionId string `gorm:"primaryKey"`
 	TestId    int64
 	Time      int64
@@ -87,8 +73,8 @@ type Session struct {
 	Message   string
 }
 
-func (Session) TableName() string {
-	return "sessions"
+func (SessionSelenium) TableName() string {
+	return "sessions_selenium"
 }
 
 /// Session Id to Test Id mapping

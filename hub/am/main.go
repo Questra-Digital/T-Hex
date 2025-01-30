@@ -7,10 +7,7 @@ import (
 
 func main() {
 	db := DBInit()
-	err := db.AutoMigrate(&ApiKey{})
-	if err != nil {
-		log.Fatalf("Error: %s", err.Error())
-	}
+	var err error
 	err = db.AutoMigrate(&User{})
 	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
@@ -23,7 +20,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
 	}
-	err = db.AutoMigrate(&Session{})
+	err = db.AutoMigrate(&SessionSelenium{})
 	if err != nil {
 		log.Fatalf("Error: %s", err.Error())
 	}

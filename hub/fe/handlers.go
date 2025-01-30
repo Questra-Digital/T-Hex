@@ -206,7 +206,7 @@ func TestSessionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	testId, _ := strconv.ParseInt(vars["testId"], 10, 64)
 
-	var sessions []Session
+	var sessions []SessionSelenium
 	db.Where("test_id = ?", testId).Order("time DESC").Find(&sessions)
 
 	TemplateExec(w, "testsession.html", map[string]interface{}{

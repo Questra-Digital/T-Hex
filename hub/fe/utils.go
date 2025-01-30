@@ -10,7 +10,6 @@ import (
 	"unicode"
 
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 // hashes the password using bcrypt
@@ -57,18 +56,12 @@ func UsernameExists(username string) bool {
 }
 
 func UserGetCurrentKey(username string) string {
-	var result struct {
-		Key string
-	}
-	err := db.Table("users_keys").
-		Select("api_keys.key").
-		Joins("JOIN api_keys ON users_keys.key = api_keys.key").
-		Where("users_keys.username = ?", username).
-		Scan(&result).Error
+	var ukey UserKey
+	err := db.Where("username = ?", username).Find(&ukey).Error
 	if err != nil {
 		return ""
 	}
-	return result.Key
+	return ukey.Key
 }
 
 var SingleUseTokens = struct {
@@ -134,17 +127,8 @@ var keyGenMu sync.Mutex
 func ApiKeyGenerate(username string) (string, error) {
 	currentKey := UserGetCurrentKey(username)
 	if currentKey != "" {
-		err := db.Transaction(func(tx *gorm.DB) error {
-			if err := tx.Delete(&ApiKey{}, "key = ?", currentKey).Error; err != nil {
-				return err
-			}
-			if err := tx.Delete(&UserKey{}, "username = ? AND key = ?", username,
-					currentKey).Error; err != nil {
-				return err
-			}
-			return nil
-		})
-		if err != nil {
+		if err := db.Delete(&UserKey{}, "username = ? AND key = ?", username,
+			currentKey).Error; err != nil {
 			return "", fmt.Errorf("error deleting current key: %w", err)
 		}
 	}
@@ -160,31 +144,17 @@ func ApiKeyGenerate(username string) (string, error) {
 		}
 		newKey = hex.EncodeToString(keyBytes)
 		var count int64
-		err = db.Model(&ApiKey{}).Where("key = ?", newKey).Count(&count).Error
+		err = db.Model(&UserKey{}).Where("key = ?", newKey).Count(&count).Error
 		if err != nil {
-			return "", fmt.Errorf("error checking ApiKey table: %w", err)
-		}
-		if count == 0 {
-			err = db.Model(&UserKey{}).Where("key = ?", newKey).Count(&count).Error
-			if err != nil {
-				return "", fmt.Errorf("error checking UserKey table: %w", err)
-			}
+			return "", fmt.Errorf("error checking UserKey table: %w", err)
 		}
 		if count == 0 {
 			break
 		}
 	}
 
-	err := db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(&ApiKey{Key: newKey}).Error; err != nil {
-			return err
-		}
-		if err := tx.Create(&UserKey{Username: username, Key: newKey}).Error; err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
+	if err := db.Create(&UserKey{Username: username, Key: newKey}).Error;
+			err != nil {
 		return "", fmt.Errorf("error inserting new key: %w", err)
 	}
 	return newKey, nil
