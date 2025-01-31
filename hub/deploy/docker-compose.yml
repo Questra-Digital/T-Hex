@@ -39,14 +39,14 @@ services:
     networks:
       - selenium-network
 
-  db: # TODO: add volume
+  db:
     image: postgres:14-alpine
     restart: always
     environment:
-      POSTGRES_USER: thex
+      POSTGRES_USER: thex # TODO username
       POSTGRES_PASSWORD: thex1234 # TODO password
       POSTGRES_DB: thex
-      PGUSER: thex
+      PGUSER: thex # TODO username
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
@@ -59,8 +59,7 @@ services:
       start_period: 80s
 
   am: # TODO manual run
-    image: am:latest
-    restart: no
+    image: jawadc/t-hex:am-latest
     networks:
       - web-network
     environment:
@@ -70,7 +69,7 @@ services:
         condition: service_healthy
 
   proxse:
-    image: proxse:latest
+    image: jawadc/t-hex:proxse-latest
     restart: always
     ports:
       - "4445:4445"
@@ -84,7 +83,7 @@ services:
         condition: service_completed_successfully
 
   fe:
-    image: fe:latest
+    image: jawadc/t-hex:fe-latest
     restart: always
     ports:
       - "80:8080"
