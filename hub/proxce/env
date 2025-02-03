@@ -1,4 +1,4 @@
 export THEX_URL="http://localhost:4445"
 export LOCAL=":8888"
-export THEX_KEY="abcd1234"
+export THEX_KEY=" 6e3d22b1ce048952c44d79fde0f1fdbeac2f3d7fe8ec6c26981d690b1ebf99d094e56f61b0ee469507d0bf128fbe56745594412359c296c6499127dcc3460885"
 export THEX_PROJ="Dummy Project"
