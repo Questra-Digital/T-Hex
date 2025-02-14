@@ -29,3 +29,4 @@ func GenerateJWT(username string) (string,error){
 	return token.SignedString(Jwtsecret)
 
 }
+

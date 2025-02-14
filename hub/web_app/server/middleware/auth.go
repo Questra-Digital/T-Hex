@@ -14,7 +14,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc{
 		tokenString := r.Header.Get("Authorization")
 
 		if tokenString == ""{
-			http.Error(w,"Missing Token",http.StatusUnauthorized)
+			utils.RespondError(w,"Missing Token",http.StatusUnauthorized)
 			return
 		}
 
@@ -25,10 +25,9 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc{
 		})
 
 		if err != nil || !token.Valid {
-			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			utils.RespondError(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
-
 
 		//Set request header for subsequent handlers
 		r.Header.Set("Username",claims.Username)
