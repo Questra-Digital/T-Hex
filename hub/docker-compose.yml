@@ -57,7 +57,7 @@ services:
       start_period: 80s
 
   am:
-    image: am:latest
+    image: jawadc/thex:am-latest
     networks:
       - web-network
     environment:
@@ -67,7 +67,7 @@ services:
         condition: service_healthy
 
   proxse:
-    image: proxse:latest
+    image: jawadc/thex:proxse-latest
     ports:
       - "4445:4445"
     networks:
@@ -80,7 +80,7 @@ services:
         condition: service_completed_successfully
 
   fe:
-    image: fe:latest
+    image: jawadc/thex:fe-latest
     ports:
       - "8080:8080"
     networks:
