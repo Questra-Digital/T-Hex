@@ -25,7 +25,7 @@ jobs:
       run: echo "${{ secrets.CONTABO_SERVER_SSH_KEY }}" > thexci
 
     - name: Copy Docker Compose file
-      run: scp -i thexci hub/docker-compose.yml "${{ secrets.CONTABO_SERVER_USER }}@${{ secrets.secrets.CONTABO_SERVER_IP }}:/home/thexci"
+      run: scp -i thexci hub/docker-compose.yml "${{ secrets.CONTABO_SERVER_USER }}@${{ secrets.CONTABO_SERVER_IP }}:/home/thexci"
 
     - name: Run the Service
-      run: ssh -i thexci "${{ secrets.CONTABO_SERVER_USER }}@${{ secrets.secrets.CONTABO_SERVER_IP }}" -t "cd thexci; docker compose up -d"
+      run: ssh -i thexci "${{ secrets.CONTABO_SERVER_USER }}@${{ secrets.CONTABO_SERVER_IP }}" -t "cd thexci; docker compose up -d"
