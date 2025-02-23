@@ -6,12 +6,14 @@ on:
       - main
     paths:
       - ./hub/proxse
+      - .github/workflows/proxse-service.yml
 
   pull_request:
     branches:
       - main
     paths:
       - ./hub/proxse
+      - .github/workflows/proxse-service.yml
 
 jobs:
   buildnpush:
