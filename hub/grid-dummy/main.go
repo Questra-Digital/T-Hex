@@ -26,7 +26,12 @@ func main() {
 		log.Printf("Using default `%s` for listener", local)
 		log.Println("\tConsider setting the LOCAL env var")
 	}
-	http.HandleFunc("/session", func(w http.ResponseWriter, r *http.Request) {
+
+	http.HandleFunc("/is-dummy-grid", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("true"))
+	})
+
+	http.HandleFunc("/wd/hub/session", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			sessionID := randomID()
 			response := map[string]any{
@@ -43,13 +48,12 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/session/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/wd/hub/session/", func(w http.ResponseWriter, r *http.Request) {
 		pathParts := strings.Split(r.URL.Path, "/")
-		if len(pathParts) < 3 {
+		if len(pathParts) < 5 {
 			http.Error(w, "Invalid request", http.StatusBadRequest)
 			return
 		}
-		//sessionID := pathParts[2]
 
 		if r.Method == http.MethodDelete {
 			json.NewEncoder(w).Encode(map[string]any{"value": nil})
