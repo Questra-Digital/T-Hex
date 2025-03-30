@@ -5,6 +5,7 @@ import(
 	"encoding/json"
 	"server/utils"
 	"server/models"
+	"time"
 )
 
 func LoginHandler(w http.ResponseWriter,r *http.Request){
@@ -47,6 +48,15 @@ func LoginHandler(w http.ResponseWriter,r *http.Request){
 		return
 	}
 
-	utils.RespondJSON(w,map[string]string{"token":tokenString})
+	// Set the JWT as a cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     "token",
+		Value:    tokenString,
+		Expires:  time.Now().Add(5 * 24 * time.Hour),
+		HttpOnly: true, // Prevent JavaScript access
+		//Secure:   true, // Ensure it’s sent only over HTTPS
+		Path:     "/",  // Available for all paths
+	})
 
+	utils.RespondJSON(w, map[string]string{"message": "Login successful"})
 }
