@@ -9,7 +9,7 @@ import (
 
 func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		
+
 		// Extract the token from the Cookie
 		cookie, err := r.Cookie("token")
 		if err != nil {
@@ -28,7 +28,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		// Set the username in the request header for subsequent handlers
+		
 		r.Header.Set("Username", claims.Username)
 
 		// Call the next handler
