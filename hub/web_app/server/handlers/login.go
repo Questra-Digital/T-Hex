@@ -58,5 +58,5 @@ func LoginHandler(w http.ResponseWriter,r *http.Request){
 		Path:     "/",  // Available for all paths
 	})
 
-	utils.RespondJSON(w, map[string]string{"message": "Login successful"})
+	utils.RespondJSON(w,http.StatusOK ,map[string]string{"message": "Login successful"})
 }
