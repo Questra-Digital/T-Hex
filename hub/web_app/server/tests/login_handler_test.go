@@ -65,51 +65,45 @@ func containsToken(cookie string) bool {
 }
 
 
-// func TestLoginHandler_InvalidUsername(t *testing.T) {
-// 	models.ValidUsers = map[string]string{
-// 		"testuser": "password123",
-// 	}
+func TestLoginHandler_InvalidUsername(t *testing.T) {
 
-// 	reqBody := `{"username": "wronguser", "password": "password123"}`
-// 	req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewBufferString(reqBody))
-// 	req.Header.Set("Content-Type", "application/json")
+	reqBody := `{"username": "wronguser", "password": "password123"}`
+	req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewBufferString(reqBody))
+	req.Header.Set("Content-Type", "application/json")
 
-// 	rec := httptest.NewRecorder()
+	rec := httptest.NewRecorder()
 
-// 	handlers.LoginHandler(rec, req)
+	handlers.LoginHandler(rec, req)
 
-// 	if rec.Code != http.StatusUnauthorized {
-// 		t.Errorf("Expected status 401, got %d", rec.Code)
-// 	}
-// }
+	if rec.Code != http.StatusUnauthorized {
+		t.Errorf("Expected status 401, got %d", rec.Code)
+	}
+}
 
-// func TestLoginHandler_InvalidPassword(t *testing.T) {
-// 	models.ValidUsers = map[string]string{
-// 		"testuser": "password123",
-// 	}
+func TestLoginHandler_InvalidPassword(t *testing.T) {
 
-// 	reqBody := `{"username": "testuser", "password": "wrongpassword"}`
-// 	req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewBufferString(reqBody))
-// 	req.Header.Set("Content-Type", "application/json")
+	reqBody := `{"username": "testuser", "password": "wrongpassword"}`
+	req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewBufferString(reqBody))
+	req.Header.Set("Content-Type", "application/json")
 
-// 	rec := httptest.NewRecorder()
+	rec := httptest.NewRecorder()
 
-// 	handlers.LoginHandler(rec, req)
+	handlers.LoginHandler(rec, req)
 
-// 	if rec.Code != http.StatusUnauthorized {
-// 		t.Errorf("Expected status 401, got %d", rec.Code)
-// 	}
-// }
+	if rec.Code != http.StatusUnauthorized {
+		t.Errorf("Expected status 401, got %d", rec.Code)
+	}
+}
 
-// func TestLoginHandler_EmptyRequestBody(t *testing.T) {
-// 	req := httptest.NewRequest(http.MethodPost, "/login", nil)
-// 	req.Header.Set("Content-Type", "application/json")
+func TestLoginHandler_EmptyRequestBody(t *testing.T) {
+	req := httptest.NewRequest(http.MethodPost, "/login", nil)
+	req.Header.Set("Content-Type", "application/json")
 
-// 	rec := httptest.NewRecorder()
+	rec := httptest.NewRecorder()
 
-// 	handlers.LoginHandler(rec, req)
+	handlers.LoginHandler(rec, req)
 
-// 	if rec.Code != http.StatusBadRequest {
-// 		t.Errorf("Expected status 400, got %d", rec.Code)
-// 	}
-// }
+	if rec.Code != http.StatusBadRequest {
+		t.Errorf("Expected status 400, got %d", rec.Code)
+	}
+}
