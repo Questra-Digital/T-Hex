@@ -7,35 +7,30 @@ import (
 	"net/http/httptest"
 	"testing"
 	"server/handlers"
+	"reflect"
 )
 
-func testSignupHandler(t *testing.T, requestBody map[string]string, expectedStatus int, expectedBody map[string]string) {
-	// Convert request body to JSON
-	reqBody, _ := json.Marshal(requestBody)
-	req := httptest.NewRequest(http.MethodPost, "/signup", bytes.NewBuffer(reqBody))
+func testSignupHandler(t *testing.T, reqBody map[string]string, expectedStatus int, expectedBody map[string]string) {
+	body, _ := json.Marshal(reqBody)
+	req := httptest.NewRequest(http.MethodPost, "/signup", bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 
 	rec := httptest.NewRecorder()
+	handlers.SignupHandler(rec, req)
 
-	handlers.SignupHandler(rec, req) // Call the SignupHandler
-
-	// Check status code
 	if rec.Code != expectedStatus {
 		t.Errorf("Expected status %d, got %d", expectedStatus, rec.Code)
 	}
 
-	// Parse actual response
 	var actualBody map[string]string
-	err := json.Unmarshal(rec.Body.Bytes(), &actualBody)
-	if err != nil {
-		t.Fatalf("Failed to parse response body: %v", err)
-	}
+	json.Unmarshal(rec.Body.Bytes(), &actualBody)
 
-	// Compare expected and actual responses
-	if actualBody["message"] != expectedBody["message"] {
-		t.Errorf("Expected response body %v, got %v", expectedBody, actualBody)
+	// Compare the two JSON maps
+	if !reflect.DeepEqual(actualBody, expectedBody) {
+		t.Errorf("Expected response body '%v', got '%v'", expectedBody, actualBody)
 	}
 }
+
 
 func TestSignupHandler_Success(t *testing.T) {
 	requestBody := map[string]string{
@@ -55,7 +50,7 @@ func TestSignupHandler_UserAlreadyExists(t *testing.T) {
 		"password": "password123",
 	}
 	expectedBody := map[string]string{
-		"message": "Username already taken",
+		"error": "Username already taken",
 	}
 
 	testSignupHandler(t, requestBody, http.StatusConflict, expectedBody)
@@ -67,7 +62,7 @@ func TestSignupHandler_MissingFields(t *testing.T) {
 		"password": "",
 	}
 	expectedBody := map[string]string{
-		"message": "Username and password required",
+		"error": "Username and Password required",
 	}
 
 	testSignupHandler(t, requestBody, http.StatusBadRequest, expectedBody)
@@ -85,11 +80,11 @@ func TestSignupHandler_InvalidJSON(t *testing.T) {
 		t.Errorf("Expected status 400, got %d", rec.Code)
 	}
 
-	expectedBody := map[string]string{"message": "Invalid JSON format"}
+	expectedBody := map[string]string{"error": "Invalid JSON format"}
 	var actualBody map[string]string
 	_ = json.Unmarshal(rec.Body.Bytes(), &actualBody)
 
-	if actualBody["message"] != expectedBody["message"] {
+	if actualBody["error"] != expectedBody["error"] {
 		t.Errorf("Expected response body %v, got %v", expectedBody, actualBody)
 	}
 }

@@ -31,7 +31,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Validate input fields
 	if req.Username == "" || req.Password == "" {
-		utils.RespondError(w, "Username and Password are required", http.StatusBadRequest)
+		utils.RespondError(w, "Username and Password required", http.StatusBadRequest)
 		return
 	}
 
