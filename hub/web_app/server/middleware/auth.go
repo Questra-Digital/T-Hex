@@ -13,7 +13,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		// Extract the token from the Cookie
 		cookie, err := r.Cookie("token")
 		if err != nil {
-			utils.RespondError(w, "Missing token", http.StatusUnauthorized)
+			utils.RespondError(w, "Missing Token", http.StatusUnauthorized)
 			return
 		}
 
@@ -24,11 +24,22 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		})
 
 		if err != nil || !token.Valid {
-			utils.RespondError(w, "Invalid token", http.StatusUnauthorized)
+			utils.RespondError(w, "Invalid Token", http.StatusUnauthorized)
 			return
 		}
 
-		
+		// Validate username
+		if claims.Username == "" {
+			utils.RespondError(w, "Missing Username", http.StatusUnauthorized)
+			return
+		}
+
+		// Check if username exists in the ValidUsers map
+		if _, exists := models.ValidUsers[claims.Username]; !exists {
+			utils.RespondError(w, "User does not exist", http.StatusUnauthorized)
+			return
+		}
+
 		r.Header.Set("Username", claims.Username)
 
 		// Call the next handler
