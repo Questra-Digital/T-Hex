@@ -64,7 +64,6 @@ func containsToken(cookie string) bool {
 	return false
 }
 
-
 func TestLoginHandler_InvalidUsername(t *testing.T) {
 
 	reqBody := `{"username": "wronguser", "password": "password123"}`
