@@ -13,8 +13,8 @@ type SignupRequest struct {
 	Password string `json:"password"`
 }
 
-// SignupHandler handles user registration
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
+	
 	// Ensure request method is POST
 	if r.Method != http.MethodPost {
 		utils.RespondError(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -44,6 +44,5 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	// Save new user (for simplicity, adding to the in-memory map)
 	models.ValidUsers[req.Username] = req.Password
 
-	// Respond with success
 	utils.RespondJSON(w, http.StatusCreated, map[string]string{"message": "User registered successfully"})
 }
