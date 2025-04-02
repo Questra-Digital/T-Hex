@@ -58,7 +58,7 @@ func TestSignupHandler_UserAlreadyExists(t *testing.T) {
 
 func TestSignupHandler_MissingFields(t *testing.T) {
 	requestBody := map[string]string{
-		"username": "", // Missing username
+		"username": "", 
 		"password": "",
 	}
 	expectedBody := map[string]string{
