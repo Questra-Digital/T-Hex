@@ -49,6 +49,9 @@ import (
 		// Generate OAuth URL
 		authURL := oauth2Config.AuthCodeURL(state, oauth2.AccessTypeOffline)
 
+		// Add prompt=consent to force Google to always request consent and return a refresh token
+		authURL = fmt.Sprintf("%s&prompt=consent", authURL)		
+
 		// Redirect the user to Google OAuth consent page
 		http.Redirect(w, r, authURL, http.StatusFound)
 }
