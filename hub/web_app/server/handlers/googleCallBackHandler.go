@@ -7,9 +7,7 @@ import (
 	"server/utils"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
-
 )
-
 
 // GoogleCallback handles the OAuth callback after Google authorization
 func GoogleCallback(w http.ResponseWriter, r *http.Request) {
@@ -22,21 +20,37 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	// Check if there's an error parameter in the response
 	if errorFromGoogle != "" {
 		fmt.Printf("Error from Google: %s\n", errorFromGoogle)
-		utils.RespondError(w, "Authorization failed: "+errorFromGoogle, http.StatusUnauthorized)
+
+		// Delete the state before redirecting to GoogleLogin
+		if stateFromGoogle != "" {
+			utils.DeleteState(stateFromGoogle)
+		}
+
+		// Redirect to Google Login to restart the OAuth process
+		http.Redirect(w, r, "/googleLogin", http.StatusFound)
 		return
 	}
 
 	// Validate state using the function from utils
 	if !utils.ValidateState(stateFromGoogle) {
 		fmt.Println("Error: Invalid state. Possible CSRF attack.")
-		utils.RespondError(w, "Invalid state parameter. Possible CSRF attack.", http.StatusForbidden)
+
+		// Redirect to Google Login to restart the OAuth process
+		http.Redirect(w, r, "/googleLogin", http.StatusFound)
 		return
 	}
 
 	// Check for a missing authorization code
 	if codeFromGoogle == "" {
 		fmt.Println("Error: Missing authorization code")
-		utils.RespondError(w, "Invalid request: missing authorization code", http.StatusBadRequest)
+
+		// Delete the state before redirecting to GoogleLogin
+		if stateFromGoogle != "" {
+			utils.DeleteState(stateFromGoogle)
+		}
+
+		// Redirect to Google Login to restart the OAuth process
+		http.Redirect(w, r, "/googleLogin", http.StatusFound)
 		return
 	}
 
@@ -56,12 +70,17 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	tokens, err := oauth2Config.Exchange(r.Context(), codeFromGoogle)
 	if err != nil {
 		fmt.Println("Error: Failed to exchange token")
-		utils.RespondError(w, "Failed to exchange token", http.StatusInternalServerError)
+
+		// Delete the state before redirecting to GoogleLogin
+		utils.DeleteState(stateFromGoogle)
+
+		// Redirect to Google Login to restart the OAuth process
+		http.Redirect(w, r, "/googleLogin", http.StatusFound)
 		return
 	}
 
 	// Print tokens (for testing, store them securely in production)
-	fmt.Fprintf(w, "Access Token: %s\n", tokens.AccessToken)
+	fmt.Printf("Access Token: %s\n", tokens.AccessToken)
+	fmt.Printf("Refresh Token: %s\n", tokens.RefreshToken)
 
-	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
