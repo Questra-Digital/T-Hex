@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 	"server/utils"
+
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
@@ -83,4 +85,37 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Access Token: %s\n", tokens.AccessToken)
 	fmt.Printf("Refresh Token: %s\n", tokens.RefreshToken)
 
+	oauth2Client := oauth2Config.Client(r.Context(),tokens)
+
+	userInfoEndpoint := "https://www.googleapis.com/oauth2/v2/userinfo"
+
+	resp,err := oauth2Client.Get(userInfoEndpoint)
+
+	if err!= nil{
+		fmt.Printf("Error fetching user info: %v\n",err)
+		// Delete the state before redirecting to GoogleLogin
+		if stateFromGoogle != "" {
+			utils.DeleteState(stateFromGoogle)
+		}
+		http.Redirect(w,r,"/googleLogin",http.StatusFound)
+		return
+	}
+
+	//To deallocate resource for opening json body for an http connection
+	defer resp.Body.Close()
+
+	userInfo := struct{
+		Name string `json:"name"`
+		Email string `json:"email"`
+	}{}
+
+	err = json.NewDecoder(resp.Body).Decode(&userInfo)
+	
+	if err !=nil{
+		fmt.Printf("Error decoding user info: %v\n",err)
+		http.Redirect(w,r,"/googleLogin",http.StatusFound)
+		return
+	}
+
+	fmt.Printf("Welcome, %s (%s)\n", userInfo.Name, userInfo.Email)
 }
