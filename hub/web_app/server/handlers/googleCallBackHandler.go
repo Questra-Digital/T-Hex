@@ -11,6 +11,16 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
+func ErrorRedirectToLogin(errorBody string, stateFromGoogle string,w http.ResponseWriter,r *http.Request){
+	fmt.Printf("%s",errorBody)
+	// Delete the state before redirecting to GoogleLogin
+	if stateFromGoogle != "" {
+		utils.DeleteState(stateFromGoogle)
+	}
+	// Redirect to Google Login to restart the OAuth process
+	http.Redirect(w, r, "/googleLogin", http.StatusFound)
+}
+
 // GoogleCallback handles the OAuth callback after Google authorization
 func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	// Parse query parameters from Google's callback
@@ -21,15 +31,8 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 
 	// Check if there's an error parameter in the response
 	if errorFromGoogle != "" {
-		fmt.Printf("Error from Google: %s\n", errorFromGoogle)
-
-		// Delete the state before redirecting to GoogleLogin
-		if stateFromGoogle != "" {
-			utils.DeleteState(stateFromGoogle)
-		}
-
-		// Redirect to Google Login to restart the OAuth process
-		http.Redirect(w, r, "/googleLogin", http.StatusFound)
+		errorBody := fmt.Sprintf("Error from Google: %s\n", errorFromGoogle)
+		ErrorRedirectToLogin(errorBody, stateFromGoogle, w, r)
 		return
 	}
 
@@ -44,15 +47,8 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 
 	// Check for a missing authorization code
 	if codeFromGoogle == "" {
-		fmt.Println("Error: Missing authorization code")
-
-		// Delete the state before redirecting to GoogleLogin
-		if stateFromGoogle != "" {
-			utils.DeleteState(stateFromGoogle)
-		}
-
-		// Redirect to Google Login to restart the OAuth process
-		http.Redirect(w, r, "/googleLogin", http.StatusFound)
+		errorBody := "Error: Missing authorization code"
+		ErrorRedirectToLogin(errorBody, stateFromGoogle, w, r)
 		return
 	}
 
@@ -71,13 +67,8 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	// Exchange authorization code for access token
 	tokens, err := oauth2Config.Exchange(r.Context(), codeFromGoogle)
 	if err != nil {
-		fmt.Println("Error: Failed to exchange token")
-
-		// Delete the state before redirecting to GoogleLogin
-		utils.DeleteState(stateFromGoogle)
-
-		// Redirect to Google Login to restart the OAuth process
-		http.Redirect(w, r, "/googleLogin", http.StatusFound)
+		errorBody := "Error: Failed to exchange token"
+		ErrorRedirectToLogin(errorBody, stateFromGoogle, w, r)
 		return
 	}
 
@@ -92,12 +83,8 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	resp,err := oauth2Client.Get(userInfoEndpoint)
 
 	if err!= nil{
-		fmt.Printf("Error fetching user info: %v\n",err)
-		// Delete the state before redirecting to GoogleLogin
-		if stateFromGoogle != "" {
-			utils.DeleteState(stateFromGoogle)
-		}
-		http.Redirect(w,r,"/googleLogin",http.StatusFound)
+		errorBody := fmt.Sprintf("Error fetching user info: %v\n",err)
+		ErrorRedirectToLogin(errorBody, stateFromGoogle, w, r)
 		return
 	}
 
@@ -112,8 +99,8 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	err = json.NewDecoder(resp.Body).Decode(&userInfo)
 	
 	if err !=nil{
-		fmt.Printf("Error decoding user info: %v\n",err)
-		http.Redirect(w,r,"/googleLogin",http.StatusFound)
+		errorBody := fmt.Sprintf("Error decoding user info: %v\n",err)
+		ErrorRedirectToLogin(errorBody, stateFromGoogle, w, r)
 		return
 	}
 
