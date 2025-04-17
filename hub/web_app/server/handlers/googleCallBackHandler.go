@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"os"
 	"server/utils"
-
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
+	"time"
 )
 
 func ErrorRedirectToLogin(errorBody string, stateFromGoogle string,w http.ResponseWriter,r *http.Request){
@@ -72,12 +72,13 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Print tokens (for testing, store them securely in production)
+	// Print tokens 
 	fmt.Printf("Access Token: %s\n", tokens.AccessToken)
 	fmt.Printf("Refresh Token: %s\n", tokens.RefreshToken)
 
 	oauth2Client := oauth2Config.Client(r.Context(),tokens)
 
+	//Use token to access google API
 	userInfoEndpoint := "https://www.googleapis.com/oauth2/v2/userinfo"
 
 	resp,err := oauth2Client.Get(userInfoEndpoint)
@@ -91,6 +92,7 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	//To deallocate resource for opening json body for an http connection
 	defer resp.Body.Close()
 
+	//Decode to retireve name and email
 	userInfo := struct{
 		Name string `json:"name"`
 		Email string `json:"email"`
@@ -105,4 +107,25 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Printf("Welcome, %s (%s)\n", userInfo.Name, userInfo.Email)
+
+	//Generate JWT Token
+	tokenString,err := utils.GenerateJWT(userInfo.Email)
+	if err!=nil{
+		utils.RespondError(w, "Error generating token",http.StatusInternalServerError)
+		return
+	}
+
+	// Set the JWT as a cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     "token",
+		Value:    tokenString,
+		Expires:  time.Now().Add(5 * 24 * time.Hour),
+		HttpOnly: true, // Prevent JavaScript access
+		//Secure:   true, // Ensure it’s sent only over HTTPS
+		Path:     "/",  // Available for all paths
+	})
+
+	// Redirect user to /dashboard
+    http.Redirect(w, r, "/dashboard", http.StatusFound)
+
 }
