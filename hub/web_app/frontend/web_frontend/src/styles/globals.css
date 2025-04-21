@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-light-gray: #D9D9D9;
+  --color-mint-green: #A3D1C6;
+  --color-teal-green: #3D8D7A;
+  --color-off-white: #EEEEEE;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
