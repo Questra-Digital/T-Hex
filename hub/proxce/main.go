@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"slices"
 )
 
 func main() {
@@ -36,6 +39,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error parsing THEX_URL `%s`:\n\t%s", endpoint, err.Error())
 	}
+	logReqs := slices.Contains(os.Args[1:], "log")
+	if logReqs {
+		log.Println("Enabled Response Logging");
+	}
 
 	// get new testId
 	req, err := http.NewRequest("POST", fmt.Sprintf("%s/thex/test", endpoint), nil)
@@ -62,6 +69,18 @@ func main() {
 		req.Header.Add("thex-test", testId)
 		req.URL.Scheme = targetURL.Scheme
 		req.URL.Host = targetURL.Host
+	}
+
+	if logReqs {
+		proxy.ModifyResponse = func (res *http.Response) error {
+			body, err := io.ReadAll(res.Body)
+			if err != nil {
+				return err
+			}
+			log.Printf("Response Body: %s", string(body))
+			res.Body = io.NopCloser(bytes.NewReader(body))
+			return nil
+		}
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
