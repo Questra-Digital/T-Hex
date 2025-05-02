@@ -1,13 +1,22 @@
-name: Docker Image CI
+name: FE Service CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+    paths:
+      - ./hub/fe
+      - .github/workflows/fe-service.yml
+
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
+    paths:
+      - ./hub/fe
+      - .github/workflows/fe-service.yml
 
 jobs:
-  build:
+  buildnpush:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,20 +26,8 @@ jobs:
     - name: Log in to Docker Hub
       run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-    - name: Build Docker image (AM)
-      run: docker build ./hub/am --tag jawadc/thex:am-latest
-
     - name: Build Docker image (FE)
       run: docker build ./hub/fe --tag jawadc/thex:fe-latest
 
-    - name: Build Docker image (ProxSE)
-      run: docker build ./hub/proxse --tag jawadc/thex:proxse-latest
-
-    - name: Push Docker image (AM)
-      run: docker push jawadc/thex:am-latest
-
     - name: Push Docker image (FE)
       run: docker push jawadc/thex:fe-latest
-
-    - name: Push Docker image (ProxSE)
-      run: docker push jawadc/thex:proxse-latest
