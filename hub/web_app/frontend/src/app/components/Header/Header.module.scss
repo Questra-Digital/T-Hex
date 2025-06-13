@@ -1,0 +1,104 @@
+$text-color: #000000;
+$text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.5);
+// Header Styles
+.header {
+  background-color: #a3d1c6;
+  color: $text-color;
+  padding: 16px;
+  //Flex Container
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+ 
+
+
+  h1 {
+    font-family: var(--font-montserrat); //Import from already loaded fonts
+    font-weight: 700;
+    font-style: normal;
+    font-size: 34px;
+    line-height: 41px;
+    text-shadow: $text-shadow-effect;
+    flex-grow: 1;//Take weight 1
+    text-align: center;
+  }
+
+  nav {
+    flex-grow: 2;//Take weight 2
+    justify-content: center;
+    ul {
+      list-style: none;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+     
+
+      li {
+        /* Text Style inside the list*/
+        font-family: var(--font-outfit);
+        font-style: normal;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 23px;
+        color: $text-color;
+        text-decoration: none;
+        text-shadow: $text-shadow-effect;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  .buttonsGroup {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;//Take weight 1
+    justify-content: end; // Center the buttons within their allocated space
+    
+    button {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      padding: 8px 0px;
+
+      width: 105px;
+      height: 42px;
+
+      background: #ffffff;
+      border: none;
+      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+      border-radius: 6px;
+
+      /* Button Text */
+      font-family: var(--font-outfit); //Import from already loaded fonts
+      font-style: normal;
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 25px;
+      color: #000000;
+
+      cursor: pointer;
+
+      &:hover {
+        background: #f0f0f0; // Lighter shade on hover
+        box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3); // Stronger shadow on hover
+      }
+
+      /* Getting-Started-Free Variation */
+      &.getStarted {
+        background: #3d8d7a;
+        width: 189px;
+        color: #ffffff;
+        margin-left: 10%;
+
+        &:hover {
+          background: #2e6e5d; // Darker green on hover
+          color: #e0e0e0; // Slightly lighter text color
+        }
+      }
+    }
+  }
+}
