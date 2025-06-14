@@ -5,7 +5,6 @@ export const montserrat = Montserrat({
     weight: ['700'], 
     style: ['normal'], 
     variable: '--font-montserrat',
-    
   });
 
   export const outfit = Outfit({
