@@ -1,46 +1,72 @@
 $text-color: #000000;
 $text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.5);
 $lighter-text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.2);
+
+
+// Mixins
+@mixin flex-container($direction: row, $align: center, $justify: center) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: $align;
+  justify-content: $justify;
+}
+
+@mixin text-style(
+  $font: var(--font-outfit),
+  $size: 18px,
+  $weight: 500,
+  $shadow: $shadow-light,
+  $style: normal,
+  $line_height: 10px,
+  $text_align: center,
+  $color: $text-color
+) {
+  font-family: $font;
+  font-size: $size;
+  font-weight: $weight;
+  text-shadow: $shadow;
+  font-style: $style;
+  line-height: $line_height;
+  text-align: $text_align;
+  color: $color;
+}
+
+@mixin button-style($bg: #ffffff, $width: 105px, $height: 42px, $color: #000000) {
+  @include flex-container(row, center, center);
+  width: $width;
+  height: $height;
+  background: $bg;
+  color: $color;
+  border: none;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+
 // Header Styles
 .header {
   background-color: #a3d1c6;
-  color: $text-color;
   padding: 16px;
-  //Flex Container
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  @include flex-container(row, center, center);
 
   h1 {
-    font-family: var(--font-montserrat); //Import from already loaded fonts
-    font-weight: 700;
-    font-style: normal;
-    font-size: 34px;
-    line-height: 41px;
-    text-shadow: $text-shadow-effect;
+    @include text-style(var(--font-monsterrat),34px,700,$text-shadow-effect,normal,41px,center);
     flex-grow: 1; //Take weight 1
-    text-align: center;
   }
 
   nav {
     flex-grow: 2; //Take weight 2
-    justify-content: center;
+    margin-top: 0.3%;
     ul {
       list-style: none;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
+      @include flex-container(row, center, space-between);
 
       li {
         /* Text Style inside the list*/
-        font-family: var(--font-outfit);
-        font-style: normal;
-        font-weight: 500;
-        font-size: 18px;
-        line-height: 23px;
-        color: $text-color;
+        @include text-style(var(--font-outfit),18px,500,$lighter-text-shadow-effect,normal,23px);
         text-decoration: none;
-        text-shadow: $lighter-text-shadow-effect;
         position: relative; //Creates a positioning context
 
         /* Create the animated underline with pseudo-element */
@@ -70,61 +96,35 @@ $lighter-text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.2);
 
         .arrowIcon {
           transition: transform 0.3s ease-in-out;
-          vertical-align:middle
+          vertical-align: middle;
         }
       }
     }
-    
   }
 
   .buttonsGroup {
-    display: flex;
-    flex-direction: row;
-    flex-grow: 1; //Take weight 1
-    justify-content: end; // Center the buttons within their allocated space
-
+    @include flex-container(row, center, end);
+    flex-grow: 1;
+  
     button {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      padding: 8px 0px;
-
-      width: 105px;
-      height: 42px;
-
-      background: #ffffff;
-      border: none;
-      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-      border-radius: 6px;
-
-      /* Button Text */
-      font-family: var(--font-outfit); //Import from already loaded fonts
-      font-style: normal;
-      font-weight: 400;
-      font-size: 20px;
-      line-height: 25px;
-      color: #000000;
-
-      cursor: pointer;
-
+      @include button-style();
+      @include text-style(var(--font-outfit), 20px, 400, none, normal, 25px, center);
+  
       &:hover {
-        background: #f0f0f0; // Lighter shade on hover
-        box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3); // Stronger shadow on hover
+        background: #f0f0f0; 
+        box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
       }
-
-      /* Getting-Started-Free Variation */
+  
       &.getStarted {
-        background: #3d8d7a;
-        width: 189px;
-        color: #ffffff;
+        @include button-style(#3d8d7a, 189px, 42px, #ffffff);
         margin-left: 10%;
-
+  
         &:hover {
-          background: #2e6e5d; // Darker green on hover
-          color: #e0e0e0; // Slightly lighter text color
+          background: #2e6e5d;
+          color: #e0e0e0;
         }
       }
     }
   }
+  
 }
