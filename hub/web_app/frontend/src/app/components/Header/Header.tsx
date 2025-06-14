@@ -1,7 +1,9 @@
+"use client";
 import styles from "./Header.module.scss";
 import Link from "next/link";
 import { montserrat, outfit } from "@/font/fonts";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 
 const links = [
   { name: "Home", href: "/landingPage" },
@@ -13,12 +15,27 @@ const links = [
 ];
 
 export default function Header() {
+  const [isSmall, setIsSmall] = useState(false);
+  const [isMedium, setIsMedium] = useState(false);
+  const [isLarge, setIsLarge] = useState(false);
+  const [screenSize, setScreenSize] = useState(false);
+
   return (
     <header
       className={`${styles.header} ${montserrat.variable} ${outfit.variable}`}
     >
+      {/* Menu Icon */}
+      <Image
+        src="/Icons/Menu.svg"
+        alt="Menu Icon"
+        className={styles.menuIcon}
+        width={58}
+        height={58}
+      />
+
       {/* T-Hex Logo */}
       <h1>T-Hex</h1>
+      
       {/* Nav Bar */}
       <nav>
         <ul>
@@ -41,6 +58,7 @@ export default function Header() {
           })}
         </ul>
       </nav>
+
       {/* Button Groups */}
       <div className={styles.buttonsGroup}>
         <button>Login</button>
