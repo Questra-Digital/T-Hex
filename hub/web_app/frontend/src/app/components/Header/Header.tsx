@@ -1,5 +1,6 @@
 import styles from "./Header.module.scss";
 import Link from "next/link";
+import {montserrat,outfit} from "@/font/fonts";
 
 const links =[
 {name:'Home', href:'/landingPage'},
@@ -12,7 +13,7 @@ const links =[
 
 export default function Header() {
   return (
-    <header className={styles.header}>
+    <header className={`${styles.header} ${montserrat.variable} ${outfit.variable}`}>
       {/* T-Hex Logo */}
       <h1>T-Hex</h1>
       {/* Nav Bar */}
