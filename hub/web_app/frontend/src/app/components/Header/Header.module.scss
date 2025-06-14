@@ -41,28 +41,40 @@ $lighter-text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.2);
         color: $text-color;
         text-decoration: none;
         text-shadow: $lighter-text-shadow-effect;
-        position: relative;//Creates a positioning context
-        
+        position: relative; //Creates a positioning context
+
         /* Create the animated underline with pseudo-element */
         &::after {
-          content: '';
+          content: "";
           position: absolute;
           bottom: 0;
           left: 50%;
           width: 0;
           height: 2px;
           background-color: $text-color;
-          transform: translateX(-50%);// so that the center of the ruler is at the center mark
+          transform: translateX(
+            -50%
+          ); // so that the center of the ruler is at the center mark
           transition: width 0.3s ease-in-out;
         }
-        
+
         &:hover {
           &::after {
             width: 100%;
           }
+          //Rotate downwards on hover
+          .arrowIcon {
+            transform: rotate(180deg);
+          }
+        }
+
+        .arrowIcon {
+          transition: transform 0.3s ease-in-out;
+          vertical-align:middle
         }
       }
     }
+    
   }
 
   .buttonsGroup {
