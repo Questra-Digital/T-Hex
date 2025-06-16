@@ -57,6 +57,8 @@ $lighter-text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.2);
 
   .menuIcon {
     display: none;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
   }
 
   nav {
