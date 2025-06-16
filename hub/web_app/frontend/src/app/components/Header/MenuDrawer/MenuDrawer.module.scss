@@ -1,0 +1,103 @@
+@media (min-width: 768px) {
+    .drawerContainer {
+        display: none;
+    }
+}
+
+/* Fade each link into view */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+
+.drawerContainer {
+    .linkCard {
+        width: 100%;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10%;
+        background-color: #a3d1c6;
+        border-bottom: 1px solid black;
+        cursor: pointer;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+
+        /* initial state */
+        opacity: 0;
+        transform: translateY(0px);
+        animation: fadeIn 0.4s ease-out forwards;
+
+        /* stagger using nth-child */
+        &:nth-child(1) {
+            animation-delay: 0.02s;
+        }
+
+        &:nth-child(2) {
+            animation-delay: 0.04s;
+        }
+
+        &:nth-child(3) {
+            animation-delay: 0.06s;
+        }
+
+        &:nth-child(4) {
+            animation-delay: 0.08s;
+        }
+
+        &:nth-child(5) {
+            animation-delay: 0.1s;
+        }
+
+        &:nth-child(6) {
+            animation-delay: 0.12s;
+        }
+
+        .linkName {
+            font-family: var(--font-outfit);
+            font-size: 24px;
+            font-weight: 500;
+            color: black;
+            transition: color 0.3s ease;
+            margin: 0;
+        }
+
+        .arrowIcon {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        &:hover {
+            background-color: #88b7a6;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+
+            .linkName {
+                color: #ffffff;
+            }
+
+            .arrowIcon {
+                transform: rotate(180deg);
+            }
+        }
+    }
+
+
+
+    //Border on top
+    .linkCard:first-child {
+        border-top: 1px solid black;
+    }
+
+    //Corner Borders at last
+    .linkCard:last-child {
+        border-bottom: none;
+        border-radius: 0 0 20px 20px;
+    }
+}
