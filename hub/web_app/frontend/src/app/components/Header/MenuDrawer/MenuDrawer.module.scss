@@ -1,103 +1,85 @@
-@media (min-width: 768px) {
-    .drawerContainer {
-        display: none;
-    }
-}
-
-/* Fade each link into view */
-@keyframes fadeIn {
+  /* Slide animations for drawer container */
+  @keyframes slideDown {
     from {
-        opacity: 0;
+      transform: translateY(-100%);
+      opacity: 0;
     }
-
     to {
-        opacity: 1;
+      transform: translateY(0);
+      opacity: 1;
     }
-}
-
-
-
-.drawerContainer {
+  }
+  
+  @keyframes slideUp {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+  }
+  
+  .drawerContainer {
+    z-index: 50; // Below header but above other content
+    
+    /* Slide down animation when drawer opens */
+    animation: slideDown 0.3s ease-out forwards;
+    
+    /*Slide Up animation when closing the drawer */
+    &.closing {
+      animation: slideUp 0.3s ease-out forwards;
+    }
+    
     .linkCard {
-        width: 100%;
-        height: 80px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 10%;
-        background-color: #a3d1c6;
-        border-bottom: 1px solid black;
-        cursor: pointer;
-        transition: background-color 0.3s ease, box-shadow 0.3s ease;
-
-        /* initial state */
-        opacity: 0;
-        transform: translateY(0px);
-        animation: fadeIn 0.4s ease-out forwards;
-
-        /* stagger using nth-child */
-        &:nth-child(1) {
-            animation-delay: 0.02s;
-        }
-
-        &:nth-child(2) {
-            animation-delay: 0.04s;
-        }
-
-        &:nth-child(3) {
-            animation-delay: 0.06s;
-        }
-
-        &:nth-child(4) {
-            animation-delay: 0.08s;
-        }
-
-        &:nth-child(5) {
-            animation-delay: 0.1s;
-        }
-
-        &:nth-child(6) {
-            animation-delay: 0.12s;
-        }
-
+      width: 100%;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10%;
+      background-color: #a3d1c6;
+      border-bottom: 1px solid black;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      
+      .linkName {
+        font-family: var(--font-outfit);
+        font-size: 24px;
+        font-weight: 500;
+        color: black;
+        transition: color 0.3s ease;
+        margin: 0;
+      }
+      
+      .arrowIcon {
+        transition: transform 0.3s ease-in-out;
+      }
+      
+      &:hover {
+        background-color: #88b7a6;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+        
         .linkName {
-            font-family: var(--font-outfit);
-            font-size: 24px;
-            font-weight: 500;
-            color: black;
-            transition: color 0.3s ease;
-            margin: 0;
+          color: #ffffff;
         }
-
+        
         .arrowIcon {
-            transition: transform 0.3s ease-in-out;
+          transform: rotate(180deg);
         }
-
-        &:hover {
-            background-color: #88b7a6;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 4px;
-
-            .linkName {
-                color: #ffffff;
-            }
-
-            .arrowIcon {
-                transform: rotate(180deg);
-            }
-        }
+      }
     }
-
-
-
-    //Border on top
+    
+    // Border on top
     .linkCard:first-child {
-        border-top: 1px solid black;
+      border-top: 1px solid black;
     }
-
-    //Corner Borders at last
+    
+    // Corner Borders at last
     .linkCard:last-child {
-        border-bottom: none;
-        border-radius: 0 0 20px 20px;
+      border-bottom: none;
+      border-radius: 0 0 20px 20px;
     }
-}
+  }
