@@ -50,6 +50,11 @@ export default function Drawer({
               />
             </div>
           ))}
+
+          <div className={`${styles.linkCard}`}>
+            <button className={outfit.variable}>Login</button>
+            <button className={`${styles.getStarted} ${outfit.variable}`}>Get Started Free</button>
+          </div>
         </div>
       )}
     </>
