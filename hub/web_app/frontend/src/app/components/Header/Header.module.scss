@@ -42,13 +42,14 @@ $lighter-text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.2);
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-
 // Header Styles
 
 .header {
   background-color: #a3d1c6;
   padding: 16px;
   @include flex-container(row, center, center);
+  position: relative; // Add this to create positioning context
+  z-index: 100; // Ensure header stays above other content
 
   h1 {
     @include text-style(var(--font-montserrat), 34px, 700, $text-shadow-effect, normal, 41px, center);

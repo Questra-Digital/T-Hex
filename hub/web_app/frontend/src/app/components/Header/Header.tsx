@@ -18,6 +18,25 @@ const links = [
 export default function Header() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
+  useEffect(() => {
+    const handleScreenResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsDrawerOpen(false) //Stop rendering drawer if screen exceeds 768px
+      } 
+    };
+
+    // Add event listener for resize
+    window.addEventListener("resize", handleScreenResize);
+
+    // Check initial screen size on mount
+    handleScreenResize();
+
+    return () => {
+      // Cleanup event listener
+      window.removeEventListener("resize", handleScreenResize);
+    };
+  }, []);
+
   function onMenuPressed() {
     setIsDrawerOpen(!isDrawerOpen);
   }
@@ -69,7 +88,7 @@ export default function Header() {
           <button className={styles.getStarted}>Get Started Free</button>
         </div>
       </header>
-      {isDrawerOpen && <MenuDrawer links={links} />}
+      <MenuDrawer links={links} isDrawerOpen={isDrawerOpen} />
     </>
   );
 }
