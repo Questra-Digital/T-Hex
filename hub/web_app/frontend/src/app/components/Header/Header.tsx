@@ -21,8 +21,8 @@ export default function Header() {
   useEffect(() => {
     const handleScreenResize = () => {
       if (window.innerWidth >= 768) {
-        setIsDrawerOpen(false) //Stop rendering drawer if screen exceeds 768px
-      } 
+        setIsDrawerOpen(false); //Stop rendering drawer if screen exceeds 768px
+      }
     };
 
     // Add event listener for resize
@@ -88,6 +88,8 @@ export default function Header() {
           <button className={styles.getStarted}>Get Started Free</button>
         </div>
       </header>
+      
+      {/* MenuDrawer for smaller screens */}
       <MenuDrawer links={links} isDrawerOpen={isDrawerOpen} />
     </>
   );

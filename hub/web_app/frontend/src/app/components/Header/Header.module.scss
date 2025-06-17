@@ -42,18 +42,15 @@ $lighter-text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.2);
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-// Header Styles
-
+// Shared Header Base Styles
 .header {
   background-color: #a3d1c6;
   padding: 16px;
-  @include flex-container(row, center, center);
-  position: relative; // Add this to create positioning context
+  position: relative;// Add this to create positioning context
   z-index: 100; // Ensure header stays above other content
 
   h1 {
     @include text-style(var(--font-montserrat), 34px, 700, $text-shadow-effect, normal, 41px, center);
-    flex-grow: 1; //Take weight 1
   }
 
   .menuIcon {
@@ -63,18 +60,14 @@ $lighter-text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.2);
   }
 
   nav {
-    flex-grow: 2; //Take weight 2
-    margin-top: 0.3%;
-
     ul {
       list-style: none;
-      @include flex-container(row, center, space-between);
 
       li {
-        /* Text Style inside the list*/
+         /* Text Style inside the list*/
         @include text-style(var(--font-outfit), 18px, 500, $lighter-text-shadow-effect, normal, 23px);
         text-decoration: none;
-        position: relative; //Creates a positioning context
+        position: relative;
 
         /* Create the animated underline with pseudo-element */
         &::after {
@@ -85,7 +78,7 @@ $lighter-text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.2);
           width: 0;
           height: 2px;
           background-color: $text-color;
-          transform: translateX(-50%); // so that the center of the ruler is at the center mark
+          transform: translateX(-50%);// so that the center of the ruler is at the center mark
           transition: width 0.3s ease-in-out;
         }
 
@@ -94,7 +87,6 @@ $lighter-text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.2);
             width: 100%;
           }
 
-          //Rotate downwards on hover
           .arrowIcon {
             transform: rotate(180deg);
           }
@@ -109,9 +101,6 @@ $lighter-text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.2);
   }
 
   .buttonsGroup {
-    @include flex-container(row, center, end);
-    flex-grow: 1;
-
     button {
       @include button-style();
       @include text-style(var(--font-outfit), 20px, 400, none, normal, 25px, center);
@@ -121,10 +110,9 @@ $lighter-text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.2);
         box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
       }
 
-      /*Get Started Button Variation*/
+       /*Get Started Button Variation*/
       &.getStarted {
         @include button-style(#3d8d7a, 189px, 42px, #ffffff);
-        margin-left: 10%;
 
         &:hover {
           background: #2e6e5d;
@@ -135,12 +123,77 @@ $lighter-text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.2);
   }
 }
 
+// Desktop Layout (default - above 1160px)
+@media (min-width: 1161px) {
+  .header {
+    @include flex-container(row, center, center);
 
-// Mobile responsive styles
+    h1 {
+      flex-grow: 1;
+    }
+
+    nav {
+      flex-grow: 2;
+      margin-top: 0.3%;
+
+      ul {
+        @include flex-container(row, center, space-between);
+      }
+    }
+
+    .buttonsGroup {
+      @include flex-container(row, center, end);
+      flex-grow: 1;
+
+      button.getStarted {
+        margin-left: 10%;
+      }
+    }
+  }
+}
+
+// Tablet Layout (1160px and below)
+@media (max-width: 1160px) and (min-width: 769px) {
+  .header {
+    @include flex-container(column, center, center);
+    gap: 2%;
+    
+    h1 {
+      order: 1;
+      margin-bottom: 1.5%;
+    }
+
+    nav {
+      order: 2;
+      width: 100%;
+      margin-top: 0;
+      
+      ul {
+        @include flex-container(row, center, center);
+        gap: 4%;
+      }
+    }
+
+    .buttonsGroup {
+      @include flex-container(row, center, center);
+      order: 3;
+      margin-top: 1.5%;
+      
+      button.getStarted {
+        margin-left: 10%;
+      }
+    }
+  }
+}
+
+// Mobile Layout (768px and below)
 @media (max-width: 768px) {
   .header {
+    @include flex-container(row, center, space-between);
+    
     h1 {
       font-size: 34px;
+      flex-grow: 1;
     }
 
     nav {
@@ -150,11 +203,25 @@ $lighter-text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.2);
     .menuIcon {
       display: block;
     }
+
+    .buttonsGroup {
+      @include flex-container(row, center, end);
+      button.getStarted{
+          margin-left: 10%;
+      }
+    }
   }
 }
 
-@media (max-width: 360px) {
+// Small Mobile Layout (480px and below)
+@media (max-width: 480px) {
   .header {
+    @include flex-container(row, center, space-between);
+    
+    h1 {
+      flex-grow: 1;
+    }
+
     .menuIcon {
       display: block;
     }
