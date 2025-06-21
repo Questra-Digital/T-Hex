@@ -1,4 +1,4 @@
-import styles from "./MenuDrawer.module.scss";
+import styles from "@/styles/components/Header/MenuDrawer.module.scss";
 import Image from "next/image";
 import { outfit } from "@/font/fonts";
 import { useEffect, useState } from "react";
@@ -53,7 +53,9 @@ export default function Drawer({
 
           <div className={`${styles.linkCard}`}>
             <button className={outfit.variable}>Login</button>
-            <button className={`${styles.getStarted} ${outfit.variable}`}>Get Started Free</button>
+            <button className={`${styles.getStarted} ${outfit.variable}`}>
+              Get Started Free
+            </button>
           </div>
         </div>
       )}

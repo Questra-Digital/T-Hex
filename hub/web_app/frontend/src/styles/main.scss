@@ -1,0 +1,7 @@
+// main.scss
+@use './abstracts/variables' as var;
+@use './abstracts/mixins' as mx;
+@use './abstracts/breakpoints' as break;
+
+// Importing individual component modules
+@use './components/Header.module.scss';

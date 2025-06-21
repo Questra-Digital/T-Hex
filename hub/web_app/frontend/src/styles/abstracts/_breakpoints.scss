@@ -1,0 +1,39 @@
+// _breakpoints.scss
+@use "sass:map";
+$breakpoints: (
+  xs: 320px,
+  sm: 375px,
+  md: 480px,
+  lg: 576px,
+  xl: 768px,
+  xxl: 992px,
+  desktop: 1200px,
+  large-desktop: 1400px,
+  xl-desktop: 1920px
+);
+
+// Mixin for media queries
+@mixin respond-to($breakpoint) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    @media (min-width: map.get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  }
+
+  @else {
+    @warn "Unknown breakpoint: #{$breakpoint}";
+  }
+}
+
+// Advanced mixin with range support
+@mixin respond-between($min, $max) {
+  @if map.has-key($breakpoints, $min) and map.has-key($breakpoints, $max) {
+    @media (min-width: map.get($breakpoints, $min)) and (max-width: calc(map.get($breakpoints, $max) - 1px)) {
+      @content;
+    }
+  }
+
+  @else {
+    @warn "Unknown breakpoint(s): #{$min}, #{$max}";
+  }
+}
