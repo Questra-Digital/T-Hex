@@ -1,0 +1,176 @@
+@use '../../abstracts/mixins' as mx;
+@use '../../abstracts/variables' as var;
+@use '../../abstracts/breakpoints' as break;
+
+// Mobile First Header Styles (320px and up - BASE STYLES)
+.header {
+    background-color: #a3d1c6;
+    padding: 16px;
+    position: relative; // Add this to create positioning context
+    z-index: 100; // Ensure header stays above other content
+    @include mx.flex-container(row, center, space-evenly);
+
+
+    .logo {
+        @include mx.text-style($font: var(--font-montserrat),
+            $size: 34px,
+            $weight: 700,
+            $shadow: var.$text-shadow-effect,
+            $line_height: 41px);
+        flex-grow: 1;
+    }
+
+    .menuIcon {
+        display: block;
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out;
+        flex-grow: 1;
+    }
+
+    .navbar {
+        display: none;
+
+        .list {
+            list-style: none;
+
+            .listItem {
+                /* Text Style inside the list*/
+                @include mx.text-style($line_height: 23px);
+                text-decoration: none;
+                position: relative;
+
+                /* Create the animated underline with pseudo-element */
+                &::after {
+                    content: "";
+                    position: absolute;
+                    bottom: 0;
+                    left: 50%;
+                    width: 0;
+                    height: 2px;
+                    background-color: var.$text-color;
+                    transform: translateX(-50%); // so that the center of the ruler is at the center mark
+                    transition: width 0.3s ease-in-out;
+                }
+
+                &:hover {
+                    &::after {
+                        width: 100%;
+                    }
+
+                    .arrowIcon {
+                        transform: rotate(180deg);
+                    }
+                }
+
+                .arrowIcon {
+                    transition: transform 0.3s ease-in-out;
+                    vertical-align: middle;
+                }
+            }
+        }
+    }
+
+    .buttonsGroup {
+        display: none;
+
+        .button {
+            @include mx.button-style($width: 105px, $height: 42px);
+            @include mx.text-style($size: 20px, $weight: 400, $shadow: none, $line_height: 25px);
+
+            &:hover {
+                background: #f0f0f0;
+                box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
+            }
+
+            /*Get Started Button Variation*/
+            &.getStarted {
+                @include mx.button-style($bg: #3d8d7a, $width: 189px, $height: 42px, $color: #ffffff);
+
+                &:hover {
+                    background: #2e6e5d;
+                    color: #e0e0e0;
+                }
+            }
+        }
+    }
+}
+
+//more than 576px
+@include break.respond-to(lg) {
+    .header {
+        .buttonsGroup {
+            display: block;
+            @include mx.flex-container(row, center, end);
+
+            .button.getStarted {
+                margin-left: 10%;
+            }
+        }
+    }
+}
+
+//more than 768px
+@include break.respond-to(xl) {
+    .header {
+        @include mx.flex-container(column, center, center);
+        gap: 2%;
+
+        .logo {
+            order: 1;
+            margin-bottom: 1.5%;
+        }
+
+        .navbar {
+            order: 2;
+            width: 100%;
+            margin-top: 0;
+            display: block;
+
+            .list {
+                @include mx.flex-container(row, center, center);
+                gap: 4%;
+            }
+        }
+
+        .buttonsGroup {
+            @include mx.flex-container(row, center, center);
+            order: 3;
+            margin-top: 1.5%;
+
+        }
+
+        .menuIcon {
+            display: none;
+        }
+
+    }
+}
+
+//more than 1200px
+@include break.respond-to(desktop) {
+    .header {
+        @include mx.flex-container(row, center, center);
+        gap: 0; //reset to default
+
+        .logo {
+            flex-grow: 1;
+            margin-bottom: 0; //reset to default
+        }
+
+        .navbar {
+            flex-grow: 2;
+            margin-top: 0.3%;
+            width: auto; //reset to default
+
+            .list {
+                @include mx.flex-container(row, center, space-between);
+            }
+        }
+
+        .buttonsGroup {
+            @include mx.flex-container(row, center, end);
+            flex-grow: 1;
+            margin-top: 0;
+        }
+    }
+}
