@@ -1,0 +1,40 @@
+@use 'variables' as var;
+
+// Mixins
+@mixin flex-container($direction: row, $align: center, $justify: center) {
+    display: flex;
+    flex-direction: $direction;
+    align-items: $align;
+    justify-content: $justify;
+}
+
+@mixin text-style($font: var(--font-outfit),
+    $size: 18px,
+    $weight: 500,
+    $shadow: var.$lighter-text-shadow-effect,
+    $style: normal,
+    $line_height: 10px,
+    $text_align: center,
+    $color: var.$text-color) {
+    font-family: $font;
+    font-size: $size;
+    font-weight: $weight;
+    text-shadow: $shadow;
+    font-style: $style;
+    line-height: $line_height;
+    text-align: $text_align;
+    color: $color;
+}
+
+@mixin button-style($bg: #ffffff, $width: 0px, $height: 0px, $color: #000000, $border: none, $box-shadow: var.$box-shadow, $border-radius: 6px) {
+    @include flex-container(row, center, center);
+    width: $width;
+    height: $height;
+    background: $bg;
+    color: $color;
+    border: $border;
+    box-shadow: $box-shadow;
+    border-radius: $border-radius;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}

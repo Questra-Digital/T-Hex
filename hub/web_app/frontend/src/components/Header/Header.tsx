@@ -1,7 +1,7 @@
 "use client";
-import styles from "./Header.module.scss";
+import styles from "@/styles/components/Header/Header.module.scss";
 import Link from "next/link";
-import { montserrat, outfit } from "@/font/fonts";
+import { montserrat, outfit } from "../../fonts/fonts";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import MenuDrawer from "./MenuDrawer/MenuDrawer";
@@ -57,15 +57,15 @@ export default function Header() {
         />
 
         {/* T-Hex Logo */}
-        <h1>T-Hex</h1>
+        <h1 className={styles.logo}>T-Hex</h1>
 
         {/* Nav Bar */}
-        <nav>
-          <ul>
+        <nav className={styles.navbar}>
+          <ul className={styles.list}>
             {/*map each link to Next's Link*/}
             {links.map((link) => {
               return (
-                <li key={link.name}>
+                <li key={link.name} className={styles.listItem}>
                   <Link href={link.href}>
                     {link.name}
                     <Image
@@ -84,8 +84,8 @@ export default function Header() {
 
         {/* Button Groups */}
         <div className={styles.buttonsGroup}>
-          <button>Login</button>
-          <button className={styles.getStarted}>Get Started Free</button>
+          <button className={styles.button}>Login</button>
+          <button className={`${styles.getStarted} ${styles.button}`}>Get Started Free</button>
         </div>
       </header>
       

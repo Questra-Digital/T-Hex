@@ -1,3 +1,4 @@
+import HeroSection from "@/components/HeroSection/HeroSection";
 export default function Page() {
-  return <p>Landing Page Content</p>;
+  return <><HeroSection /> </>;
 }
