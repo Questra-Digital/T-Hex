@@ -1,0 +1,332 @@
+@use '../abstracts/mixins' as mx;
+@use '../abstracts/variables' as var;
+@use '../abstracts/breakpoints' as break;
+
+
+// Keyframe animations
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOutDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+//Base Style from 320px and onwards
+.features {
+    background-color: #EEEEEE;
+    @include mx.flex-container(column, center, center);
+
+    .featuresHeading {
+        @include mx.text-style($size: 28px, $weight: 500, $line_height: 35px, $text_align: center, $shadow: var.$heading-text-shadow);
+        letter-spacing: -0.02em;
+        span{
+            color: #1B39CE;
+        }
+    }
+
+    .mainContainer {
+        @include mx.flex-container(column, center, center);
+        width: 90%;
+        border: 2px solid #3D8D7A;
+        border-radius: 20px;
+        padding: 5%;
+        margin-top: 5%;
+        margin-bottom: 10%;
+
+
+        .categoriesContainer {
+            @include mx.flex-container(column, center, center);
+            gap: 18px;
+
+
+            .category {
+                @include mx.flex-container(row, center, center);
+                @include mx.button-style($bg: #EEEEEE, $width: 209px, $height: 56px, $border: 2px solid #A3D1C6, $box-shadow: none, $border-radius: 12px);
+                box-sizing: border-box;
+                @include mx.text-style($size: 26px, $line_height: 33px, $shadow: none);
+                letter-spacing: -0.02em;
+
+                p {
+                    display: none;
+                }
+
+                &:hover {
+                    background-color: #f8f9fa;
+                }
+
+                &.active {
+                    background-color: #FFFFFF;
+                    box-shadow: inset 0px -4px 0px 0px #1B39CE; // Display blue line on top when clicked.
+                }
+            }
+        }
+
+        .border {
+            border: 1px solid #A3D1C6;
+            width: 100%;
+            margin-top: 7%;
+            display: block; // make span fill width
+        }
+
+        .featuresContainer {
+            @include mx.flex-container(column, center, center);
+            width: 100%;
+            margin-top: 7%;
+            gap: 10px;
+            position: relative;
+
+
+            .featureCard {
+                @include mx.flex-container(row, center, flex-start);
+                width: 100%;
+                height: 69px;
+                border: 2px solid #A3D1C6;
+                border-radius: 8px;
+                background-color: #EEEEEE;
+                transition: all 0.3s ease;
+                cursor: pointer;
+
+                // Animation classes for cascading effect
+                &.slideIn {
+                    animation: slideInUp 0.6s ease-out forwards;
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+
+                &.slideOut {
+                    animation: slideOutDown 0.3s ease-in forwards;
+                    opacity: 1;
+                }
+
+                // Hover effect adjustments for animated cards
+                &:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(61, 141, 122, 0.15);
+                    border-color: #3D8D7A;
+                    background-color: #FAFAFA;
+                }
+
+                // Ensure hover works with animations
+                &.slideIn:hover {
+                    transform: translateY(-2px) !important;
+                }
+
+                .imgIcon {
+                    width: 30px;
+                    height: 30px;
+                    margin-left: 5%;
+                    flex-shrink: 0; // Prevent icon from shrinking
+                }
+
+
+                .textContainer {
+                    @include mx.flex-container(column, flex-start, flex-start);
+                    align-items: start;
+                    margin-left: 5%;
+                    gap: 4px;
+
+                    .featureName {
+                        @include mx.text-style($size: 22px, $weight: 500, $line_height: 18px);
+                        margin-bottom: 4px;
+
+                    }
+
+                    .featureDescription {
+                        @include mx.text-style($size: 14px, $weight: 500, $line_height: 18px, $color: #898989, $shadow: none);
+
+                    }
+                }
+
+
+            }
+        }
+    }
+}
+
+//576px and more
+@include break.respond-to(lg) {
+    .features {
+        .mainContainer {
+            .categoriesContainer {
+                flex-direction: row;
+
+                .category {
+                    width: 220px;
+                    height: 60px;
+                }
+            }
+
+            .featuresContainer {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 13px;
+
+                .featureCard {
+                    width: 48.5%;
+                    height: 106px;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;
+
+                    .topRow {
+                        @include mx.flex-container(row, center, center);
+                        gap: 13px;
+                        width: 100%;
+                        align-items: center;
+                        justify-content: center;
+
+                        .imgIcon {
+                            width: 30px;
+                            height: 30px;
+                            flex-shrink: 0; // Prevent icon from shrinking
+                        }
+
+                        .featureName {
+                            @include mx.text-style($size: 24px, $weight: 500, $line_height: 30px);
+                            margin: 0; // Remove any default margins
+                            padding: 0; // Remove any default padding
+                            text-align: center;
+                            margin-bottom: 2%;
+                        }
+                    }
+
+                    .featureDescription {
+                        @include mx.text-style($size: 16px, $weight: 500, $line_height: 18px, $color: #898989, $shadow: none);
+                        width: 100%;
+                        text-align: center;
+                        margin: 0;
+                        padding: 0 10px; // Add horizontal padding for better readability
+                    }
+                }
+            }
+        }
+    }
+}
+
+//768px and more
+@include break.respond-to(xl) {
+    .features {
+        .featuresHeading{
+            font-size: 38px;
+            margin-top: 5%;
+        }
+        .mainContainer {
+            .categoriesContainer {
+                flex-direction: row;
+
+                .category {
+                    width: 293px;
+                    height: 77px;
+                }
+            }
+
+            .border{
+                margin-top: 5%;
+            }
+          .featuresContainer{
+            margin-top: 5%;
+          }
+        }
+
+    }
+}
+
+//992px and more
+@include break.respond-to(xxl) {
+    .features {
+        .featuresHeading {
+            font-size: 48px;
+            line-height: 60px;
+            margin-top: 3%;
+        }
+
+        .mainContainer {
+            flex-direction: row;
+            padding: 2%;
+            width: 95%;
+            .categoriesContainer {
+                flex-direction: column;
+
+                .category {
+                    flex-direction: column;
+                    width: 270px;
+                    height: 130px;
+                    font-size: 32px;
+                    line-height: 43px;
+
+                    p {
+                        display: block;
+                        @include mx.text-style($size: 16px, $weight: 400, $line_height: 30px, $color: #8E8E93, $shadow: none);
+                        letter-spacing: -0.02em;
+                    }
+                }
+            }
+
+            .border {
+                // Make it a vertical divider:
+                width: 3px; // thin vertical line
+                height: auto;
+                background-color: #A3D1C6;
+                margin: 0 2%;
+                align-self: stretch;
+                border: none;
+            }
+
+            .featuresContainer {
+                margin-top: 0;
+
+                .featureCard {
+                    width: 48.5%;
+                }
+            }
+        }
+    }
+}
+
+//1200px and more
+@include break.respond-to(desktop) {
+    .features {
+        .featuresHeading{
+            font-size: 50px;
+        }
+        .mainContainer {
+            padding: 1%;
+            margin-top: 3%;
+            width: 90%;
+
+            .featuresContainer {
+                gap: 14px;
+
+                .featureCard {
+                    width: 32%;
+                    .topRow{
+                        .featureName{
+                            font-size: 26px;
+                        }
+                    }
+                    .featureDescription{
+                        font-size: 18px;
+                    }
+                }
+            }
+        }
+    }
+}
