@@ -1,369 +1,294 @@
-    @use '../abstracts/mixins' as mx;
-    @use '../abstracts/variables' as var;
-    @use '../abstracts/breakpoints' as break;
+@use '../abstracts/mixins' as mx;
+@use '../abstracts/variables' as var;
+@use '../abstracts/breakpoints' as break;
 
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
+$animation-time: 0.8s;
+
+// Base styles starting from 320px and plus
+.heroSection {
+    height: auto;
+    @include mx.flex-container(column, center, center);
+
+    .heroHeading {
+        @include mx.fade-in($animation-time);
+        order: 1;
+        margin: 3% 2% 0 2%;
+    }
+
+    .imageContainer {
+        order: 2;
+        margin-top: -2%;
+        position: relative;
+        width: 100%;
+        @include mx.flex-container(row, center, center);
+        @include mx.slide-in-right($animation-time);
+
+        .backgroundRectangle {
+            position: absolute;
+            top: 10%;
+            right: 0;
+            width: 50%;
+            height: 90%;
+            background-color: #D9D9D9;
+            z-index: 0;
+            display: block;
         }
 
-        to {
-            opacity: 1;
+        .dashboard {
+            position: relative;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .playCircle {
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            top: 47%;
+            left: 45%;
+            cursor: pointer;
         }
     }
 
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(100%);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
+    .breakLine {
+        order: 3;
+        width: 30%;
+        height: 2px;
+        background-color: black;
+        display: block;
+        margin-top: 7%;
     }
 
-    @keyframes slideInUp {
-        from {
-            opacity: 0;
-            transform: translateY(100%); // positive for bottom
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .bodyText {
+        text-shadow: var.$heading-text-shadow;
+        order: 4;
+        margin: 7% 5% 0 5%;
+        @include mx.fade-in($animation-time);
     }
 
-    $animation-time: 0.8s;
-
-    //Base styles starting from 320px and plus
-    .heroSection {
-        background-color: #EEEEEE;
-        height: auto;
+    .buttonsGroup {
+        order: 5;
         @include mx.flex-container(column, center, center);
-        
-        // Base text style applied to all text elements
-        @include mx.text-style($font: var(--font-outfit), $size: 18px, $weight: 500, $line_height: 23px);
+        gap: 20px;
+        margin-top: 7%;
+        @include mx.fade-in($animation-time);
 
-        .heroHeading {
-            @include mx.text-style($size: 32px, $shadow: var.$heading-text-shadow, $line_height: 40px, $text_align: center);
-            animation: fadeIn $animation-time ease-in forwards;
-            order: 1;
-            margin: 3% 2% 0 2%;
+        button {
+            @include mx.button-style($width: 277px, $height: 61px, $bg: #3D8D7A);
+            @include mx.text-style($weight: 400, $size: 20px, $line_height: 25px, $color: white);
+            @include mx.flex-container(row, center, space-evenly);
+            letter-spacing: -0.02em;
 
-            span {
-                color: #1B39CE;
+            &:hover {
+                background: #2e6e5d;
+                color: #e0e0e0;
             }
+        }
+
+        // Google button variation
+        button.googleButton {
+            background-color: white;
+            color: black;
+
+            &:hover {
+                background: #f0f0f0;
+            }
+        }
+    }
+
+    .trustedGlobally {
+        margin-top: 10%;
+        order: 6;
+        @include mx.flex-container(column, center, center);
+        @include mx.slide-in-up($animation-time);
+
+        p {
+            font-size: 22px;
+            line-height: 30px;
+            color: rgba(0,0,0,0.55);
+        }
+
+        .usersIcons {
+            margin-top: 5%;
+            @include mx.flex-container(row, center, space-evenly);
+            flex-wrap: wrap;
+            max-width: 100%;
+
+            .iconCell {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                height: 70px;
+                margin: 0 2%;
+
+                .microsoft {
+                    width: 100%;
+                    height: 130px;
+                }
+
+                .telstra {
+                    margin-top: 5%;
+                }
+
+                .rubrik {
+                    margin-bottom: 7%;
+                }
+            }
+        }
+    }
+}
+
+// Medium screens (480px+)
+@include break.respond-to(md) {
+    .heroSection {
+        .imageContainer {
+            .playCircle {
+                top: 50%;
+                left: 47%;
+            }
+        }
+    }
+}
+
+// Large screens (576px+)
+@include break.respond-to(lg) {
+    .heroSection {
+        .bodyText {
+            font-size: 22px;
         }
 
         .imageContainer {
-            order: 2;
-            margin-top: -2%;
-            position: relative;
-            width: 100%;
-            @include mx.flex-container(row, center, center);
-            animation: slideInRight $animation-time ease-out forwards;
-
-            .backgroundRectangle {
-                position: absolute;
-                top: 10%;
-                right: 0;
-                width: 50%; //
-                height: 90%;
-                background-color: #D9D9D9;
-                z-index: 0;
-                display: block;
-            }
-
-
-            .dashboard {
-                position: relative; //positioning context
-                cursor: pointer;
-                width: 100%;
-                height: 100%;
-            }
-
             .playCircle {
-                width: 30px;
-                height: 30px;
-                position: absolute;
-                /* Position relative to .mainImage */
-                top: 47%;
-                left: 45%;
-                cursor: pointer;
+                width: 34px;
+                height: 34px;
             }
-        }
-
-        .breakLine {
-            order: 3;
-            width: 30%;
-            height: 2px;
-            background-color: black; // Ensures the line is visible
-            display: block; // Ensures the span behaves like a block element
-            margin-top: 7%;
-        }
-
-        .bodyText {
-            @include mx.text-style($line_height: 23px, $shadow: var.$heading-text-shadow);
-            order: 4;
-            margin: 7% 5% 0 5%;
-            animation: fadeIn $animation-time ease-in forwards;
         }
 
         .buttonsGroup {
-            order: 5;
-            @include mx.flex-container(column, center, center);
-            gap: 20px;
-            margin-top: 7%;
-            animation: fadeIn $animation-time ease-in forwards;
+            button {
+                width: 350px;
+            }
+        }
+    }
+}
+
+// Extra large screens (768px+)
+@include break.respond-to(xl) {
+    .heroSection {
+        .buttonsGroup {
+            @include mx.flex-container(row, center, center);
 
             button {
-                @include mx.button-style($width: 277px, $height: 61px, $bg: #3D8D7A);
-                @include mx.text-style($weight: 400, $size: 20px, $line_height: 25px, $color: white);
-                @include mx.flex-container(row, center, space-evenly);
-                letter-spacing: -0.02em;
-
-                &:hover {
-                    background: #2e6e5d;
-                    color: #e0e0e0;
-                }
+                width: 307px;
             }
-
-            //variation for google button
-            button.googleButton {
-                background-color: white;
-                color: black;
-
-                &:hover {
-                    background: #f0f0f0;
-                    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
-                }
-            }
-
-
         }
 
         .trustedGlobally {
-            margin-top: 10%;
-            order: 6;
-            @include mx.flex-container(column, center, center);
-            animation: slideInUp $animation-time ease-out forwards;
+            .usersIcons {
+                .iconCell {
+                    margin-left: 2%;
+                }
+            }
+        }
+    }
+}
+
+// Desktop screens (1200px+)
+@include break.respond-to(desktop) {
+    .heroSection {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-template-rows: repeat(6, auto);
+        align-items: start;
+        position: relative;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30%;
+            height: 100%;
+            background-color: #D9D9D9;
+            z-index: 0;
+            display: block;
+        }
+
+        // Left column content
+        .heroHeading {
+            grid-column: 1;
+            grid-row: 1;
+            text-align: left;
+            margin: 7% 0 0 10%;
+            font-size: 64px;
+            line-height: 70px;
+        }
+
+        .breakLine {
+            grid-column: 1;
+            grid-row: 2;
+            justify-self: start;
+            margin: 7% 0 0 10%;
+        }
+
+        .bodyText {
+            grid-column: 1;
+            grid-row: 3;
+            text-align: left;
+            margin: 5% 0 0 10%;
+            font-size: 24px;
+        }
+
+        .buttonsGroup {
+            grid-column: 1;
+            grid-row: 4;
+            justify-self: start;
+            margin: 7% 0 0 10%;
+            gap: 5%;
+
+            button {
+                font-size: 22px;
+            }
+        }
+
+        .trustedGlobally {
+            grid-column: 1;
+            grid-row: 5;
+            justify-self: start;
+            align-items: start;
+            margin: 7% 0 0 10%;
 
             p {
-                @include mx.text-style($size: 22px, $line_height: 30px, $text_align: center, $color: rgba(0, 0, 0, 0.55));
+                text-align: left;
             }
 
             .usersIcons {
-                margin-top: 5%;
-                @include mx.flex-container(row, center, space-evenly);
-                flex-wrap: wrap;
-                max-width: 100%;
-
+                justify-content: flex-start;
+                margin: 1% 0 0 -2%;
 
                 .iconCell {
-                    display: inline-flex; // Shrink to content size
-                    align-items: center;
-                    justify-content: center;
-                    height: 70px; // Fixed container height
-
                     margin: 0 2%;
-
-                    .microsoft {
-                        width: 100%;
-                        height: 130px;
-                    }
-
-                    .telstra {
-                        margin-top: 5%;
-                    }
-
-                    .rubrik {
-                        margin-bottom: 7%;
-                    }
-
-
-                }
-            }
-
-            .logoImage {
-                width: 100%;
-                height: 100%;
-                object-fit: contain; // Maintains aspect ratio while fitting container
-            }
-
-
-
-        }
-
-    }
-
-    //480 px and plus
-    @include break.respond-to(md) {
-        .heroSection {
-            .imageContainer {
-                .playCircle {
-                    top: 50%;
-                    left: 47%;
-                }
-
-            }
-        }
-    }
-
-    //576px and more
-    @include break.respond-to(lg) {
-        .heroSection {
-
-            .heroHeading {
-                font-size: 34px;
-            }
-
-            .bodyText {
-                font-size: 22px;
-            }
-
-            .imageContainer {
-                .playCircle {
-                    width: 34px;
-                    height: 34px;
-                }
-            }
-
-            .buttonsGroup {
-                button {
-                    width: 350px;
                 }
             }
         }
-    }
 
-    //768px and more
-    @include break.respond-to(xl) {
-        .heroSection {
+        // Right column - image spans all rows
+        .imageContainer {
+            grid-column: 2;
+            grid-row: 1 / -1;
+            margin: 5% 0 0 -10%;
+            justify-self: start;
+            align-self: start;
 
-            .heroHeading {
-                font-size: 42px;
+            .backgroundRectangle {
+                display: none;
             }
 
-            .buttonsGroup {
-                @include mx.flex-container(row, center, center);
-
-                button {
-                    width: 307px;
-                }
-            }
-
-            .trustedGlobally {
-                .usersIcons {
-                    .iconCell {
-                        margin-left: 2%;
-                    }
-                }
+            .playCircle {
+                width: 52px;
+                height: 52px;
             }
         }
     }
-
-    //1200px and more
-    @include break.respond-to(desktop) {
-        .heroSection {
-            display: grid;
-            grid-template-columns: 50% 50%; // Two equal columns
-            grid-template-rows: repeat(6, auto);
-            align-items: start;
-            position: relative;
-
-
-            &::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                right: 0;
-                width: 30%; //
-                height: 100%;
-                background-color: #D9D9D9;
-                z-index: 0;
-                display: block;
-            }
-
-            // Left column content
-            .heroHeading {
-                grid-column: 1;
-                grid-row: 1;
-                text-align: left;
-                margin: 7% 0 0 10%;
-                font-size: 64px;
-                line-height: 70px;
-            }
-
-            .breakLine {
-                grid-column: 1;
-                grid-row: 2;
-                justify-self: start;
-                margin: 7% 0 0 10%;
-            }
-
-            .bodyText {
-                grid-column: 1;
-                grid-row: 3;
-                text-align: left;
-                margin: 5% 0 0 10%;
-                font-size: 24px;
-            }
-
-            .buttonsGroup {
-                grid-column: 1;
-                grid-row: 4;
-                justify-self: start;
-                margin: 7% 0 0 10%;
-                gap: 5%;
-
-                button {
-                    font-size: 22px;
-                }
-            }
-
-            .trustedGlobally {
-                grid-column: 1;
-                grid-row: 5;
-                justify-self: start;
-                align-items: start;
-                margin: 7% 0 0 10%;
-
-                p {
-                    text-align: left;
-                }
-
-                .usersIcons {
-
-                    justify-content: flex-start;
-                    margin: 1% 0 0 -2%;
-
-                    .iconCell {
-                        margin: 0 2%;
-                    }
-
-                }
-            }
-
-            // Right column - image spans all rows
-            .imageContainer {
-                grid-column: 2;
-                grid-row: 1 / -1; // Span all rows
-                margin: 5% 0 0 -10%;
-                justify-self: start;
-                align-self: start;
-
-
-                .backgroundRectangle {
-                    display: none;
-                }
-
-                .playCircle {
-                    width: 52px;
-                    height: 52px;
-                }
-            }
-        }
-    }
+}
