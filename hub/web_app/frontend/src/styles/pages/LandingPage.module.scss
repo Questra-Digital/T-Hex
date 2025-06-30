@@ -2,137 +2,60 @@
 @use '../abstracts/variables' as var;
 @use '../abstracts/breakpoints' as break;
 
-// Common animations used across landing page sections
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(100%);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 // Landing page base styles
 .landingPage {
     // Common background color for all sections
     background-color: #EEEEEE;
     
-    // Base text style applied to all text elements
+    // Base text style applied to all text elements, override specific parameters in components
     @include mx.text-style($font: var(--font-outfit), $size: 18px, $weight: 500, $line_height: 23px);
-}
 
-// Common section heading styles
-.sectionHeading {
-    @include mx.text-style($size: 32px, $weight: 500, $line_height: 35px, $text_align: center, $shadow: var.$heading-text-shadow);
-    letter-spacing: -0.02em;
-
-    span {
-        color: #1B39CE;
+    // Common section styles for all sections
+    section {
+        margin-bottom: 5%;
+        
+        h1 {
+            font-size: 32px;
+            line-height: 40px;
+            text-shadow: var.$heading-text-shadow;
+            letter-spacing: -0.02em;
+            font-weight: 500;
+            
+            span {
+                color: #1B39CE;
+            }
+        }
     }
 }
 
-// Common button styles
-.primaryButton {
-    @include mx.button-style($bg: #3D8D7A, $width: auto, $height: 61px, $border-radius: 6px);
-    @include mx.text-style($weight: 400, $size: 20px, $line_height: 25px, $color: white);
-    @include mx.flex-container(row, center, center);
-    letter-spacing: -0.02em;
-
-    &:hover {
-        background: #2e6e5d;
-        color: #e0e0e0;
-    }
-}
-
-.secondaryButton {
-    @include mx.button-style($bg: white, $width: auto, $height: 61px, $border-radius: 6px);
-    @include mx.text-style($weight: 400, $size: 20px, $line_height: 25px, $color: black);
-    @include mx.flex-container(row, center, center);
-    letter-spacing: -0.02em;
-
-    &:hover {
-        background: #f0f0f0;
-    }
-}
-
-// Animation utility classes
-.fadeIn {
-    animation: fadeIn 0.8s ease-in forwards;
-}
-
-.slideInRight {
-    animation: slideInRight 0.8s ease-out forwards;
-}
-
-.slideInUp {
-    animation: slideInUp 0.8s ease-out forwards;
-}
-
-// Common container styles
-.sectionContainer {
-    @include mx.flex-container(column, center, center);
-    width: 100%;
-    padding: 5% 0;
-}
-
-// Common card styles
-.card {
-    background-color: #ffffff;
-    border-radius: 24px;
-    box-shadow: 0px 2px 12px rgba(20, 20, 43, 0.08);
-    transition: all 0.3s ease;
-}
-
-// Responsive breakpoints for common elements
+// Responsive breakpoints for section headings
 @include break.respond-to(md) {
-    .sectionHeading {
+    .landingPage section h1 {
         font-size: 36px;
     }
 }
 
 @include break.respond-to(lg) {
-    .sectionHeading {
+    .landingPage section h1 {
         font-size: 38px;
     }
 }
 
 @include break.respond-to(xl) {
-    .sectionHeading {
+    .landingPage section h1 {
         font-size: 40px;
     }
 }
 
 @include break.respond-to(xxl) {
-    .sectionHeading {
+    .landingPage section h1 {
         font-size: 48px;
         line-height: 60px;
     }
 }
 
 @include break.respond-to(desktop) {
-    .sectionHeading {
+    .landingPage section h1 {
         font-size: 50px;
     }
-} 
+}
