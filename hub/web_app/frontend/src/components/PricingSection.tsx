@@ -1,6 +1,6 @@
 import styles from "@/styles/components/PricingSection.module.scss";
 import Image from "next/image";
-import { dm_sans, outfit } from "../fonts/fonts";
+import { dm_sans } from "../fonts/fonts";
 
 // Constants
 const FREE_TRIAL_FEATURES = [
@@ -121,7 +121,7 @@ export default function PricingSection() {
 
   return (
     <section className={`${styles.pricingSection} ${dm_sans.variable}`}>
-      <h1 className={outfit.variable}>
+      <h1 className={styles.pricingHeading}>
         T-Hex <span>Pricing</span>
       </h1>
 
