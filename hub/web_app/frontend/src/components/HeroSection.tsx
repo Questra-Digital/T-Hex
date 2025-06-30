@@ -1,5 +1,4 @@
 import styles from "@/styles/components/HeroSection.module.scss";
-import { outfit } from "../fonts/fonts";
 import Image from "next/image";
 
 // Constants
@@ -80,8 +79,8 @@ export default function HeroSection() {
   );
 
   return (
-    <section className={`${styles.heroSection} ${outfit.variable}`}>
-      <h1 className={styles.heroHeading}>
+    <section className={`${styles.heroSection}`}>
+      <h1 className={`${styles.heroHeading} `}>
         Power Your Software Testing with<span> AI and Cloud</span>
       </h1>
       <span className={styles.breakLine}></span>
