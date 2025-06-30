@@ -6,7 +6,8 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import MenuDrawer from "./MenuDrawer/MenuDrawer";
 
-const links = [
+// Constants
+const NAVIGATION_LINKS = [
   { name: "Home", href: "/landingPage" },
   { name: "Solutions", href: "/landingPage" },
   { name: "Services", href: "/landingPage" },
@@ -15,31 +16,59 @@ const links = [
   { name: "Contact", href: "/landingPage" },
 ];
 
+const BREAKPOINT_MOBILE = 768;
+const ICON_SIZE = 42;
+const ARROW_ICON_SIZE = 32;
+
 export default function Header() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     const handleScreenResize = () => {
-      if (window.innerWidth >= 768) {
-        setIsDrawerOpen(false); //Stop rendering drawer if screen exceeds 768px
+      if (window.innerWidth >= BREAKPOINT_MOBILE) {
+        setIsDrawerOpen(false);
       }
     };
 
-    // Add event listener for resize
     window.addEventListener("resize", handleScreenResize);
-
-    // Check initial screen size on mount
-    handleScreenResize();
+    handleScreenResize(); // Check initial screen size
 
     return () => {
-      // Cleanup event listener
       window.removeEventListener("resize", handleScreenResize);
     };
   }, []);
 
-  function onMenuPressed() {
+  const handleMenuToggle = () => {
     setIsDrawerOpen(!isDrawerOpen);
-  }
+  };
+
+  const renderNavigationLinks = () => (
+    <ul className={styles.list}>
+      {NAVIGATION_LINKS.map((link) => (
+        <li key={link.name} className={styles.listItem}>
+          <Link href={link.href}>
+            {link.name}
+            <Image
+              height={ARROW_ICON_SIZE}
+              width={ARROW_ICON_SIZE}
+              src="/Icons/arrow_down.svg"
+              alt="Arrow Down Icon"
+              className={styles.arrowIcon}
+            />
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+
+  const renderButtons = () => (
+    <div className={styles.buttonsGroup}>
+      <button className={styles.button}>Login</button>
+      <button className={`${styles.getStarted} ${styles.button}`}>
+        Get Started Free
+      </button>
+    </div>
+  );
 
   return (
     <>
@@ -51,46 +80,25 @@ export default function Header() {
           src={isDrawerOpen ? "/Icons/close.svg" : "/Icons/Menu.svg"}
           alt={isDrawerOpen ? "Close menu" : "Open menu"}
           className={styles.menuIcon}
-          width={42}
-          height={42}
-          onClick={onMenuPressed}
+          width={ICON_SIZE}
+          height={ICON_SIZE}
+          onClick={handleMenuToggle}
         />
 
         {/* T-Hex Logo */}
         <h1 className={styles.logo}>T-Hex</h1>
 
-        {/* Nav Bar */}
+        {/* Navigation Bar */}
         <nav className={styles.navbar}>
-          <ul className={styles.list}>
-            {/*map each link to Next's Link*/}
-            {links.map((link) => {
-              return (
-                <li key={link.name} className={styles.listItem}>
-                  <Link href={link.href}>
-                    {link.name}
-                    <Image
-                      height={32}
-                      width={32}
-                      src="/Icons/arrow_down.svg"
-                      alt="Arrow Down Icon"
-                      className={styles.arrowIcon}
-                    />
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          {renderNavigationLinks()}
         </nav>
 
         {/* Button Groups */}
-        <div className={styles.buttonsGroup}>
-          <button className={styles.button}>Login</button>
-          <button className={`${styles.getStarted} ${styles.button}`}>Get Started Free</button>
-        </div>
+        {renderButtons()}
       </header>
       
       {/* MenuDrawer for smaller screens */}
-      <MenuDrawer links={links} isDrawerOpen={isDrawerOpen} />
+      <MenuDrawer links={NAVIGATION_LINKS} isDrawerOpen={isDrawerOpen} />
     </>
   );
 }

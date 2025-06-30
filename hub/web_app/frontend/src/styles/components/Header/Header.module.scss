@@ -6,17 +6,15 @@
 .header {
     background-color: #a3d1c6;
     padding: 16px;
-    position: relative; // Add this to create positioning context
-    z-index: 100; // Ensure header stays above other content
+    position: relative;
+    z-index: 100;
     @include mx.flex-container(row, center, space-evenly);
-
+    
+    // Base text style applied to all text elements
+    @include mx.text-style($font: var(--font-outfit), $size: 18px, $weight: 500, $line_height: 23px);
 
     .logo {
-        @include mx.text-style($font: var(--font-montserrat),
-            $size: 34px,
-            $weight: 700,
-            $shadow: var.$text-shadow-effect,
-            $line_height: 41px);
+        @include mx.text-style($font: var(--font-montserrat), $size: 34px, $weight: 700, $shadow: var.$text-shadow-effect, $line_height: 41px);
         flex-grow: 1;
     }
 
@@ -34,8 +32,6 @@
             list-style: none;
 
             .listItem {
-                /* Text Style inside the list*/
-                @include mx.text-style($line_height: 23px);
                 text-decoration: none;
                 position: relative;
 
@@ -48,7 +44,7 @@
                     width: 0;
                     height: 2px;
                     background-color: var.$text-color;
-                    transform: translateX(-50%); // so that the center of the ruler is at the center mark
+                    transform: translateX(-50%);
                     transition: width 0.3s ease-in-out;
                 }
 
@@ -95,7 +91,7 @@
     }
 }
 
-//more than 576px
+// Large screens (576px+)
 @include break.respond-to(lg) {
     .header {
         .buttonsGroup {
@@ -109,7 +105,7 @@
     }
 }
 
-//more than 768px
+// Extra large screens (768px+)
 @include break.respond-to(xl) {
     .header {
         @include mx.flex-container(column, center, center);
@@ -136,31 +132,29 @@
             @include mx.flex-container(row, center, center);
             order: 3;
             margin-top: 1.5%;
-
         }
 
         .menuIcon {
             display: none;
         }
-
     }
 }
 
-//more than 1200px
+// Desktop screens (1200px+)
 @include break.respond-to(desktop) {
     .header {
         @include mx.flex-container(row, center, center);
-        gap: 0; //reset to default
+        gap: 0;
 
         .logo {
             flex-grow: 1;
-            margin-bottom: 0; //reset to default
+            margin-bottom: 0;
         }
 
         .navbar {
             flex-grow: 2;
             margin-top: 0.3%;
-            width: auto; //reset to default
+            width: auto;
 
             .list {
                 @include mx.flex-container(row, center, space-between);
