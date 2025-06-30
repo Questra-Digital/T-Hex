@@ -1,5 +1,50 @@
 @use 'variables' as var;
 
+// Common animations
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Animation mixins
+@mixin fade-in($duration: 0.8s, $timing: ease-in) {
+    animation: fadeIn $duration $timing forwards;
+}
+
+@mixin slide-in-right($duration: 0.8s, $timing: ease-out) {
+    animation: slideInRight $duration $timing forwards;
+}
+
+@mixin slide-in-up($duration: 0.8s, $timing: ease-out) {
+    animation: slideInUp $duration $timing forwards;
+}
+
 // Mixins
 @mixin flex-container($direction: row, $align: center, $justify: center) {
     display: flex;
