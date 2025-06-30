@@ -30,7 +30,6 @@
 
 //Base Style from 320px and onwards
 .features {
-    background-color: #EEEEEE;
     @include mx.flex-container(column, center, center);
     
 

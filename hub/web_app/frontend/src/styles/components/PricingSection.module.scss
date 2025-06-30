@@ -4,8 +4,6 @@
 
     //Base Styles 320px and more
     .pricingSection {
-        background-color: #eeeeee;
-        
         // Base text style applied to all text elements
         @include mx.text-style($font: var(--font-outfit), $size: 18px, $weight: 500, $line_height: 23px);
 
