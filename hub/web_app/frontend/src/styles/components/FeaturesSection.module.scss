@@ -33,24 +33,16 @@
     background-color: #EEEEEE;
     @include mx.flex-container(column, center, center);
     
-    // Base text style applied to all text elements
-    @include mx.text-style($font: var(--font-outfit), $size: 18px, $weight: 500, $line_height: 23px);
 
-    .featuresHeading {
-        @include mx.text-style($size: 28px, $weight: 500, $line_height: 35px, $text_align: center, $shadow: var.$heading-text-shadow);
-        letter-spacing: -0.02em;
-        span{
-            color: #1B39CE;
-        }
+    .featuresHeading{
+        margin-bottom: 5%;
     }
-
     .mainContainer {
         @include mx.flex-container(column, center, center);
         width: 90%;
         border: 2px solid #3D8D7A;
         border-radius: 20px;
         padding: 5%;
-        margin: 5% 0 10% 0;
 
 
         .categoriesContainer {
@@ -226,10 +218,6 @@
 //768px and more
 @include break.respond-to(xl) {
     .features {
-        .featuresHeading{
-            font-size: 38px;
-            margin-top: 5%;
-        }
         .mainContainer {
             .categoriesContainer {
                 flex-direction: row;
@@ -254,12 +242,6 @@
 //992px and more
 @include break.respond-to(xxl) {
     .features {
-        .featuresHeading {
-            font-size: 48px;
-            line-height: 60px;
-            margin-top: 3%;
-        }
-
         .mainContainer {
             flex-direction: row;
             padding: 2%;
@@ -306,12 +288,8 @@
 //1200px and more
 @include break.respond-to(desktop) {
     .features {
-        .featuresHeading{
-            font-size: 50px;
-        }
         .mainContainer {
             padding: 1%;
-            margin-top: 3%;
             width: 90%;
 
             .featuresContainer {
