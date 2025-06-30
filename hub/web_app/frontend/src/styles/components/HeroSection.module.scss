@@ -43,20 +43,19 @@
         background-color: #EEEEEE;
         height: auto;
         @include mx.flex-container(column, center, center);
+        
+        // Base text style applied to all text elements
+        @include mx.text-style($font: var(--font-outfit), $size: 18px, $weight: 500, $line_height: 23px);
 
         .heroHeading {
             @include mx.text-style($size: 32px, $shadow: var.$heading-text-shadow, $line_height: 40px, $text_align: center);
             animation: fadeIn $animation-time ease-in forwards;
+            order: 1;
+            margin: 3% 2% 0 2%;
 
             span {
                 color: #1B39CE;
             }
-
-            order: 1;
-            margin-top: 3%;
-            margin-left: 2%;
-            margin-right: 2%;
-
         }
 
         .imageContainer {
@@ -109,9 +108,7 @@
         .bodyText {
             @include mx.text-style($line_height: 23px, $shadow: var.$heading-text-shadow);
             order: 4;
-            margin-left: 5%;
-            margin-right: 5%;
-            margin-top: 7%;
+            margin: 7% 5% 0 5%;
             animation: fadeIn $animation-time ease-in forwards;
         }
 
@@ -171,8 +168,7 @@
                     justify-content: center;
                     height: 70px; // Fixed container height
 
-                    margin-left: 2%;
-                    margin-right: 2%;
+                    margin: 0 2%;
 
                     .microsoft {
                         width: 100%;
@@ -296,8 +292,7 @@
                 grid-column: 1;
                 grid-row: 1;
                 text-align: left;
-                margin-left: 10%;
-                margin-top: 7%;
+                margin: 7% 0 0 10%;
                 font-size: 64px;
                 line-height: 70px;
             }
@@ -306,16 +301,14 @@
                 grid-column: 1;
                 grid-row: 2;
                 justify-self: start;
-                margin-left: 10%;
-                margin-top: 7%;
+                margin: 7% 0 0 10%;
             }
 
             .bodyText {
                 grid-column: 1;
                 grid-row: 3;
                 text-align: left;
-                margin-top: 5%;
-                margin-left: 10%;
+                margin: 5% 0 0 10%;
                 font-size: 24px;
             }
 
@@ -323,8 +316,7 @@
                 grid-column: 1;
                 grid-row: 4;
                 justify-self: start;
-                margin-top: 7%;
-                margin-left: 10%;
+                margin: 7% 0 0 10%;
                 gap: 5%;
 
                 button {
@@ -337,8 +329,7 @@
                 grid-row: 5;
                 justify-self: start;
                 align-items: start;
-                margin-top: 7%;
-                margin-left: 10%;
+                margin: 7% 0 0 10%;
 
                 p {
                     text-align: left;
@@ -347,13 +338,10 @@
                 .usersIcons {
 
                     justify-content: flex-start;
-                    margin-top: 1%;
-                    margin-left: -2%;
+                    margin: 1% 0 0 -2%;
 
                     .iconCell {
-                        margin: 0;
-                        margin-left: 2%;
-                        margin-right: 2%;
+                        margin: 0 2%;
                     }
 
                 }
@@ -363,9 +351,7 @@
             .imageContainer {
                 grid-column: 2;
                 grid-row: 1 / -1; // Span all rows
-                margin: 0;
-                margin-left: -10%;
-                margin-top: 5%;
+                margin: 5% 0 0 -10%;
                 justify-self: start;
                 align-self: start;
 
