@@ -32,6 +32,9 @@
 .features {
     background-color: #EEEEEE;
     @include mx.flex-container(column, center, center);
+    
+    // Base text style applied to all text elements
+    @include mx.text-style($font: var(--font-outfit), $size: 18px, $weight: 500, $line_height: 23px);
 
     .featuresHeading {
         @include mx.text-style($size: 28px, $weight: 500, $line_height: 35px, $text_align: center, $shadow: var.$heading-text-shadow);
@@ -47,8 +50,7 @@
         border: 2px solid #3D8D7A;
         border-radius: 20px;
         padding: 5%;
-        margin-top: 5%;
-        margin-bottom: 10%;
+        margin: 5% 0 10% 0;
 
 
         .categoriesContainer {
