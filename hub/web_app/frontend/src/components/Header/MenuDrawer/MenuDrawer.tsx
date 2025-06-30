@@ -54,7 +54,7 @@ export default function MenuDrawer({
   const renderButtons = () => (
     <div className={styles.linkCard}>
       <button className={outfit.variable}>Login</button>
-      <button className={`${styles.getStarted} ${outfit.variable}`}>
+      <button className={`${styles.getStarted}`}>
         Get Started Free
       </button>
     </div>
@@ -66,7 +66,7 @@ export default function MenuDrawer({
 
   return (
     <div
-      className={`${styles.drawerContainer} ${
+      className={`${styles.drawerContainer}  ${outfit.variable} ${
         !isDrawerOpen ? styles.closing : ""
       }`}
     >
