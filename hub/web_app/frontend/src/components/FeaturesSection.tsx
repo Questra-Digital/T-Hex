@@ -1,7 +1,6 @@
 "use client";
 import styles from "@/styles/components/FeaturesSection.module.scss";
 import Image from "next/image";
-import { outfit } from "../fonts/fonts";
 import { useEffect, useState } from "react";
 
 // Constants
@@ -137,7 +136,7 @@ export default function FeaturesSection() {
   );
 
   return (
-    <div className={`${styles.features} ${outfit.variable}`}>
+    <section className={`${styles.features}`}>
       <h1 className={styles.featuresHeading}>
         Test Your <span>Websites</span> and <span>Mobile Apps</span>
       </h1>
@@ -146,6 +145,6 @@ export default function FeaturesSection() {
         <span className={styles.border}></span>
         {renderFeaturesContainer()}
       </div>
-    </div>
+    </section>
   );
 }
