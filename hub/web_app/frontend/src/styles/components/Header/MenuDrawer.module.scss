@@ -1,174 +1,171 @@
-  @use '../../abstracts/mixins' as mx;
-  @use '../../abstracts/breakpoints' as break;
+@use '../../abstracts/mixins' as mx;
+@use '../../abstracts/breakpoints' as break;
 
-  /* Slide animations for drawer container */
-  @keyframes slideDown {
-      from {
-          transform: translateY(-100%);
-          opacity: 0;
-      }
+/* Slide animations for drawer container */
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
 
-      to {
-          transform: translateY(0);
-          opacity: 1;
-      }
-  }
+@keyframes slideUp {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+}
 
-  @keyframes slideUp {
-      from {
-          transform: translateY(0);
-          opacity: 1;
-      }
+// Base Styles starting from 320px plus
+.drawerContainer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    animation: slideDown 0.3s ease-out forwards;
 
-      to {
-          transform: translateY(-100%);
-          opacity: 0;
-      }
-  }
+    &.closing {
+        animation: slideUp 0.3s ease-out forwards;
+    }
 
-  //Base Styles starting from 320px plus
-  .drawerContainer {
-      position: absolute;
-      left: 0;
-      right: 0;
-      z-index: 99;
-      animation: slideDown 0.3s ease-out forwards;
+    .linkCard {
+        width: 100%;
+        height: 70px;
+        @include mx.flex-container($justify: space-between);
+        padding: 0 10%;
+        background-color: #a3d1c6;
+        border-bottom: 1px solid black;
+        cursor: pointer;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
 
+        // Base text style for all text elements
+        @include mx.text-style($font: var(--font-outfit), $size: 20px, $weight: 500, $shadow: none);
 
-      &.closing {
-          animation: slideUp 0.3s ease-out forwards;
-      }
+        .linkName {
+            transition: color 0.3s ease;
+        }
 
-      .linkCard {
-          width: 100%;
-          height: 70px;
-          @include mx.flex-container($justify: space-between);
-          padding: 0 10%;
-          background-color: #a3d1c6;
-          border-bottom: 1px solid black;
-          cursor: pointer;
-          transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        .arrowIcon {
+            transition: transform 0.3s ease-in-out;
+            width: 30px;
+            height: 30px;
+        }
 
-          .linkName {
-              @include mx.text-style($font: var(--font-outfit), $size: 20px, $weight: 500, $shadow: none);
-              transition: color 0.3s ease;
-          }
+        /* Apply hover effects to all cards except the last child (buttons card) */
+        &:not(:last-child):hover {
+            background-color: #88b7a6;
+           
+            border-radius: 4px;
 
-          .arrowIcon {
-              transition: transform 0.3s ease-in-out;
-              width: 30px;
-              height: 30px;
-          }
+            .linkName {
+                color: #ffffff;
+            }
 
-          /* Apply hover effects to all cards except the last child .i.e. buttons card */
-          &:not(:last-child):hover {
-              background-color: #88b7a6;
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-              border-radius: 4px;
+            .arrowIcon {
+                transform: rotate(180deg);
+            }
+        }
 
-              .linkName {
-                  color: #ffffff;
-              }
+        /* Borders for first and last cards */
+        &:first-child {
+            border-top: 1px solid black;
+        }
 
-              .arrowIcon {
-                  transform: rotate(180deg);
-              }
-          }
+        // Buttons card
+        &:last-child {
+            border-bottom: none;
+            border-radius: 0 0 20px 20px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: auto;
+            padding: 5%;
 
-          /* Borders for first and last cards */
-          &:first-child {
-              border-top: 1px solid black;
-          }
+            button {
+                @include mx.flex-container();
+                @include mx.button-style($width: 150px, $height: 42px);
+                @include mx.text-style($size: 16px, $weight: 400, $shadow: none, $line_height: 20px);
+                margin-bottom: 5%;
 
-          //This is buttons card
-          &:last-child {
-              border-bottom: none;
-              border-radius: 0 0 20px 20px;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              height: auto;
-              padding: 5%;
-          }
+                &:hover {
+                    background: #f0f0f0;
+                  
+                }
 
-          button {
-              @include mx.flex-container();
-              @include mx.button-style($width: 150px, $height: 42px);
-              @include mx.text-style($size: 16px, $weight: 400, $shadow: none, $line_height: 20px);
-              margin-bottom: 5%;
+                /* Get Started Button Variation */
+                &.getStarted {
+                    background: #3d8d7a;
+                    color: #ffffff;
+                    margin-bottom: 0;
 
-              &:hover {
-                  background: #f0f0f0;
-                  box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
-              }
+                    &:hover {
+                        background: #2e6e5d;
+                        color: #e0e0e0;
+                    }
+                }
+            }
+        }
+    }
+}
 
-              /* Get Started Button Variation */
-              &.getStarted {
-                  background: #3d8d7a;
-                  color: #ffffff;
-                  margin-bottom: 0; //no margin bottom for last button
+// Small screens (375px+)
+@include break.respond-to(sm) {
+    .drawerContainer {
+        .linkCard {
+            &:last-child {
+                flex-direction: row;
+                justify-content: space-evenly;
+                padding: 0 10%;
+                height: 70px;
 
-                  &:hover {
-                      background: #2e6e5d;
-                      color: #e0e0e0;
-                  }
-              }
-          }
+                button {
+                    width: 105px;
+                    font-size: 20px;
+                    line-height: 25px;
+                    margin-bottom: 0;
 
-      }
+                    &.getStarted {
+                        width: 189px;
+                    }
+                }
+            }
+        }
+    }
+}
 
-  }
+// Large screens (576px+)
+@include break.respond-to(lg) {
+    .drawerContainer {
+        .linkCard {
+            height: 80px;
 
-  //375px and plus
-  @include break.respond-to(sm) {
-      .drawerContainer {
-          .linkCard {
-              &:last-child {
-                  flex-direction: row;
-                  justify-content: space-evenly;
-                  padding: 0 10%; //reset to default
-                  height: 70px; //reset to default
-              }
+            .linkName {
+                font-size: 24px;
+            }
 
-              button {
-                  width: 105px;
-                  font-size: 20px;
-                  line-height: 25px;
-                  margin-bottom: 0;
+            .arrowIcon {
+                width: 34px;
+                height: 34px;
+            }
 
-                  &.getStarted {
-                      width: 189px;
-                  }
-              }
-          }
-      }
-  }
+            // Hide Buttons Card
+            &:last-child {
+                display: none;
+            }
 
-  //576px and plus
-  @include break.respond-to(lg) {
-      .drawerContainer {
-          .linkCard {
-              height: 80px;
-
-              .linkName {
-                  font-size: 24px;
-              }
-
-              .arrowIcon {
-                  width: 34px;
-                  height: 34px;
-              }
-
-              //Hide Buttons Card
-              &:last-child {
-                  display: none;
-              }
-
-              //Show second last card with cornered bottom border
-              &:nth-last-child(2) {
-                  border-bottom: none;
-                  border-radius: 0 0 20px 20px;
-              }
-          }
-      }
-  }
+            // Show second last card with cornered bottom border
+            &:nth-last-child(2) {
+                border-bottom: none;
+                border-radius: 0 0 20px 20px;
+            }
+        }
+    }
+}
