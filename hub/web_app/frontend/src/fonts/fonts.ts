@@ -9,7 +9,7 @@ export const montserrat = Montserrat({
 
   export const outfit = Outfit({
     subsets: ['latin'],
-    weight: ['400','500','700'],
+    weight: ['400','500','600','700'],
     style: ['normal'],
     variable: '--font-outfit'
   })
