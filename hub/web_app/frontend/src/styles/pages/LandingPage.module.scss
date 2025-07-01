@@ -4,8 +4,19 @@
 
 // Landing page base styles
 .landingPage {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
     // Common background color for all sections
     background-color: #EEEEEE;
+    
+    // Header styling to ensure full width
+    header {
+        width: 100%;
+        align-self: stretch;
+    }
     
     // Base text style applied to all text elements, override specific parameters in components
     @include mx.text-style($font: var(--font-outfit), $size: 18px, $weight: 500, $line_height: 23px);
