@@ -10,9 +10,9 @@ $animation-time: 0.8s;
     @include mx.flex-container(column, center, center);
 
     .heroHeading {
-        @include mx.fade-in($animation-time);
         order: 1;
         margin: 3% 2% 0 2%;
+        @include mx.fade-in($duration: $animation-time, $delay: 0.2s);
     }
 
     .imageContainer {
@@ -21,7 +21,7 @@ $animation-time: 0.8s;
         position: relative;
         width: 100%;
         @include mx.flex-container(row, center, center);
-        @include mx.slide-in-right($animation-time);
+        @include mx.slide-in-right($duration: $animation-time, $delay: 0.4s, $translate-x: 100%);
 
         .backgroundRectangle {
             position: absolute;
@@ -64,7 +64,7 @@ $animation-time: 0.8s;
         text-shadow: var.$heading-text-shadow;
         order: 4;
         margin: 7% 5% 0 5%;
-        @include mx.fade-in($animation-time);
+        @include mx.fade-in($duration: $animation-time, $delay: 0.6s);
     }
 
     .buttonsGroup {
@@ -72,7 +72,7 @@ $animation-time: 0.8s;
         @include mx.flex-container(column, center, center);
         gap: 20px;
         margin-top: 7%;
-        @include mx.fade-in($animation-time);
+        @include mx.slide-in-up($duration: $animation-time, $delay: 0.8s, $translate-y: 30px);
 
         button {
             @include mx.button-style($width: 277px, $height: 61px, $bg: #3D8D7A);
@@ -101,7 +101,7 @@ $animation-time: 0.8s;
         margin-top: 10%;
         order: 6;
         @include mx.flex-container(column, center, center);
-        @include mx.slide-in-up($animation-time);
+        @include mx.slide-in-up($duration: $animation-time, $delay: 1s, $translate-y: 40px);
 
         p {
             font-size: 22px;
