@@ -3,6 +3,7 @@ import FeaturesSection from "@/components/FeaturesSection";
 import PricingSection from "@/components/PricingSection";
 import IntegrationsSection from "@/components/IntegrationsSection";
 import WhatItDo from "@/components/WhatItDoSection";
+import Footer from "@/components/Footer";
 export default function Page() {
   return (
     <>
@@ -11,6 +12,7 @@ export default function Page() {
       <FeaturesSection />
       <IntegrationsSection />
       <PricingSection />
+      <Footer />
     </>
   );
 }
