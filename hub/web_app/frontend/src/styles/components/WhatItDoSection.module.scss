@@ -1,11 +1,13 @@
 @use '../abstracts/mixins' as mx;
 @use '../abstracts/variables' as var;
 @use '../abstracts/breakpoints' as break;
+@use 'sass:color';
 
 // Mobile First Base Styles (320px and above)
 .whatItDo {
     width: 85%;
     margin: 0 auto;
+    padding: 0% 5%;
 
     @include mx.flex-container(column, center, center);
 
@@ -68,7 +70,8 @@
         justify-self: center;
 
         &:hover {
-            background-color: lighten(#0f0e1a, 5%);
+
+            background-color: color.adjust(#0f0e1a, $lightness: 5%);
             box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.2);
             cursor: pointer;
         }
@@ -76,6 +79,7 @@
 
     // Small Mobile (375px and above)
     @include break.respond-to(sm) {
+        padding: 0% 4%;
 
         .innerContainer {
             .list {
@@ -90,6 +94,8 @@
 
     // Medium Mobile (480px and above)
     @include break.respond-to(md) {
+        padding: 0% 4%;
+
         .innerContainer {
             .list {
                 gap: 30px;
@@ -110,6 +116,8 @@
 
     // Large Mobile (576px and above)
     @include break.respond-to(lg) {
+        padding: 0% 5%;
+
         .innerContainer {
             .list {
                 .listItem {
@@ -124,6 +132,7 @@
 
     // Tablet Portrait (768px and above)
     @include break.respond-to(xl) {
+        padding: 0% 6%;
 
         .innerContainer {
             @include mx.flex-container(row, flex-start, space-between);
@@ -147,6 +156,7 @@
 
     // Tablet Landscape (992px and above)
     @include break.respond-to(xxl) {
+        padding: 0% 7%;
 
         .innerContainer {
             .list {
@@ -170,6 +180,8 @@
 
     // Desktop (1200px and above)
     @include break.respond-to(desktop) {
+        padding: 0% 8%;
+
         .innerContainer {
 
 
@@ -205,7 +217,7 @@
 
     // Large Desktop (1400px and above)
     @include break.respond-to(large-desktop) {
-
+        padding: 0% 8%;
 
         .innerContainer {
             width: 80%;
@@ -230,11 +242,13 @@
 
     // XL Desktop (1920px and above)
     @include break.respond-to(xl-desktop) {
+        padding: 0% 10%;
 
         .innerContainer {
 
             .list {
                 width: 60%;
+
                 .listItem {
                     .checkCircle {
                         width: 30px;
@@ -248,10 +262,11 @@
                     }
                 }
             }
-            .diagram{
+
+            .diagram {
                 width: 40%;
             }
-      
+
 
         }
 
