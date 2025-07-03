@@ -32,17 +32,99 @@
     }
 }
 
-// Animation mixins
-@mixin fade-in($duration: 0.8s, $timing: ease-in) {
-    animation: fadeIn $duration $timing forwards;
+// Animation mixins with parameters
+@mixin fade-in($duration: 0.8s, $timing: ease-in, $delay: 0s, $opacity-start: 0, $opacity-end: 1) {
+    opacity: $opacity-start;
+    animation: fadeIn $duration $timing $delay forwards;
+    
+    @keyframes fadeIn {
+        from {
+            opacity: $opacity-start;
+        }
+        to {
+            opacity: $opacity-end;
+        }
+    }
 }
 
-@mixin slide-in-right($duration: 0.8s, $timing: ease-out) {
-    animation: slideInRight $duration $timing forwards;
+@mixin slide-in-right($duration: 0.8s, $timing: ease-out, $delay: 0s, $translate-x: 100%, $opacity-start: 0, $opacity-end: 1) {
+    opacity: $opacity-start;
+    animation: slideInRight $duration $timing $delay forwards;
+    
+    @keyframes slideInRight {
+        from {
+            opacity: $opacity-start;
+            transform: translateX($translate-x);
+        }
+        to {
+            opacity: $opacity-end;
+            transform: translateX(0);
+        }
+    }
 }
 
-@mixin slide-in-up($duration: 0.8s, $timing: ease-out) {
-    animation: slideInUp $duration $timing forwards;
+@mixin slide-in-up($duration: 0.8s, $timing: ease-out, $delay: 0s, $translate-y: 20px, $opacity-start: 0, $opacity-end: 1) {
+    opacity: $opacity-start;
+    animation: slideInUp $duration $timing $delay forwards;
+    
+    @keyframes slideInUp {
+        from {
+            opacity: $opacity-start;
+            transform: translateY($translate-y);
+        }
+        to {
+            opacity: $opacity-end;
+            transform: translateY(0);
+        }
+    }
+}
+
+@mixin slide-in-left($duration: 0.8s, $timing: ease-out, $delay: 0s, $translate-x: -100%, $opacity-start: 0, $opacity-end: 1) {
+    opacity: $opacity-start;
+    animation: slideInLeft $duration $timing $delay forwards;
+    
+    @keyframes slideInLeft {
+        from {
+            opacity: $opacity-start;
+            transform: translateX($translate-x);
+        }
+        to {
+            opacity: $opacity-end;
+            transform: translateX(0);
+        }
+    }
+}
+
+@mixin slide-in-down($duration: 0.8s, $timing: ease-out, $delay: 0s, $translate-y: -20px, $opacity-start: 0, $opacity-end: 1) {
+    opacity: $opacity-start;
+    animation: slideInDown $duration $timing $delay forwards;
+    
+    @keyframes slideInDown {
+        from {
+            opacity: $opacity-start;
+            transform: translateY($translate-y);
+        }
+        to {
+            opacity: $opacity-end;
+            transform: translateY(0);
+        }
+    }
+}
+
+@mixin scale-in($duration: 0.8s, $timing: ease-out, $delay: 0s, $scale-start: 0.8, $scale-end: 1, $opacity-start: 0, $opacity-end: 1) {
+    opacity: $opacity-start;
+    animation: scaleIn $duration $timing $delay forwards;
+    
+    @keyframes scaleIn {
+        from {
+            opacity: $opacity-start;
+            transform: scale($scale-start);
+        }
+        to {
+            opacity: $opacity-end;
+            transform: scale($scale-end);
+        }
+    }
 }
 
 // Mixins
