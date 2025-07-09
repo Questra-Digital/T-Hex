@@ -7,7 +7,6 @@
         // Base text style applied to all text elements
         @include mx.text-style($font: var(--font-outfit), $size: 18px, $weight: 500, $line_height: 23px);
 
-
         .pricingHeading{
             margin-bottom: 5%;
         }
@@ -120,7 +119,6 @@
 
             .commercialCard {
                 height: 850px;
-                margin-bottom: 5%;
 
                 // Commercial card specific styles if needed
                 .cardInnerContainer {
@@ -224,7 +222,7 @@
 
             .cardsContainer {
                 .card {
-                    width: 80%;
+                    width: 100%;
 
                     .cardInnerContainer {
                         .cardTitle {
@@ -263,7 +261,7 @@
 
             .cardsContainer {
                 .card {
-                    width: 70%;
+                    width: 100%;
 
                     .cardInnerContainer {
                         align-items: center;
