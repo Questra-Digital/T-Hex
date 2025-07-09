@@ -9,6 +9,7 @@
 
     .integrationTitle {
         margin-bottom: 1%;
+        font-size: 2rem; // Reduced from default large size
     }
 
     .integrationSubtitle {
@@ -24,6 +25,7 @@
         @include mx.flex-container(column, center, center);
         gap: 20px;
         width: 100%;
+        max-width: 1200px; // Added max-width to prevent cards from getting too wide
 
         .integrationCard {
             @include mx.flex-container(column, center, space-between);
@@ -31,23 +33,22 @@
             border-radius: 16px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             width: 100%;
-            min-height: 350px;
-            padding: 20px 15px;
+            max-width: 320px; // Added max-width for mobile
+            min-height: 240px; // Reduced from 280px
+            padding: 14px 10px; // Reduced padding
             transition: all 0.3s ease;
-
 
             &:hover {
                 transform: translateY(-4px);
                 box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-
             }
 
             // Image container for proper scaling
             .imageContainer {
                 @include mx.flex-container(column, center, center);
                 width: 100%;
-                height: 120px;
-                margin-bottom: 15px;
+                height: 70px; // Reduced from 90px
+                margin-bottom: 10px; // Reduced from 12px
                 border-radius: 8px;
                 overflow: hidden;
                 position: relative;
@@ -59,18 +60,16 @@
                     width: auto;
                     height: auto;
                 }
-
-
             }
 
             .integrationName {
-                @include mx.text-style($size: 18px, $weight: 600, $color: #2c3e50, $line_height: 24px);
-                margin: 0 0 10px 0;
+                @include mx.text-style($size: 16px, $weight: 600, $color: #2c3e50, $line_height: 22px); // Reduced from 18px
+                margin: 0 0 8px 0; // Reduced margin
             }
 
             .integrationDescription {
-                @include mx.text-style($size: 14px, $weight: 400, $color: #6c757d, $line_height: 20px, $shadow: none);
-                margin: 0 0 20px 0;
+                @include mx.text-style($size: 13px, $weight: 400, $color: #6c757d, $line_height: 18px, $shadow: none); // Reduced from 14px
+                margin: 0 0 14px 0; // Reduced margin
                 flex-grow: 1;
                 display: flex;
                 align-items: center;
@@ -80,12 +79,12 @@
             button {
                 @include mx.button-style($bg: #3D8D7A,
                     $width: 100%,
-                    $height: 44px,
+                    $height: 40px, // Reduced from 44px
                     $color: white,
                     $border-radius: 10px,
                     $box-shadow: 0 4px 15px rgba(61, 141, 122, 0.3));
                 font-weight: 600;
-                font-size: 14px;
+                font-size: 13px; // Reduced from 14px
                 transition: all 0.3s ease;
 
                 &:hover {
@@ -98,35 +97,68 @@
                 }
             }
         }
+        //To contain selenium image
+        .selenium-test{
+            .imageContainer{
+                img{
+                   width: 80%;
+                }
+                
+            }
+        }
+
+        //To contain gradle image
+        .gradle-test{
+            .imageContainer{
+                img{
+                   width: 80%;
+                }
+                
+            }
+        }
+
+        //To contain maven image
+        .maven-test{
+            .imageContainer{
+                img{
+                   width: 70%;
+                }
+                
+            }
+        }
     }
 }
 
 // Small mobile (375px+)
 @include break.respond-to(sm) {
     .integration {
+        .integrationTitle {
+            font-size: 2.2rem;
+        }
 
         .integrationsContainer {
-            gap: 25px;
+            gap: 18px;
 
             .integrationCard {
-                min-height: 370px;
-                padding: 25px 20px;
+                max-width: 340px;
+                min-height: 250px;
+                padding: 16px 12px;
 
                 .imageContainer {
-                    height: 130px;
+                    height: 75px;
                 }
 
                 .integrationName {
-                    font-size: 19px;
+                    font-size: 17px;
                 }
 
                 .integrationDescription {
-                    font-size: 15px;
+                    font-size: 14px;
                 }
 
                 button {
-                    height: 46px;
-                    font-size: 15px;
+                    height: 42px;
+                    font-size: 14px;
                 }
             }
         }
@@ -136,30 +168,33 @@
 // Medium mobile (480px+)
 @include break.respond-to(md) {
     .integration {
-
+        .integrationTitle {
+            font-size: 2.4rem;
+        }
 
         .integrationsContainer {
-            gap: 30px;
+            gap: 20px;
 
             .integrationCard {
-                min-height: 390px;
-                padding: 30px 25px;
+                max-width: 360px;
+                min-height: 260px;
+                padding: 18px 14px;
 
                 .imageContainer {
-                    height: 140px;
+                    height: 80px;
                 }
 
                 .integrationName {
-                    font-size: 20px;
+                    font-size: 18px;
                 }
 
                 .integrationDescription {
-                    font-size: 16px;
+                    font-size: 15px;
                 }
 
                 button {
-                    height: 48px;
-                    font-size: 16px;
+                    height: 44px;
+                    font-size: 15px;
                 }
             }
         }
@@ -169,16 +204,150 @@
 // Large mobile (576px+)
 @include break.respond-to(lg) {
     .integration {
+        .integrationTitle {
+            font-size: 2.6rem;
+        }
 
         .integrationsContainer {
-            gap: 35px;
+            gap: 22px;
 
             .integrationCard {
-                min-height: 410px;
-                padding: 35px 30px;
+                max-width: 380px;
+                min-height: 270px;
+                padding: 20px 16px;
 
                 .imageContainer {
-                    height: 150px;
+                    height: 85px;
+                }
+
+                .integrationName {
+                    font-size: 19px;
+                }
+
+                .integrationDescription {
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+}
+
+// Tablet (768px+)
+@include break.respond-to(xl) {
+    .integration {
+        .integrationTitle {
+            font-size: 2.8rem;
+        }
+
+        .integrationsContainer {
+            @include mx.flex-container(row, center, center);
+            flex-wrap: wrap;
+            gap: 20px;
+
+            .integrationCard {
+                width: calc(50% - 10px);
+                max-width: 280px; // Reduced max-width for tablet
+                min-height: 280px;
+                padding: 20px 16px;
+
+                .imageContainer {
+                    height: 90px;
+                }
+
+                .integrationName {
+                    font-size: 18px;
+                }
+
+                .integrationDescription {
+                    font-size: 15px;
+                }
+            }
+        }
+    }
+}
+
+// Small desktop (992px+)
+@include break.respond-to(xxl) {
+    .integration {
+        .integrationTitle {
+            font-size: 3rem;
+        }
+
+        .integrationsContainer {
+            gap: 22px;
+
+            .integrationCard {
+                width: calc(50% - 11px);
+                max-width: 300px;
+                min-height: 290px;
+                padding: 22px 18px;
+
+                .imageContainer {
+                    height: 95px;
+                }
+
+                .integrationName {
+                    font-size: 19px;
+                }
+
+                .integrationDescription {
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+}
+
+// Desktop (1200px+)
+@include break.respond-to(desktop) {
+    .integration {
+        .integrationTitle {
+            font-size: 3.2rem;
+        }
+
+        .integrationsContainer {
+            gap: 24px;
+
+            .integrationCard {
+                width: calc(33.333% - 16px);
+                max-width: 320px; // Reduced from unlimited width
+                min-height: 300px;
+                padding: 24px 20px;
+
+                .imageContainer {
+                    height: 100px;
+                }
+
+                .integrationName {
+                    font-size: 20px;
+                }
+
+                .integrationDescription {
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+}
+
+// Large desktop (1400px+)
+@include break.respond-to(large-desktop) {
+    .integration {
+        .integrationTitle {
+            font-size: 3.4rem;
+        }
+
+        .integrationsContainer {
+            gap: 26px;
+
+            .integrationCard {
+                width: calc(33.333% - 17.33px);
+                max-width: 340px;
+                min-height: 310px;
+                padding: 26px 22px;
+
+                .imageContainer {
+                    height: 105px;
                 }
 
                 .integrationName {
@@ -193,23 +362,23 @@
     }
 }
 
-// Tablet (768px+)
-@include break.respond-to(xl) {
+// Extra large desktop (1920px+)
+@include break.respond-to(xl-desktop) {
     .integration {
-
+        .integrationTitle {
+            font-size: 3.6rem;
+        }
 
         .integrationsContainer {
-            @include mx.flex-container(row, center, center);
-            flex-wrap: wrap;
-            gap: 30px;
 
             .integrationCard {
-                width: calc(50% - 15px);
-                min-height: 420px;
-                padding: 30px 25px;
+                width: calc(33.333% - 18.67px);
+                max-width: 360px;
+                min-height: 320px;
+                padding: 28px 24px;
 
                 .imageContainer {
-                    height: 160px;
+                    height: 110px;
                 }
 
                 .integrationName {
@@ -217,119 +386,7 @@
                 }
 
                 .integrationDescription {
-                    font-size: 16px;
-                }
-            }
-        }
-    }
-}
-
-// Small desktop (992px+)
-@include break.respond-to(xxl) {
-    .integration {
-
-        .integrationsContainer {
-            gap: 35px;
-
-            .integrationCard {
-                width: calc(50% - 17.5px);
-                min-height: 430px;
-                padding: 35px 30px;
-
-                .imageContainer {
-                    height: 170px;
-                }
-
-                .integrationName {
-                    font-size: 23px;
-                }
-
-                .integrationDescription {
-                    font-size: 17px;
-                }
-            }
-        }
-    }
-}
-
-// Desktop (1200px+)
-@include break.respond-to(desktop) {
-    .integration {
-
-        .integrationsContainer {
-            gap: 40px;
-
-            .integrationCard {
-                width: calc(33.333% - 26.67px);
-                min-height: 440px;
-                padding: 40px 35px;
-
-                .imageContainer {
-                    height: 180px;
-                }
-
-                .integrationName {
-                    font-size: 24px;
-                }
-
-                .integrationDescription {
                     font-size: 18px;
-                }
-            }
-        }
-    }
-}
-
-// Large desktop (1400px+)
-@include break.respond-to(large-desktop) {
-    .integration {
-
-        .integrationsContainer {
-            gap: 45px;
-
-            .integrationCard {
-                width: calc(33.333% - 30px);
-                min-height: 450px;
-                padding: 45px 40px;
-
-                .imageContainer {
-                    height: 190px;
-                }
-
-                .integrationName {
-                    font-size: 25px;
-                }
-
-                .integrationDescription {
-                    font-size: 19px;
-                }
-            }
-        }
-    }
-}
-
-// Extra large desktop (1920px+)
-@include break.respond-to(xl-desktop) {
-    .integration {
-
-        .integrationsContainer {
-            gap: 50px;
-
-            .integrationCard {
-                width: calc(33.333% - 33.33px);
-                min-height: 460px;
-                padding: 50px 45px;
-
-                .imageContainer {
-                    height: 200px;
-                }
-
-                .integrationName {
-                    font-size: 26px;
-                }
-
-                .integrationDescription {
-                    font-size: 20px;
                 }
             }
         }

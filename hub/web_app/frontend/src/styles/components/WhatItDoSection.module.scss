@@ -1,0 +1,278 @@
+@use '../abstracts/mixins' as mx;
+@use '../abstracts/variables' as var;
+@use '../abstracts/breakpoints' as break;
+@use 'sass:color';
+
+// Mobile First Base Styles (320px and above)
+.whatItDo {
+    width: 85%;
+    margin: 0 auto;
+    padding: 0% 5%;
+
+    @include mx.flex-container(column, center, center);
+
+    .title {
+        margin-bottom: 5%;
+    }
+
+    .innerContainer {
+        @include mx.flex-container(column, center, center);
+        width: 100%;
+        gap: 15px;
+
+        .list {
+            @include mx.flex-container(column, start, center);
+            gap: 20px;
+            width: 100%;
+
+            .listItem {
+                @include mx.flex-container(row, flex-start, flex-start);
+                gap: 15px;
+                width: 100%;
+
+                .checkCircle {
+                    flex-shrink: 0;
+                    width: 20px;
+                    height: 20px;
+                    margin-top: 1.5%;
+                }
+
+                p {
+                    font-weight: 400;
+                    font-size: 18px;
+                    line-height: 1.4;
+                    letter-spacing: -0.02em;
+                    text-align: left;
+                    margin: 0;
+                }
+            }
+        }
+
+        .diagram {
+            border-radius: 5%;
+            width: 100%;
+            height: auto;
+        }
+    }
+
+    .learnMoreButton {
+        @include mx.button-style($bg: #0f0e1a,
+            $width: 60%,
+            $height: 60px,
+            $color: white,
+            $box-shadow: none,
+            $border-radius: 35px);
+        font-weight: 500;
+        font-size: 20px;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        margin-top: 8%;
+        justify-self: center;
+
+        &:hover {
+
+            background-color: color.adjust(#0f0e1a, $lightness: 5%);
+            box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+    }
+
+    // Small Mobile (375px and above)
+    @include break.respond-to(sm) {
+        padding: 0% 4%;
+
+        .innerContainer {
+            .list {
+                .listItem {
+                    p {
+                        font-size: 20px;
+                    }
+                }
+            }
+        }
+    }
+
+    // Medium Mobile (480px and above)
+    @include break.respond-to(md) {
+        padding: 0% 4%;
+
+        .innerContainer {
+            .list {
+                gap: 30px;
+
+                .listItem {
+                    p {
+                        font-size: 22px;
+                    }
+
+                    .checkCircle {
+                        width: 25px;
+                        height: 25px;
+                    }
+                }
+            }
+        }
+    }
+
+    // Large Mobile (576px and above)
+    @include break.respond-to(lg) {
+        padding: 0% 5%;
+
+        .innerContainer {
+            .list {
+                .listItem {
+                    p {
+                        font-size: 24px;
+                        line-height: 1.5;
+                    }
+                }
+            }
+        }
+    }
+
+    // Tablet Portrait (768px and above)
+    @include break.respond-to(xl) {
+        padding: 0% 6%;
+
+        .innerContainer {
+            @include mx.flex-container(row, flex-start, space-between);
+
+            .list {
+                .listItem {
+                    p {
+                        font-size: 20px;
+                        line-height: 1.6;
+                    }
+                }
+            }
+
+        }
+
+        .learnMoreButton {
+            width: 40%;
+            margin-top: 2%;
+        }
+    }
+
+    // Tablet Landscape (992px and above)
+    @include break.respond-to(xxl) {
+        padding: 0% 7%;
+
+        .innerContainer {
+            .list {
+
+                gap: 40px;
+
+                .listItem {
+                    p {
+                        font-size: 22px;
+                    }
+                }
+            }
+
+        }
+
+        .learnMoreButton {
+            width: 30%;
+            font-size: 24px;
+        }
+    }
+
+    // Desktop (1200px and above)
+    @include break.respond-to(desktop) {
+        padding: 0% 8%;
+
+        .innerContainer {
+
+
+            .list {
+                width: 55%;
+
+                .listItem {
+                    p {
+                        font-size: 26px;
+                        line-height: 2.0;
+                    }
+
+                    .checkCircle {
+                        margin-top: 2.7%;
+                    }
+                }
+            }
+
+            .diagram {
+                width: 45%;
+            }
+
+
+        }
+
+        .learnMoreButton {
+            margin-top: 3%;
+            font-size: 26px;
+            width: 25%;
+            height: 65px;
+        }
+    }
+
+    // Large Desktop (1400px and above)
+    @include break.respond-to(large-desktop) {
+        padding: 0% 8%;
+
+        .innerContainer {
+            width: 80%;
+
+            .list {
+                gap: 60px;
+
+                .listItem {
+                    p {
+                        font-size: 26px;
+                        line-height: 1.6;
+                    }
+
+                    .checkCircle {
+                        margin-top: 1.5%;
+                    }
+                }
+            }
+        }
+
+    }
+
+    // XL Desktop (1920px and above)
+    @include break.respond-to(xl-desktop) {
+        padding: 0% 10%;
+
+        .innerContainer {
+
+            .list {
+                width: 60%;
+
+                .listItem {
+                    .checkCircle {
+                        width: 30px;
+                        height: 30px;
+                        margin-top: 2%;
+                    }
+
+                    p {
+                        font-size: 30px;
+                        line-height: 60px;
+                    }
+                }
+            }
+
+            .diagram {
+                width: 40%;
+            }
+
+
+        }
+
+        .learnMoreButton {
+            width: 20%;
+            font-size: 28px;
+        }
+    }
+}
