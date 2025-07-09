@@ -1,0 +1,61 @@
+@use '../abstracts/mixins' as mx;
+@use '../abstracts/variables' as var;
+@use '../abstracts/breakpoints' as break;
+
+// Landing page base styles
+.landingPage {
+    // Common background color for all sections
+    background-color: #EEEEEE;
+    
+    // Base text style applied to all text elements, override specific parameters in components
+    @include mx.text-style($font: var(--font-outfit), $size: 18px, $weight: 500, $line_height: 23px);
+
+    // Common section styles for all sections
+    section {
+        margin-bottom: 5%;
+        
+        h1 {
+            font-size: 32px;
+            line-height: 40px;
+            text-shadow: var.$heading-text-shadow;
+            letter-spacing: -0.02em;
+            font-weight: 500;
+            
+            span {
+                color: #1B39CE;
+            }
+        }
+    }
+}
+
+// Responsive breakpoints for section headings
+@include break.respond-to(md) {
+    .landingPage section h1 {
+        font-size: 36px;
+    }
+}
+
+@include break.respond-to(lg) {
+    .landingPage section h1 {
+        font-size: 38px;
+    }
+}
+
+@include break.respond-to(xl) {
+    .landingPage section h1 {
+        font-size: 40px;
+    }
+}
+
+@include break.respond-to(xxl) {
+    .landingPage section h1 {
+        font-size: 48px;
+        line-height: 60px;
+    }
+}
+
+@include break.respond-to(desktop) {
+    .landingPage section h1 {
+        font-size: 50px;
+    }
+}

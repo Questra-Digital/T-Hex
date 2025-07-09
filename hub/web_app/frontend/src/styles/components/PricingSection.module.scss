@@ -4,18 +4,13 @@
 
     //Base Styles 320px and more
     .pricingSection {
-        background-color: #eeeeee;
+        // Base text style applied to all text elements
+        @include mx.text-style($font: var(--font-outfit), $size: 18px, $weight: 500, $line_height: 23px);
 
-        h1 {
-            @include mx.text-style($size: 32px, $weight: 500, $line_height: 35px, $text_align: center, $shadow: var.$heading-text-shadow);
-            letter-spacing: -0.02em;
 
-            span {
-                color: #1B39CE;
-            }
-
+        .pricingHeading{
+            margin-bottom: 5%;
         }
-
         .cardsContainer {
             @include mx.flex-container(column, center, center);
             @include mx.text-style(var(--font-dmsans),
@@ -26,8 +21,8 @@
                 $color: #170f49,
                 $text_align: left);
             gap: 20px;
-            margin: 5%;
-            margin-top: 8%;
+            margin: 0% 5% 0% 5%;
+            
 
 
             // Base card styles - shared by all card types
@@ -71,8 +66,7 @@
                             .contentList {
                                 @include mx.flex-container(column, start, start);
                                 gap: 15px;
-                                margin-top: 7%;
-                                margin-left: 3%;
+                                margin: 7% 0 0 3%;
                                 font-size: 18px;
                                 font-weight: 400;
                                 line-height: 20px;
@@ -164,9 +158,7 @@
     //480px and more
     @include break.respond-to(md) {
         .pricingSection {
-            h1 {
-                font-size: 36px;
-            }
+          
 
             .cardsContainer {
                 .card {
@@ -228,9 +220,7 @@
     //576px and more
     @include break.respond-to(lg) {
         .pricingSection {
-            h1 {
-                font-size: 38px;
-            }
+            
 
             .cardsContainer {
                 .card {
@@ -269,13 +259,11 @@
     //768px and more
     @include break.respond-to(xl) {
         .pricingSection {
-            h1 {
-                font-size: 40px;
-            }
+          
 
             .cardsContainer {
                 .card {
-                    width: 60%;
+                    width: 70%;
 
                     .cardInnerContainer {
                         align-items: center;
@@ -294,6 +282,16 @@
                         }
                     }
                 }
+
+                .commercialCard {
+                    .cardInnerContainer {
+                        .cardTitle {
+                            gap: 25px;
+                            width: 50%;
+                            align-self: center;
+                        }
+                    }
+                }
             }
         }
     }
@@ -301,16 +299,14 @@
     //992px and more
     @include break.respond-to(xxl) {
         .pricingSection {
-            h1 {
-                font-size: 48px;
-            }
 
             .cardsContainer {
                 flex-direction: row;
                 align-items: flex-start;
                 justify-content: center;
-                margin: 2%;
-                margin-top: 5%;
+                margin: 0% 2% 0% 2%;
+                
+                
 
                 .card {
 
@@ -359,7 +355,8 @@
                         align-items: center;
 
                         .cardTitle {
-                            gap: 10px;
+                           
+                            gap: 40px;
                         }
 
                     }
@@ -378,9 +375,10 @@
     @include break.respond-to(desktop) {
         .pricingSection {
             .cardsContainer {
-
-                .card{
-                    .cardInnerContainer{
+                width: 100%;
+                gap: 40px;
+                .card {
+                    .cardInnerContainer {
                         .cardButton {
                             width: 50%;
                         }
@@ -389,11 +387,14 @@
 
                 .commercialCard {
                     height: 671px;
+                    width: 623px;
 
                     .cardInnerContainer {
-                        
-                        .cardTitle{
+
+                        .cardTitle {
                             margin-left: 0;
+                            width: 100%;
+                            gap: 20px;
                         }
 
                         .cardContent {
@@ -405,16 +406,24 @@
                                 margin: 0;
                             }
                         }
+
+                        
                     }
                 }
 
-                .freeCard{
-                    .cardInnerContainer{
+                .freeCard {
+                    width: 391px;
+                    .cardInnerContainer {
                         align-items: start;
-                        .cardContent{
-                            .contentListContainer{
+
+                        .cardContent {
+                            .contentListContainer {
                                 align-items: start;
                             }
+                        }
+
+                        .cardButton{
+                            font-size: 18px;
                         }
                     }
                 }
@@ -425,22 +434,22 @@
     }
 
     //1400px and more
-    @include break.respond-to(large-desktop){
-        .pricingSection{
-            .cardsContainer{
-                margin-left: 8%;
-                margin-right: 8%;
-                gap: 35px;
+    @include break.respond-to(large-desktop) {
+        .pricingSection {
+            .cardsContainer {
+               
 
-                .freeCard{
-                    width: 40%;
+                .freeCard {
+                    width: 391px;
                 }
-                .commercialCard{
-                    width: 60%;
-                    .cardInnerContainer{
-                      
-                        .cardTitle{
-                            justify-content: center ;
+
+                .commercialCard {
+                    width: 623px;
+
+                    .cardInnerContainer {
+
+                        .cardTitle {
+                            justify-content: center;
                         }
                     }
                 }
