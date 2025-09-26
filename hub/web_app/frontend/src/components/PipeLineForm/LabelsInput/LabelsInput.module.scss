@@ -1,0 +1,211 @@
+.labelsInputContainer {
+    position: relative; // For the dropdown below
+    width: 370px;
+    min-height: 50px;
+    background: #F9F9F9;
+    border: 3px solid #4285F4;
+    border-radius: 12px;
+    padding: 8px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    cursor: text;
+    transition: all 0.3s ease;
+
+    //When input is focused.
+    &:focus-within {
+        border-color: #4285F4;
+        box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.15);
+        background: #fff;
+    }
+
+    //Input field inside the container
+    .labelInputField {
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 16px;
+        color: #1E1E1E;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        flex: 1;
+        min-width: 120px;
+        margin: 2px 5px;
+
+        &::placeholder {
+            color: #8F8A8A;
+            font-weight: 400;
+        }
+
+        // When typing, transform input to look like dashed chip
+        &.typingInChip {
+            background: rgba(61, 141, 122, 0.12);
+            color: #3D8D7A;
+            border: 2px dashed #3D8D7A;
+            border-radius: 20px;
+            padding: 6px 14px;
+            width: auto;
+            flex: 0 0 auto;
+            animation: chipTransform 0.3s;
+
+            @keyframes chipTransform {
+                from {
+                    background: transparent;
+                    border: none;
+                    border-radius: 0;
+                    padding: 0;
+                }
+
+                to {
+                    background: rgba(61, 141, 122, 0.12);
+                    border: 2px dashed #3D8D7A;
+                    border-radius: 20px;
+                    padding: 8px 16px;
+                }
+            }
+
+            &::placeholder {
+                color: rgba(61, 141, 122, 0.7);
+            }
+        }
+    }
+
+    //Chips inside the container
+    .labelChip {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: #3D8D7A;
+        color: #FFFFFF;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 8px 12px;
+        border-radius: 20px;
+        transition: all 0.3s;
+        animation: chipAppear 0.4s;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        cursor: default;
+
+        @keyframes chipAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.7) translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        &:hover {
+            background: #4cab94;
+            box-shadow: 0 4px 16px rgba(61, 141, 122, 0.35);
+        }
+
+        .removeLabel {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #FFFFFF;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.35);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            }
+
+        }
+    }
+
+    // Dropdown for labels
+    .dropdown {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 1px solid #e1e5e9;
+        border-radius: 16px;
+        padding: 16px;
+        max-height: 150px;
+        overflow-y: auto;
+        z-index: 100; // To keep above other elements
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: space-evenly;
+
+
+        .dropdownItem {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(61, 141, 122, 0.08);
+            color: #3D8D7A;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 16px;
+            border-radius: 24px;
+            cursor: pointer;
+            border: 1px solid rgba(61, 141, 122, 0.15);
+            position: relative;
+            overflow: hidden;
+
+            &:hover {
+                background: #3D8D7A;
+                color: #fff;
+
+                border-color: #3D8D7A;
+            }
+
+
+        }
+
+        .newLabelItem {
+            background: rgba(66, 133, 244, 0.08);
+            color: #4285f4;
+            border-color: rgba(66, 133, 244, 0.15);
+            font-weight: 600;
+
+            &:hover {
+                background: #4285f4;
+                color: #fff;
+                border-color: #4285f4;
+            }
+        }
+    }
+
+    // Error state
+    &.error {
+        border-color: #FF4444;
+        
+        &:focus-within {
+            border-color: #FF4444;
+            box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.15);
+        }
+    }
+}
+
+.errorMessage {
+    text-align: left;
+    color: #FF4444;
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 8px;
+    text-align: left;
+    font-family: 'Outfit', sans-serif;
+}
