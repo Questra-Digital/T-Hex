@@ -1,0 +1,130 @@
+@use '@/styles/abstracts/variables' as var;
+
+.summaryContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 600px;
+
+
+    .summarySection {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        .sectionHeader {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .sectionIcon {
+                color: #3D8D7A;
+                flex-shrink: 0;
+            }
+
+            .sectionTitle {
+                font-size: var.$font-base;
+                font-weight: 600;
+                color: #1E1E1E;
+                margin: 0;
+                letter-spacing: -0.01em;
+            }
+        }
+
+        .summaryCard {
+            background: rgba(61, 141, 122, 0.05);
+            border: 1px solid rgba(61, 141, 122, 0.15);
+            border-radius: 12px;
+            padding: 16px 20px;
+            position: relative;
+
+            // Top border accent - matching RepoConfig style
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 3px;
+                background: #3D8D7A;
+                border-radius: 12px 12px 0 0;
+            }
+
+            .summaryItem {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                margin-bottom: 12px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                .itemLabel {
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #3D8D7A;
+                    min-width: 120px;
+                    flex-shrink: 0;
+                }
+
+                .itemValue {
+                    font-size: 14px;
+                    color: #1E1E1E;
+                    line-height: 1.4;
+                    flex: 1;
+                    word-break: break-word;
+                }
+
+                .tokenDisplay {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    flex: 1;
+
+                    .toggleTokenBtn {
+                        background: none;
+                        border: none;
+                        color: #3D8D7A;
+                        cursor: pointer;
+                        padding: 4px;
+                        border-radius: 4px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transition: all 0.2s;
+
+                        &:hover {
+                            background: rgba(61, 141, 122, 0.1);
+                            color: #2D6B5B;
+                        }
+                    }
+                }
+            }
+
+            .labelsContainer {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+
+                .labelTag {
+                    background: #3D8D7A;
+                    color: white;
+                    font-size: 12px;
+                    font-weight: 500;
+                    padding: 4px 12px;
+                    border-radius: 20px;
+                    letter-spacing: -0.01em;
+                }
+            }
+
+            .emptyState {
+                font-size: 14px;
+                color: #8F8A8A;
+                font-style: italic;
+            }
+        }
+    }
+
+}
