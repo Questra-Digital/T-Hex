@@ -1,0 +1,148 @@
+@use '@/styles/abstracts/mixins' as mx;
+@use '@/styles/abstracts/variables' as var;
+
+.snackbar {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  min-width: 320px;
+  max-width: 500px;
+  border-radius: 8px;
+  box-shadow: var.$box-shadow-medium;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+
+  &.closing {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+
+  .content {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    gap: 12px;
+  }
+
+  .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .message {
+    flex: 1;
+    font-size: var.$font-base;
+    font-weight: 500;
+    line-height: 1.4;
+    word-wrap: break-word;
+  }
+
+  .closeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    &:focus {
+      outline: 2px solid rgba(66, 133, 244, 0.5);
+      outline-offset: 2px;
+    }
+  }
+
+  // Success variant
+  &.success {
+    background: #3D8D7A;
+    color: white;
+
+    .icon {
+      color: white;
+    }
+
+    .closeButton {
+      color: white;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+
+  // Error variant
+  &.error {
+    background: #DC3545;
+    color: white;
+
+    .icon {
+      color: white;
+    }
+
+    .closeButton {
+      color: white;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+
+  // Info variant
+  &.info {
+    background: #4285F4;
+    color: white;
+
+    .icon {
+      color: white;
+    }
+
+    .closeButton {
+      color: white;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    min-width: auto;
+    max-width: none;
+
+    .content {
+      padding: 14px 16px;
+      gap: 10px;
+    }
+
+    .message {
+      font-size: var.$font-sm;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .content {
+      padding: 12px 14px;
+      gap: 8px;
+    }
+
+    .message {
+      font-size: var.$font-base;
+    }
+  }
+}
