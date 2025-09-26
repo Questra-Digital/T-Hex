@@ -1,0 +1,193 @@
+@use '@/styles/abstracts/variables' as var;
+.repoConfig{
+    display: flex;
+    flex-direction: column;
+
+    .tokenTypeContainer {
+        width: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 18px;
+
+        .sectionLabel {
+            font-size: var.$font-base;
+            font-weight: 500;
+            color: #1E1E1E;
+        }
+
+        .tokenTypeButtons {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            gap: 16px;
+
+            .tokenTypeButton {
+                padding: 16px 20px;
+                background: #F9F9F9;
+                border: 2px solid rgba(61, 141, 122, 0.4);
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-align: left;
+                height: 70px;
+                width: 235px;
+                display: flex;
+                align-items: center;
+
+                &:hover {
+                    border-color: rgba(61, 141, 122, 0.4);
+                    background: rgba(61, 141, 122, 0.05);
+                    box-shadow: 0 4px 16px rgba(61, 141, 122, 0.15);
+                }
+
+                &.active {
+                    background: #3D8D7A;
+                    border-color: #3D8D7A;
+
+                    .tokenTypeContent {
+
+                        .tokenTypeTitle,
+                        .tokenTypeSubtitle {
+                            color: #FFFFFF;
+                        }
+                    }
+                }
+
+                .tokenTypeContent {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+
+                    .tokenTypeTitle {
+                        font-size: 15px;
+                        font-weight: 600;
+                        color: #1E1E1E;
+                        transition: color 0.3s ease;
+                        letter-spacing: -0.01em;
+                    }
+
+                    .tokenTypeSubtitle {
+                        font-size: 12px;
+                        font-weight: 400;
+                        color: #8F8A8A;
+                        transition: color 0.3s ease;
+                        line-height: 1.3;
+                    }
+                }
+            }
+        }
+    }
+
+    .inputGroup {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 10px;
+
+        .inputLabel {
+            display: flex;
+            gap: 4px;
+
+            .labelText {
+                font-size: var.$font-base;
+                font-weight: 600;
+                color: #1E1E1E;
+                letter-spacing: -0.01em;
+            }
+
+            .labelRequired {
+                color: #3D8D7A;
+                font-weight: 600;
+                font-size: 16px;
+            }
+        }
+
+        .inputHint {
+            font-size: 14px;
+            color: #8F8A8A;
+            font-style: italic;
+            margin-top: 4px;
+            text-align: left; // Left-aligned as requested
+        }
+    }
+
+    .helpSection {
+        margin-bottom: 10px;
+        width: 100%;    
+        max-width: 500px; 
+
+        .helpCard {
+            background: rgba(61, 141, 122, 0.05); // Solid color instead of gradient
+            border: 1px solid rgba(61, 141, 122, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+
+            //Border Line
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 3px;
+                background: #3D8D7A; // Solid color instead of gradient
+                border-radius: 12px 12px 0 0;
+            }
+
+            .helpTitle {
+                font-size: 16px;
+                font-weight: 600;
+                color: #3D8D7A;
+                margin: 0 0 10px 0;
+                letter-spacing: -0.01em;
+            }
+
+            .helpText {
+                font-size: 14px;
+                color: #1E1E1E;
+                line-height: 1.5;
+                margin: 0 0 16px 0;
+            }
+
+            .helpSteps {
+                list-style: none;
+                margin: 6px 0;
+
+                .helpStep {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 8px;
+                    font-size: 13px;
+                    color: #1E1E1E;
+                    line-height: 1.4;
+                    margin-bottom: 10px; // 👈 spacing between steps
+
+                    &:last-child {
+                        margin-bottom: 0; // avoid extra space after last step
+                    }
+
+                    .stepNumber {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 20px;
+                        height: 20px;
+                        background: #3D8D7A;
+                        color: white;
+                        border-radius: 50%;
+                        font-weight: 600;
+                        font-size: 11px;
+                        flex-shrink: 0;
+                    }
+                }
+
+
+            }
+        }
+    }
+
+}
