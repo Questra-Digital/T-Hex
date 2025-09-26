@@ -24,7 +24,9 @@
       "@/components/*": ["components/*"],
       "@/fonts/*":["fonts/*"],
       "@/styles/*":["styles/*"],
-      "@/assets/*":["assets/*"]
+      "@/assets/*":["assets/*"],
+      "@/services/*":["services/*"],
+      "@/contexts/*":["contexts/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
