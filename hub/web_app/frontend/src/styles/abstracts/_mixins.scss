@@ -142,7 +142,8 @@
     $style: normal,
     $line_height: 10px,
     $text_align: center,
-    $color: var.$text-color) {
+    $color: var.$text-color,
+    $letter-spacing: 0px) {
     font-family: $font;
     font-size: $size;
     font-weight: $weight;

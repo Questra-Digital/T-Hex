@@ -1,0 +1,363 @@
+@use '../abstracts/mixins' as mx;
+@use '../abstracts/variables' as var;
+@use '../abstracts/breakpoints' as break;
+
+.gettingStarted {
+    background-color: #EEEEEE;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+   
+
+    // Base text style applied to all text elements, override parameters where necessary
+    @include mx.text-style($font: var(--font-outfit),
+        $size: var.$font-lg, // 18px
+        $weight: 400,
+        $line_height: 1.4, // 18 X 1.4 = 25.2px
+        $shadow: none,
+        $letter-spacing: -0.02em);
+
+    padding: 1% 3% 3% 3%;
+
+    .sideBar {
+        margin-top: 5%;
+        font-size: var.$font-xl;
+        color: #1E1E1E;
+        width: 270px; //15%;
+
+        // Positioning variables
+        --circle-width: 32px;
+        --circle-radius: calc(var(--circle-width) / 2); // Half of circle width
+        --vertical-line-left: calc(var(--circle-radius) - 3px); // Current vertical line position
+        --vertical-line-width: 5px;
+        --horizontal-line-height: 4px;
+
+        ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            gap: 30px;
+            // Main vertical line that connects all items
+            &::before {
+                content: "";
+                position: absolute;
+                top: var(--circle-radius); // Start from center of first circle
+                left: var(--vertical-line-left);
+                width: var(--vertical-line-width);
+                height: calc(100% - var(--circle-radius)); // Full height
+                background-color: #CCCCCC;
+                z-index: 1;
+            }
+
+            .sidebarItem {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                text-align: left;
+                cursor: pointer;
+                gap: 5%;
+                position: relative;
+                font-weight: 500;
+                transition: all 0.3s ease;
+
+                &.currentStep {
+                    .itemName {
+                        color: #3D8D7A;
+                        font-weight: 600;
+                    }
+                }
+
+                .circle {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: #A3D1C6;
+                    color: black;
+                    font-weight: 600;
+                    font-size: var.$font-sm;
+                    width: var(--circle-width);
+                    height: var(--circle-width);
+                    border-radius: 50%;
+                    box-shadow: var.$box-shadow-light;
+                    position: relative;
+                    z-index: 2; // Ensure circle appears above the main vertical line
+                    transition: all 0.3s ease;
+
+                    &.current {
+                        background: #3D8D7A;
+                        color: white;
+                        box-shadow: 0 0 0 3px rgba(61, 141, 122, 0.3);
+                    }
+
+                    &.completed {
+                        background: #3D8D7A;
+                        color: white;
+                    }
+                }
+            }
+
+            .subListItem {
+                margin-left: 13%; // indent for visual hierarchy
+                font-weight: 400;
+
+                // Horizontal connector line to main vertical line - ROBUST APPROACH
+                &::before {
+                    content: "";
+                    position: absolute;
+                    // Calculate position relative to vertical line center
+                    left: -9%;
+                    top: 50%;
+                    width: 11%;
+                    height: var(--horizontal-line-height);
+                    background-color: #CCCCCC;
+                    transform: translateY(-50%);
+                    z-index: 1;
+                }
+            }
+        }
+    }
+
+    .mainContent {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        margin-left: 5%;
+
+
+        .headingContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 5%;
+            align-items: flex-start;
+            justify-content: center;
+
+            .heading {
+                font-size: var.$font-3xl;
+                font-weight: 500;
+                font-style: medium;
+            }
+
+            .subHeading {
+                font-size: var.$font-xl;
+            }
+        }
+
+        .pipelineInfo {
+            width: 874px;
+            height: 432px;
+            background: #F9F9F9;
+            border: 3px solid #4285F4;
+            border-radius: 15px;
+            margin-top: 5%;
+            display: flex;
+            flex-direction: column;
+            padding: 3% 4% 4% 4%;
+            font-size: var.$font-xl;
+
+            .note {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 3%;
+
+                .exclamation {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 2.5rem; // circle size
+                    height: 2.5rem;
+                    border-radius: 50%; // makes it a circle
+                    background-color: #A3D1C6; // yellow highlight (can pick any)
+                    color: white; // text color
+                    font-weight: 700;
+                    font-size: var.$font-2xl;
+                    box-shadow: var.$box-shadow-light; // optional
+                    flex-shrink: 0; // prevent squishing in flex layout
+                }
+
+                p {
+                    span {
+                        font-weight: 600;
+                    }
+                }
+
+            }
+
+            .pipelineSteps {
+                margin-top: 5%;
+
+                --icon-size: 40px;
+
+                .stepList {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    justify-content: center;
+                    gap: 10%;
+                    height: 100%;
+                    margin-top: 3%;
+                    position: relative;
+
+                    //vertical line
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        top: calc(var(--icon-size) / 2);
+                        left: calc(var(--icon-size) / 2 - 2px);
+                        width: 3px;
+                        height: calc(100% - var(--icon-size)/2);
+                        background-color: #CCCCCC;
+                        z-index: 1;
+                    }
+
+                    .step {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: flex-start;
+                        gap: 3%;
+                        width: 100%;
+                        position: relative;
+
+                        //horizontal line
+                        &:not(:first-child) {
+                            &::before {
+                                content: "";
+                                position: absolute;
+                                top: 50%;
+                                left: -5.5%;
+                                width: 4.5%;
+                                height: 3px;
+                                background-color: #CCCCCC;
+
+                            }
+                        }
+
+                        //indent for visual hierarchy
+                        &:not(:first-child) {
+                            margin-left: 8%;
+                        }
+
+                        .icon {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 40px; // circle size
+                            height: 40px;
+                            border-radius: 50%; // makes it a circle
+                            border: 1px solid #DADCE0;
+                            background-color: white; // yellow highlight (can pick any)
+                            box-shadow: var.$box-shadow-light; // optional
+                            flex-shrink: 0; // prevent squishing in flex layout
+                            z-index: 2; // Ensure icon appears above connecting lines
+                            position: relative;
+
+                        }
+
+                        .text {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: flex-start;
+
+
+                            .title {
+                                font-weight: 600;
+                            }
+
+                            .description {
+                                text-align: left;
+                            }
+                        }
+                    }
+
+                }
+            }
+
+        }
+
+        .infoContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: space-evenly;
+            gap: 10;
+            margin-top: 5%;
+
+            .infoTitle {
+                font-weight: 500;
+                color: #1E1E1E;
+                font-size: var.$font-lg;
+            }
+
+            .input {
+                width: 369px;
+                height: 60px;
+                background: #F9F9F9;
+                border: 3px solid #4285F4;
+                border-radius: 8px;
+                padding: 0 2%;
+                font-size: var.$font-lg;
+                color: #1E1E1E;
+                font-weight: 600;
+
+
+                // Ensure input is interactive
+                outline: none;
+                cursor: text;
+
+
+                // Placeholder styling
+                &::placeholder {
+                    color: #8F8A8A;
+                    font-weight: 400;
+                }
+
+                // Focus state
+                &:focus {
+                    border-color: #4285F4;
+                    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+                }
+            }
+
+            .infoSubtitle {
+                font-size: 16px;
+                line-height: 20px;
+                color: #8F8A8A;
+                width: 80%;
+                text-align: left;
+            }
+            .button {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                width: 219px;
+                height: 54px;
+                background: #3D8D7A;
+                border: 0.5px solid #3D8D7A;
+    
+                border-radius: 6px;
+                color: #FFFFFF;
+                font-size: var.$font-lg;
+                font-weight: 500;
+                gap: 2%;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border: none;
+                margin-top: 3%;
+    
+                &:hover {
+                    background: #4cab94;
+    
+                }
+    
+            }
+        }
+
+   
+    }
+}

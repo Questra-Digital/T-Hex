@@ -1,5 +1,25 @@
+//Other Variables
 $text-color: #000000;
 $text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.5);
 $lighter-text-shadow-effect: 2px 2px 4px rgba(0, 0, 0, 0.2);
 $box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+$box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
 $heading-text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+$box-shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+//Spacing Variables
+$space-1: 0.25rem;  // 4px
+$space-2: 0.5rem;   // 8px
+$space-3: 0.75rem;  // 12px
+$space-4: 1rem;     // 16px
+$space-5: 1.5rem;   // 24px
+$space-6: 2rem;     // 32px
+$space-7: 3rem;     // 48px
+
+//Standard Font Sizes
+$font-sm: 0.875rem; // 14px
+$font-base: 1rem;   // 16px
+$font-lg: 1.125rem; // 18px
+$font-xl: 1.25rem;  // 20px
+$font-2xl: 1.5rem;  // 24px
+$font-3xl: 3.0rem;  // 48px

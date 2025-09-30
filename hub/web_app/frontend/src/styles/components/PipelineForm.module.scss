@@ -1,0 +1,147 @@
+@use '../abstracts/variables' as var;
+@use '../abstracts/mixins' as mx;
+
+.wrapper {
+    width: 50%; //Of the parent container .i.e. main content
+    // Base text style applied to all text elements, override parameters where necessary
+    @include mx.text-style($font: var(--font-outfit),
+        $size: var.$font-lg, // 18px
+        $weight: 400,
+        $color: #1E1E1E,
+        $line_height: 1.4, // 18 X 1.4 = 25.2px
+        $shadow: none,
+        $letter-spacing: -0.02em);
+
+    .infoContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10;
+        margin-top: 5%;
+
+
+        //Base Styling
+        .infoTitle {
+            font-weight: 500;
+        }
+
+        .infoSubtitle {
+            font-size: var.$font-base;
+            color: #8F8A8A;
+            text-align: left;
+        }
+
+        .navigation {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-top: 3%;
+            gap: 10;
+
+            .button {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                height: 50px;
+                padding: 5px 15px;
+                gap: 5px;
+                background: #3D8D7A;
+                border: 0.5px solid #3D8D7A;
+                border-radius: 6px;
+                color: #FFFFFF;
+                font-size: var.$font-base;
+                font-weight: 500;
+
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border: none;
+
+                &:hover:not(:disabled) {
+                    background: #4cab94;
+                }
+
+                &:disabled {
+                    background: #CCCCCC;
+                    color: #8F8A8A;
+                    cursor: not-allowed;
+                }
+
+                .spinner {
+                    animation: spin 1s linear infinite;
+                }
+
+            }
+        }
+
+        //Specific Styling for components
+
+        //Styling for Project Description
+        .textareaContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .descriptionInput {
+            outline: none;
+            border: none;
+            width: 389px;
+            height: 100px;
+            background: #F9F9F9;
+            border: 3px solid #4285F4;
+            border-radius: 8px;
+            padding: 2% 2%;
+            color: #1E1E1E;
+            resize: none;
+            font-weight: 500;
+            font-size: var.$font-base;
+
+            &::placeholder {
+                color: #8F8A8A;
+                font-weight: 400;
+            }
+
+            &:focus {
+                border-color: #4285F4;
+                box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+            }
+
+            &.error {
+                border-color: #FF4444;
+                
+                &:focus {
+                    border-color: #FF4444;
+                    box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.2);
+                }
+            }
+        }
+
+        .errorMessage {
+            color: #FF4444;
+            font-size: 14px;
+            font-weight: 400;
+            margin-top: 4px;
+            text-align: left;
+            @include mx.text-style($font: var(--font-outfit),
+                $size: 14px,
+                $weight: 400,
+                $color: #FF4444,
+                $line_height: 1.4,
+                $shadow: none,
+                $letter-spacing: -0.01em);
+        }
+    }
+
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

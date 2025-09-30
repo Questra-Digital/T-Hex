@@ -1,0 +1,163 @@
+@use '@/styles/abstracts/variables' as var;
+@use '@/styles/abstracts/mixins' as mx;
+
+.triggersContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.triggerTypeContainer {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .sectionLabel {
+    font-size: var.$font-base;
+    font-weight: 500;
+    color: #1E1E1E;
+  }
+}
+
+.triggerOptions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+.triggerOption {
+  padding: 16px 10px;
+  background: #F9F9F9;
+  border: 2px solid rgba(61, 141, 122, 0.4);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: left;
+  height: 70px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  overflow: hidden;
+
+  &:hover {
+    border-color: rgba(61, 141, 122, 0.6);
+    background: rgba(61, 141, 122, 0.05);
+    box-shadow: 0 4px 16px rgba(61, 141, 122, 0.15);
+
+  }
+
+  &.selected {
+    background: #3D8D7A;
+    border-color: #3D8D7A;
+
+    .triggerContent {
+      .triggerTitle,
+      .triggerDescription {
+        color: #FFFFFF;
+      }
+    }
+
+    .triggerIcon {
+      background: rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+    }
+  }
+}
+
+.triggerIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(61, 141, 122, 0.1);
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  color: #3D8D7A;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.triggerContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0; // Prevents flex item from overflowing
+}
+
+.triggerTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1E1E1E;
+  transition: color 0.3s ease;
+  letter-spacing: -0.01em;
+  margin: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.triggerDescription {
+  font-size: 12px;
+  font-weight: 400;
+  color: #8F8A8A;
+  transition: color 0.3s ease;
+  line-height: 1.3;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.inputGroup {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 10px;
+
+  .inputLabel {
+    display: flex;
+    gap: 4px;
+
+    .labelText {
+      font-size: var.$font-base;
+      font-weight: 600;
+      color: #1E1E1E;
+      letter-spacing: -0.01em;
+    }
+
+    .labelRequired {
+      color: #3D8D7A;
+      font-weight: 600;
+      font-size: 16px;
+    }
+  }
+
+  .inputHint {
+    font-size: 14px;
+    color: #8F8A8A;
+    font-style: italic;
+    margin-top: 4px;
+    text-align: left;
+  }
+}
+
+.branchConfig {
+  margin-top: 18px;
+  overflow: hidden;
+}
