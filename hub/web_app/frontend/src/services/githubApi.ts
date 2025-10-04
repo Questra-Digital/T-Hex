@@ -1,4 +1,5 @@
 // GitHub API service for token and repository validation
+import { httpUtils } from './httpUtils';
 export interface GitHubTokenValidation {
   isValid: boolean;
   hasRepoAccess: boolean;
@@ -41,31 +42,14 @@ class GitHubApiService {
   ): Promise<GitHubTokenValidation> {
     try {
       // First, validate the token by getting user info
-      const userResponse = await fetch(`${this.baseUrl}/user`, {
+      const userResponse = await httpUtils.get(`${this.baseUrl}/user`, {
         headers: {
           'Authorization': `token ${token}`,
           'Accept': 'application/vnd.github.v3+json',
         },
       });
 
-      if (!userResponse.ok) {
-        if (userResponse.status === 401) {
-          return {
-            isValid: false,
-            hasRepoAccess: false,
-            hasWriteAccess: false,
-            error: 'Invalid or expired GitHub token',
-          };
-        }
-        return {
-          isValid: false,
-          hasRepoAccess: false,
-          hasWriteAccess: false,
-          error: 'Failed to validate GitHub token',
-        };
-      }
-
-      const user = await userResponse.json();
+      const user = userResponse.data;
 
       // Parse repository path (format: owner/repo)
       const [owner, repo] = repoPath.split('/');
@@ -84,41 +68,14 @@ class GitHubApiService {
       }
 
       // Check repository access and permissions
-      const repoResponse = await fetch(`${this.baseUrl}/repos/${owner}/${repo}`, {
+      const repoResponse = await httpUtils.get(`${this.baseUrl}/repos/${owner}/${repo}`, {
         headers: {
           'Authorization': `token ${token}`,
           'Accept': 'application/vnd.github.v3+json',
         },
       });
 
-      if (!repoResponse.ok) {
-        if (repoResponse.status === 404) {
-          return {
-            isValid: true,
-            hasRepoAccess: false,
-            hasWriteAccess: false,
-            user: {
-              login: user.login,
-              name: user.name,
-              email: user.email,
-            },
-            error: 'Repository not found or you do not have access to it',
-          };
-        }
-        return {
-          isValid: true,
-          hasRepoAccess: false,
-          hasWriteAccess: false,
-          user: {
-            login: user.login,
-            name: user.name,
-            email: user.email,
-          },
-          error: 'Failed to access repository',
-        };
-      }
-
-      const repository: RepositoryInfo = await repoResponse.json();
+      const repository: RepositoryInfo = repoResponse.data;
 
       return {
         isValid: true,
@@ -130,13 +87,34 @@ class GitHubApiService {
           email: user.email,
         },
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('GitHub API validation error:', error);
+      
+      // Handle specific HTTP errors
+      if (error.status === 401) {
+        return {
+          isValid: false,
+          hasRepoAccess: false,
+          hasWriteAccess: false,
+          error: 'Invalid or expired GitHub token',
+        };
+      }
+      
+      if (error.status === 404) {
+        return {
+          isValid: true,
+          hasRepoAccess: false,
+          hasWriteAccess: false,
+          user: error.data?.user,
+          error: 'Repository not found or you do not have access to it',
+        };
+      }
+      
       return {
         isValid: false,
         hasRepoAccess: false,
         hasWriteAccess: false,
-        error: 'Network error or GitHub API unavailable',
+        error: error.message || 'Network error or GitHub API unavailable',
       };
     }
   }
@@ -159,7 +137,7 @@ class GitHubApiService {
         };
       }
 
-      const response = await fetch(
+      const response = await httpUtils.get(
         `${this.baseUrl}/repos/${owner}/${repo}/branches/${branchName}`,
         {
           headers: {
@@ -169,31 +147,25 @@ class GitHubApiService {
         }
       );
 
-      if (!response.ok) {
-        if (response.status === 404) {
-          return {
-            exists: false,
-            branchName,
-            error: `Branch '${branchName}' does not exist in the repository`,
-          };
-        }
-        return {
-          exists: false,
-          branchName,
-          error: 'Failed to check branch existence',
-        };
-      }
-
       return {
         exists: true,
         branchName,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Branch validation error:', error);
+      
+      if (error.status === 404) {
+        return {
+          exists: false,
+          branchName,
+          error: `Branch '${branchName}' does not exist in the repository`,
+        };
+      }
+      
       return {
         exists: false,
         branchName,
-        error: 'Network error while checking branch',
+        error: error.message || 'Network error while checking branch',
       };
     }
   }
@@ -214,30 +186,23 @@ class GitHubApiService {
         };
       }
 
-      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}`, {
+      const response = await httpUtils.get(`${this.baseUrl}/repos/${owner}/${repo}`, {
         headers: {
           'Authorization': `token ${token}`,
           'Accept': 'application/vnd.github.v3+json',
         },
       });
 
-      if (!response.ok) {
-        return {
-          success: false,
-          error: 'Failed to fetch repository information',
-        };
-      }
-
-      const data: RepositoryInfo = await response.json();
+      const data: RepositoryInfo = response.data;
       return {
         success: true,
         data,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Repository info error:', error);
       return {
         success: false,
-        error: 'Network error while fetching repository information',
+        error: error.message || 'Network error while fetching repository information',
       };
     }
   }
