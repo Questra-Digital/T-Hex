@@ -2,10 +2,14 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import styles from "@/styles/components/PipelineForm.module.scss";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
-import { SnackbarProvider } from "@/contexts/SnackbarContext";
-
+import { useSnackbar } from "@/contexts/SnackbarContext";
+import { pipelineService } from "@/services/pipelineService";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { addPipeline, selectNewPipelineId } from "@/store/pipelinesSlice";
+import { Pipeline } from "@/types/pipeline";
 // Step components
 import PipelineNameStep, { PipelineNameStepRef } from "@/components/PipeLineForm/PipelineNameStep/PipelineNameStep";
 import DescriptionStep, { DescriptionStepRef } from "@/components/PipeLineForm/DescriptionStep/DescriptionStep";
@@ -14,16 +18,31 @@ import Triggers, { TriggersRef } from "@/components/PipeLineForm/Triggers/Trigge
 import RepoConfig, { RepoConfigRef } from "@/components/PipeLineForm/RepoConfig/RepoConfig";
 import Summary, { SummaryRef } from "@/components/PipeLineForm/Summary/Summary";
 
-// Types
-import { PipelineFormData } from "@/components/PipeLineForm/types";
-
 interface PipelineFormProps {
   onStepChange?: (stepIndex: number) => void;
   onStepComplete?: (stepIndex: number) => void;
   onStepIncomplete?: (stepIndex: number) => void;
 }
 
-export default function PipelineForm({ onStepChange, onStepComplete, onStepIncomplete }: PipelineFormProps) {
+interface PipelineFormData {
+  pipelineName: string;
+  description: string;
+  labels: string[];
+  triggerType: "manual" | "commit";
+  branchName: string;
+  tokenType: boolean;
+  githubToken: string;
+  repoPath: string;
+}
+
+
+function PipelineFormContent({ onStepChange, onStepComplete, onStepIncomplete }: PipelineFormProps) {
+  const router = useRouter();
+  const { showSnackbar } = useSnackbar();
+  const dispatch = useAppDispatch();
+  const newPipelineId = useAppSelector(selectNewPipelineId);
+
+
   // Current step state
   const [currentStep, setCurrentStep] = useState(0);
   const [isValidating, setIsValidating] = useState(false);
@@ -179,73 +198,119 @@ export default function PipelineForm({ onStepChange, onStepComplete, onStepIncom
   const step = steps[currentStep];
 
   return (
-    <SnackbarProvider>
-      <div className={styles.wrapper}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.4 }}
-            className={styles.infoContainer}
-          >
-            <p className={styles.infoTitle}>{step.title}</p>
+    <div className={styles.wrapper}>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentStep}
+          initial={{ opacity: 0, x: 100 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -100 }}
+          transition={{ duration: 0.4 }}
+          className={styles.infoContainer}
+        >
+          <p className={styles.infoTitle}>{step.title}</p>
 
-            {/* Step component being rendered */}
-            {step.children}
+          {/* Step component being rendered */}
+          {step.children}
 
-            {step.subtitle && (
-              <p className={styles.infoSubtitle}>{step.subtitle}</p>
+          {step.subtitle && (
+            <p className={styles.infoSubtitle}>{step.subtitle}</p>
+          )}
+
+          {/* Navigation Buttons */}
+          <div className={styles.navigation}>
+            {currentStep > 0 && (
+              <button
+                className={styles.button}
+                onClick={handlePrevStep}
+              >
+                <ArrowLeft size={26} />
+                {steps[currentStep - 1].title}
+              </button>
             )}
 
-            {/* Navigation Buttons */}
-            <div className={styles.navigation}>
-              {currentStep > 0 && (
-                <button
-                  className={styles.button}
-                  onClick={handlePrevStep}
-                >
-                  <ArrowLeft size={26} />
-                  {steps[currentStep - 1].title}
-                </button>
-              )}
+            {currentStep < steps.length - 1 && (
+              <button
+                className={styles.button}
+                onClick={handleNextStep}
+                disabled={isValidating}
+              >
+                {isValidating ? (
+                  <>
+                    <Loader2 className={styles.spinner} size={26} />
+                    Validating...
+                  </>
+                ) : (
+                  <>
+                    {steps[currentStep + 1].title} <ArrowRight size={26} />
+                  </>
+                )}
+              </button>
+            )}
 
-              {currentStep < steps.length - 1 && (
-                <button
-                  className={styles.button}
-                  onClick={handleNextStep}
-                  disabled={isValidating}
-                >
-                  {isValidating ? (
-                    <>
-                      <Loader2 className={styles.spinner} size={26} />
-                      Validating...
-                    </>
-                  ) : (
-                    <>
-                      {steps[currentStep + 1].title} <ArrowRight size={26} />
-                    </>
-                  )}
-                </button>
-              )}
+            {currentStep === steps.length - 1 && (
+              <button
+                className={styles.button}
+                onClick={async () => {
+                  try {
 
-              {currentStep === steps.length - 1 && (
-                <button
-                  className={styles.button}
-                  onClick={() => {
-                    // Handle pipeline creation
-                    console.log("Creating pipeline with:", formData);
-                    // Here you would typically send the data to your API
-                  }}
-                >
-                  Create Pipeline
-                </button>
-              )}
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </SnackbarProvider>
+                    const newPipeLine: Pipeline = {
+                      id: (newPipelineId).toString(),
+                      name: formData.pipelineName,
+                      description: formData.description,
+                      status: "pending",
+                      lastRun: new Date().toISOString(),
+                      triggerType: formData.triggerType,
+                      branchName: formData.branchName,
+                      repositoryPath: formData.repoPath,
+                      labels: formData.labels,
+                      events: [],
+                    };
+
+                    // Create pipeline via API service using the ID from context
+                    const result = await pipelineService.createPipeline({
+                      pipeline_id: newPipeLine.id,
+                      repo_path: formData.repoPath,
+                      access_token: formData.githubToken,
+                    });
+
+                    if (result.success) {
+                      // Show success snackbar
+                      showSnackbar(result.message, "success", 3000);
+
+                      // Add the pipeline to the context
+                      dispatch(addPipeline(newPipeLine));
+
+                      // Redirect to pipelines page after a short delay
+                      setTimeout(() => {
+                        router.push("/pipelines");
+                      }, 1000);
+                    } else {
+                      // Show error snackbar
+                      showSnackbar(result.error || result.message, "error", 5000);
+                    }
+                  } catch (error) {
+                    console.error("Pipeline creation error:", error);
+                    showSnackbar("Failed to create pipeline. Please try again.", "error", 5000);
+                  }
+                }}
+              >
+                Create Pipeline
+              </button>
+            )}
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+export default function PipelineForm({ onStepChange, onStepComplete, onStepIncomplete }: PipelineFormProps) {
+  return (
+    <PipelineFormContent
+      onStepChange={onStepChange}
+      onStepComplete={onStepComplete}
+      onStepIncomplete={onStepIncomplete}
+    />
   );
 }
