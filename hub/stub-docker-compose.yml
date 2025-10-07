@@ -1,0 +1,94 @@
+services:
+  grid:
+    image: grid-stub:latest
+    ports:
+      - "4444:4444"
+    networks:
+      - selenium-network
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: thex
+      POSTGRES_PASSWORD: thex1234
+      POSTGRES_DB: thex
+      PGUSER: thex
+    ports:
+      - "5432:5432"
+    networks:
+      - web-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "thex", "-d", "thex", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 80s
+
+  am:
+    image: am:latest
+    networks:
+      - web-network
+    environment:
+      - AM_DEMO=1
+    depends_on:
+      db:
+        condition: service_healthy
+
+  proxse-a:
+    image: proxse:latest
+    ports:
+      - "4446:4445"
+    networks:
+      - selenium-network
+      - web-network
+    environment:
+      - GRID=http://grid:4444
+    depends_on:
+      db:
+        condition: service_healthy
+      am:
+        condition: service_completed_successfully
+
+  proxse-b:
+    image: proxse:latest
+    ports:
+      - "4447:4445"
+    networks:
+      - selenium-network
+      - web-network
+    environment:
+      - GRID=http://grid:4444
+    depends_on:
+      db:
+        condition: service_healthy
+      am:
+        condition: service_completed_successfully
+
+  haproxy:
+    image: haproxy:latest
+    container_name: haproxy
+    restart: always
+    networks:
+      - web-network
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    ports:
+      - "4445:4445"
+
+  fe:
+    image: fe:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - web-network
+    depends_on:
+      db:
+        condition: service_healthy
+      am:
+        condition: service_completed_successfully
+
+networks:
+  selenium-network:
+    driver: bridge
+  web-network:
+    driver: bridge
