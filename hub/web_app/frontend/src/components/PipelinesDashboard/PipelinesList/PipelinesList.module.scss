@@ -1,0 +1,352 @@
+@use '@/styles/abstracts/mixins' as mx;
+@use '@/styles/abstracts/variables' as var;
+@use '@/styles/abstracts/breakpoints' as break;
+
+.pipelinesList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+  min-width: 0;
+}
+
+.pipelineCard {
+  background: rgba(61, 141, 122, 0.05);
+  border: 1px solid rgba(61, 141, 122, 0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+  
+  // Top border accent - matching Summary style
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #3D8D7A;
+    border-radius: 12px 12px 0 0;
+    z-index: 1;
+  }
+  
+  &:hover {
+    border-color: rgba(61, 141, 122, 0.3);
+    background: rgba(61, 141, 122, 0.08);
+  }
+}
+
+.pipelineHeader {
+  @include mx.flex-container(row, center, space-between);
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  gap: 16px;
+  
+  &:hover {
+    background-color: rgba(61, 141, 122, 0.05);
+  }
+}
+
+.pipelineInfo {
+  flex: 1;
+  min-width: 0;
+  
+  .pipelineName {
+    @include mx.flex-container(row, center, flex-start);
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    
+    h3 {
+      @include mx.text-style($font: var(--font-outfit), $size: 20px, $weight: 600, $shadow: none, $line_height: 26px, $color: #1E1E1E);
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+  }
+  
+  .pipelineDescription {
+    @include mx.text-style($font: var(--font-outfit), $size: 14px, $weight: 400, $shadow: none, $line_height: 1.4, $color: #1E1E1E);
+    margin-bottom: 12px;
+    text-align: left;
+    
+    .commitInfo {
+      @include mx.text-style($font: var(--font-outfit), $size: 13px, $weight: 500, $shadow: none, $line_height: 1.4, $color: #3D8D7A);
+      font-style: italic;
+    }
+  }
+  
+  .pipelineMeta {
+    @include mx.flex-container(row, center, flex-start);
+    gap: 16px;
+    flex-wrap: wrap;
+    
+    .metaItem {
+      @include mx.flex-container(row, center, center);
+      gap: 6px;
+      
+      span {
+        @include mx.text-style($font: var(--font-outfit), $size: 13px, $weight: 500, $shadow: none, $line_height: 18px, $color: #3D8D7A);
+      }
+      
+      svg {
+        color: #3D8D7A;
+        flex-shrink: 0;
+        width: 14px;
+        height: 14px;
+      }
+    }
+    
+    .labels {
+      @include mx.flex-container(row, center, flex-start);
+      gap: 8px;
+      flex-wrap: wrap;
+      
+      .label {
+        @include mx.text-style($font: var(--font-outfit), $size: 11px, $weight: 500, $shadow: none, $line_height: 14px, $color: #ffffff);
+        background: #3D8D7A;
+        padding: 4px 12px;
+        border-radius: 20px;
+        letter-spacing: -0.01em;
+        text-transform: uppercase;
+      }
+    }
+  }
+}
+
+.statusBadge {
+  @include mx.flex-container(row, center, center);
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: #ffffff;
+  flex-shrink: 0;
+  
+  span {
+    @include mx.text-style($font: var(--font-outfit), $size: 12px, $weight: 600, $shadow: none, $line_height: 15px, $color: #ffffff);
+    text-transform: capitalize;
+  }
+  
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.pipelineActions {
+  @include mx.flex-container(row, center, center);
+  gap: 8px;
+  flex-shrink: 0;
+  
+  .actionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(61, 141, 122, 0.1);
+    color: #3D8D7A;
+    border-radius: 8px;
+    border: 1px solid rgba(61, 141, 122, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: #3D8D7A;
+      color: #ffffff;
+      border-color: #3D8D7A;
+    }
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  .expandIcon {
+    color: #3D8D7A;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.pipelineDetails {
+  border-top: 1px solid rgba(61, 141, 122, 0.15);
+  background: rgba(255, 255, 255, 0.5);
+  
+  .detailsContent {
+    padding: 20px;
+  }
+}
+
+.eventsSection {
+  .sectionTitle {
+    @include mx.text-style($font: var(--font-outfit), $size: var.$font-base, $weight: 600, $shadow: none, $line_height: 1.4);
+    margin-bottom: 16px;
+    color: #1E1E1E;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    &::before {
+      content: '';
+      width: 3px;
+      height: 20px;
+      background: #3D8D7A;
+      border-radius: 2px;
+    }
+  }
+  
+  .eventsList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.eventItem {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 12px 16px;
+  border: 1px solid rgba(61, 141, 122, 0.15);
+  border-left: 3px solid #3D8D7A;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: rgba(61, 141, 122, 0.3);
+    background: rgba(61, 141, 122, 0.02);
+  }
+  
+  .eventHeader {
+    @include mx.flex-container(row, center, space-between);
+    margin-bottom: 8px;
+    gap: 12px;
+    flex-wrap: wrap;
+    
+    .eventType {
+      @include mx.flex-container(row, center, center);
+      gap: 8px;
+      
+      .eventTypeBadge {
+        @include mx.text-style($font: var(--font-outfit), $size: 12px, $weight: 600, $shadow: none, $line_height: 14px, $color: #3D8D7A);
+        background: rgba(61, 141, 122, 0.1);
+        padding: 4px 12px;
+        border-radius: 16px;
+        text-transform: uppercase;
+        letter-spacing: -0.01em;
+        border: 1px solid rgba(61, 141, 122, 0.2);
+      }
+      
+      .eventStatus {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        flex-shrink: 0;
+      }
+    }
+    
+    .eventMeta {
+      @include mx.flex-container(row, center, center);
+      gap: 12px;
+      
+      .eventDuration {
+        @include mx.text-style($font: var(--font-outfit), $size: 12px, $weight: 600, $shadow: none, $line_height: 15px, $color: #3D8D7A);
+        background: rgba(61, 141, 122, 0.1);
+        padding: 4px 10px;
+        border-radius: 6px;
+        border: 1px solid rgba(61, 141, 122, 0.15);
+      }
+      
+      .eventTime {
+        @include mx.text-style($font: var(--font-outfit), $size: 12px, $weight: 500, $shadow: none, $line_height: 15px, $color: #8F8A8A);
+      }
+    }
+  }
+  
+  .eventDetails {
+    @include mx.text-style($font: var(--font-outfit), $size: 14px, $weight: 400, $shadow: none, $line_height: 1.4, $color: #1E1E1E);
+    margin: 0;
+    text-align: left;
+  }
+}
+
+.successIcon {
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3D8D7A;
+  
+  
+}
+
+.failedIcon {
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  
+}
+
+// Responsive Design
+@include break.respond-to(md) {
+  .pipelineHeader {
+    padding: 18px 24px;
+  }
+}
+
+@include break.respond-to(lg) {
+  .pipelineInfo {
+    .pipelineName {
+      h3 {
+        font-size: 22px;
+        line-height: 28px;
+      }
+    }
+    
+    .pipelineDescription {
+      font-size: 15px;
+    }
+  }
+}
+
+.noEventsMessage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  
+  p {
+    color: #8F8A8A;
+    font-size: 14px;
+    font-style: italic;
+    margin: 0;
+  }
+}
+
+@include break.respond-to(xl) {
+  .pipelineInfo {
+    .pipelineName {
+      h3 {
+        font-size: 24px;
+        line-height: 30px;
+      }
+    }
+  }
+}
