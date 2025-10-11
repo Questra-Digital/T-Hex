@@ -18,7 +18,7 @@ class HttpUtils {
     try {
       const baseUrl = this.getBaseUrl();
       const fullUrl = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`;
-      
+
       const response = await fetch(fullUrl, {
         method: method || "GET",
         body: options?.body ? JSON.stringify(options.body) : undefined,
@@ -35,7 +35,7 @@ class HttpUtils {
 
 
       const data = await response.json();
-      
+
       return data as T;
     } catch (err: any) {
       return {
