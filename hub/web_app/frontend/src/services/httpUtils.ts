@@ -1,6 +1,6 @@
 import { APIResponse } from "@/types/API";
 
-interface HttpRequestOptions {
+export interface HttpRequestOptions {
   body?: any;
   headers?: Record<string, string>;
 }
@@ -30,18 +30,26 @@ class HttpUtils {
           success: false,
           message: `HTTP error: ${response.status}`,
           error: response.statusText,
+          statusCode: response.status,
         } as T;
       }
 
 
-      const data = await response.json();
+      const data = await response.json() as T;
 
-      return data as T;
+      return {
+        success: true,
+        message: "Request successful",
+        data: data as T,
+        statusCode: response.status,
+      } as T;
+
     } catch (err: any) {
       return {
         success: false,
         message: "Network or JSON parse error",
         error: err.message,
+        statusCode: 500,
       } as T;
     }
   }
