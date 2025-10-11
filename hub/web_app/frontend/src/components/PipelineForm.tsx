@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import styles from "@/styles/components/PipelineForm.module.scss";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { useSnackbar } from "@/contexts/SnackbarContext";
-import { pipelineService } from "@/services/pipelineService";
+import { createPipeline } from "@/services/pipelineService";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { addPipeline, selectNewPipelineId } from "@/store/pipelinesSlice";
-import { Pipeline } from "@/types/pipeline";
+import { CreatePipelineRequest, Pipeline, PipelineStatus, TriggerType } from "@/types/pipeline";
 // Step components
 import PipelineNameStep, { PipelineNameStepRef } from "@/components/PipeLineForm/PipelineNameStep/PipelineNameStep";
 import DescriptionStep, { DescriptionStepRef } from "@/components/PipeLineForm/DescriptionStep/DescriptionStep";
@@ -254,32 +254,37 @@ function PipelineFormContent({ onStepChange, onStepComplete, onStepIncomplete }:
                 onClick={async () => {
                   try {
 
-                    const newPipeLine: Pipeline = {
-                      id: (newPipelineId).toString(),
+                    const newPipeLine: Omit<Pipeline, "id" | "events"> = {
                       name: formData.pipelineName,
                       description: formData.description,
-                      status: "pending",
-                      lastRun: new Date().toISOString(),
-                      triggerType: formData.triggerType,
-                      branchName: formData.branchName,
-                      repositoryPath: formData.repoPath,
+                      status: "pending" as PipelineStatus,
+                      last_run: new Date().toISOString(),
+                      trigger_type: formData.triggerType as TriggerType,
+                      branch_name: formData.branchName,
+                      repository_path: formData.repoPath,
                       labels: formData.labels,
-                      events: [],
                     };
 
-                    // Create pipeline via API service using the ID from context
-                    const result = await pipelineService.createPipeline({
-                      pipeline_id: newPipeLine.id,
-                      repo_path: formData.repoPath,
+                    const createPipelineRequest: CreatePipelineRequest = {
+                      pipeline: newPipeLine,
                       access_token: formData.githubToken,
-                    });
+                    };
+
+                    // Create pipeline via API service
+                    const result = await createPipeline(createPipelineRequest);
 
                     if (result.success) {
                       // Show success snackbar
                       showSnackbar(result.message, "success", 3000);
 
-                      // Add the pipeline to the context
-                      dispatch(addPipeline(newPipeLine));
+                      // Create pipeline with ID from response and empty events array
+                      const createdPipeline: Pipeline = {
+                        ...newPipeLine,
+                        id: result.data?.pipeline_id as number,
+                        events: []
+                      };
+
+                      dispatch(addPipeline(createdPipeline));
 
                       // Redirect to pipelines page after a short delay
                       setTimeout(() => {
