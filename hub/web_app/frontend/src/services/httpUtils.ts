@@ -1,171 +1,65 @@
-// HTTP utility functions for API interactions
+import { APIResponse } from "@/types/API";
 
-export interface HttpRequestOptions {
+interface HttpRequestOptions {
+  body?: any;
   headers?: Record<string, string>;
-  timeout?: number;
-}
-
-export interface HttpResponse<T = any> {
-  data: T;
-  status: number;
-  statusText: string;
-}
-
-export interface HttpError {
-  message: string;
-  status?: number;
-  statusText?: string;
-  data?: any;
 }
 
 class HttpUtils {
-  private defaultHeaders: Record<string, string> = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  };
+  private getBaseUrl(): string {
+    return process.env.NEXT_PUBLIC_CICD_RUNNER_URL || 'http://localhost:8082';
+  }
 
-  private async makeRequest<T>(
-    url: string,
-    options: RequestInit & HttpRequestOptions = {}
-  ): Promise<HttpResponse<T>> {
-    const { timeout = 10000, headers = {}, ...fetchOptions } = options;
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
-
+  private async httpRequest<T extends APIResponse<any>>(
+    endpoint: string,
+    method: "GET" | "POST" | "PUT" | "DELETE",
+    options?: HttpRequestOptions
+  ): Promise<T> {
     try {
-      const response = await fetch(url, {
-        ...fetchOptions,
-        headers: {
-          ...this.defaultHeaders,
-          ...headers,
-        },
-        signal: controller.signal,
+      const baseUrl = this.getBaseUrl();
+      const fullUrl = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`;
+      
+      const response = await fetch(fullUrl, {
+        method: method || "GET",
+        body: options?.body ? JSON.stringify(options.body) : undefined,
+        headers: { "Content-Type": "application/json", ...options?.headers },
       });
 
-      clearTimeout(timeoutId);
-
-      let data: T;
-      const contentType = response.headers.get('content-type');
-      
-      if (contentType && contentType.includes('application/json')) {
-        data = await response.json();
-      } else {
-        data = (await response.text()) as T;
-      }
-
       if (!response.ok) {
-        const error: HttpError = {
-          message: `HTTP ${response.status}: ${response.statusText}`,
-          status: response.status,
-          statusText: response.statusText,
-          data,
-        };
-        throw error;
+        return {
+          success: false,
+          message: `HTTP error: ${response.status}`,
+          error: response.statusText,
+        } as T;
       }
 
+
+      const data = await response.json();
+      
+      return data as T;
+    } catch (err: any) {
       return {
-        data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    } catch (error) {
-      clearTimeout(timeoutId);
-      
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          throw new Error('Request timeout');
-        }
-        throw error;
-      }
-      
-      throw new Error('Unknown error occurred');
+        success: false,
+        message: "Network or JSON parse error",
+        error: err.message,
+      } as T;
     }
   }
 
-  /**
-   * GET request
-   */
-  async get<T = any>(
-    url: string,
-    options: HttpRequestOptions = {}
-  ): Promise<HttpResponse<T>> {
-    return this.makeRequest<T>(url, {
-      method: 'GET',
-      ...options,
-    });
+  async get<T extends APIResponse<any>>(endpoint: string, options?: HttpRequestOptions): Promise<T> {
+    return this.httpRequest<T>(endpoint, "GET", options);
   }
 
-  /**
-   * POST request
-   */
-  async post<T = any>(
-    url: string,
-    data?: any,
-    options: HttpRequestOptions = {}
-  ): Promise<HttpResponse<T>> {
-    return this.makeRequest<T>(url, {
-      method: 'POST',
-      body: data ? JSON.stringify(data) : undefined,
-      ...options,
-    });
+  async post<T extends APIResponse<any>>(endpoint: string, options?: HttpRequestOptions): Promise<T> {
+    return this.httpRequest<T>(endpoint, "POST", options);
   }
 
-  /**
-   * PUT request
-   */
-  async put<T = any>(
-    url: string,
-    data?: any,
-    options: HttpRequestOptions = {}
-  ): Promise<HttpResponse<T>> {
-    return this.makeRequest<T>(url, {
-      method: 'PUT',
-      body: data ? JSON.stringify(data) : undefined,
-      ...options,
-    });
+  async put<T extends APIResponse<any>>(endpoint: string, options?: HttpRequestOptions): Promise<T> {
+    return this.httpRequest<T>(endpoint, "PUT", options);
   }
 
-  /**
-   * PATCH request (update)
-   */
-  async patch<T = any>(
-    url: string,
-    data?: any,
-    options: HttpRequestOptions = {}
-  ): Promise<HttpResponse<T>> {
-    return this.makeRequest<T>(url, {
-      method: 'PATCH',
-      body: data ? JSON.stringify(data) : undefined,
-      ...options,
-    });
-  }
-
-  /**
-   * DELETE request
-   */
-  async delete<T = any>(
-    url: string,
-    options: HttpRequestOptions = {}
-  ): Promise<HttpResponse<T>> {
-    return this.makeRequest<T>(url, {
-      method: 'DELETE',
-      ...options,
-    });
-  }
-
-  /**
-   * Set default headers
-   */
-  setDefaultHeaders(headers: Record<string, string>): void {
-    this.defaultHeaders = { ...this.defaultHeaders, ...headers };
-  }
-
-  /**
-   * Get default headers
-   */
-  getDefaultHeaders(): Record<string, string> {
-    return { ...this.defaultHeaders };
+  async delete<T extends APIResponse<any>>(endpoint: string, options?: HttpRequestOptions): Promise<T> {
+    return this.httpRequest<T>(endpoint, "DELETE", options);
   }
 }
 
