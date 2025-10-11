@@ -325,6 +325,21 @@
   }
 }
 
+.noEventsMessage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  
+  p {
+    color: #8F8A8A;
+    font-size: 14px;
+    font-style: italic;
+    margin: 0;
+  }
+}
+
 @include break.respond-to(xl) {
   .pipelineInfo {
     .pipelineName {

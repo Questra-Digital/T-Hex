@@ -85,9 +85,9 @@ export default function PipelinesList({ initialPipelines, error }: { initialPipe
 
   return (
     <div className={styles.pipelinesList}>
-      {pipelines.map((pipeline: Pipeline) => (
+      {pipelines.map((pipeline: Pipeline, index: number) => (
         <motion.div
-          key={pipeline.id.toString()}
+          key={pipeline.id?.toString() || `pipeline-${index}`}
           className={styles.pipelineCard}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -95,7 +95,7 @@ export default function PipelinesList({ initialPipelines, error }: { initialPipe
         >
           <div
             className={styles.pipelineHeader}
-            onClick={() => togglePipeline(pipeline.id.toString())}
+            onClick={() => togglePipeline(pipeline.id?.toString() || '')}
           >
             <div className={styles.pipelineInfo}>
               <div className={styles.pipelineName}>
@@ -143,7 +143,7 @@ export default function PipelinesList({ initialPipelines, error }: { initialPipe
               <button className={styles.actionButton}>
                 <Trash2 size={16} />
               </button>
-              {expandedPipeline === pipeline.id.toString() ? (
+              {expandedPipeline === pipeline.id?.toString() ? (
                 <ChevronUp size={20} className={styles.expandIcon} />
               ) : (
                 <ChevronDown size={20} className={styles.expandIcon} />
@@ -152,7 +152,7 @@ export default function PipelinesList({ initialPipelines, error }: { initialPipe
           </div>
 
           <AnimatePresence>
-            {expandedPipeline === pipeline.id.toString() && (
+            {expandedPipeline === pipeline.id?.toString() && (
               <motion.div
                 className={styles.pipelineDetails}
                 initial={{ height: 0, opacity: 0 }}
@@ -164,26 +164,32 @@ export default function PipelinesList({ initialPipelines, error }: { initialPipe
                   <div className={styles.eventsSection}>
                     <h4 className={styles.sectionTitle}>Recent Events</h4>
                     <div className={styles.eventsList}>
-                      {pipeline.events.length > 0 && pipeline.events.map((event: PipelineEvent) => (
-                        <div key={event.id} className={styles.eventItem}>
-                          <div className={styles.eventHeader}>
-                            <div className={styles.eventType}>
-                              <span className={styles.eventTypeBadge}>{event.type}</span>
-                              <div
-                                className={styles.eventStatus}
-                                style={{ backgroundColor: getStatusColor(event.status) }}
-                              >
-                                {getStatusIcon(event.status)}
+                      {pipeline.events.length > 0 ? (
+                        pipeline.events.map((event: PipelineEvent) => (
+                          <div key={event.id} className={styles.eventItem}>
+                            <div className={styles.eventHeader}>
+                              <div className={styles.eventType}>
+                                <span className={styles.eventTypeBadge}>{event.type}</span>
+                                <div
+                                  className={styles.eventStatus}
+                                  style={{ backgroundColor: getStatusColor(event.status) }}
+                                >
+                                  {getStatusIcon(event.status)}
+                                </div>
+                              </div>
+                              <div className={styles.eventMeta}>
+                                <span className={styles.eventDuration}>{formatDuration(event.duration)}</span>
+                                <span className={styles.eventTime}>{formatDate(event.timestamp)}</span>
                               </div>
                             </div>
-                            <div className={styles.eventMeta}>
-                              <span className={styles.eventDuration}>{formatDuration(event.duration)}</span>
-                              <span className={styles.eventTime}>{formatDate(event.timestamp)}</span>
-                            </div>
+                            <p className={styles.eventDetails}>{event.details}</p>
                           </div>
-                          <p className={styles.eventDetails}>{event.details}</p>
+                        ))
+                      ) : (
+                        <div className={styles.noEventsMessage}>
+                          <p>No events exist for this pipeline yet.</p>
                         </div>
-                      ))}
+                      )}
                     </div>
                   </div>
                 </div>
