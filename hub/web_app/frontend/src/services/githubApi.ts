@@ -1,211 +1,139 @@
 // GitHub API service for token and repository validation
-import { httpUtils } from './httpUtils';
-export interface GitHubTokenValidation {
-  isValid: boolean;
-  hasRepoAccess: boolean;
-  hasWriteAccess: boolean;
-  user?: {
-    login: string;
-    name?: string;
-    email?: string;
-  };
-  error?: string;
-}
+import { APIResponse } from '@/types/API';
+import { httpUtils, HttpRequestOptions } from '@/services/httpUtils';
 
-export interface BranchValidation {
-  exists: boolean;
-  branchName: string;
-  error?: string;
-}
-
-export interface RepositoryInfo {
-  name: string;
-  fullName: string;
-  private: boolean;
-  defaultBranch: string;
+interface RepositoryInfo {
   permissions: {
     admin: boolean;
-    push: boolean;
-    pull: boolean;
   };
 }
 
-class GitHubApiService {
-  private baseUrl = 'https://api.github.com';
+const baseUrl = 'https://api.github.com';
 
-  /**
-   * Validate GitHub token and check repository access
-   */
-  async validateTokenAndRepo(
-    token: string,
-    repoPath: string
-  ): Promise<GitHubTokenValidation> {
-    try {
-      // First, validate the token by getting user info
-      const userResponse = await httpUtils.get(`${this.baseUrl}/user`, {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-        },
-      });
+/*
+  Default options for GitHub API requests
+*/
+const defaultOptions = (token: string) => ({
+  headers: {
+    'Authorization': `token ${token}`,
+    'Accept': 'application/vnd.github.v3+json',
+  },
+}) as HttpRequestOptions;
 
-      const user = userResponse.data;
-
-      // Parse repository path (format: owner/repo)
-      const [owner, repo] = repoPath.split('/');
-      if (!owner || !repo) {
-        return {
-          isValid: true,
-          hasRepoAccess: false,
-          hasWriteAccess: false,
-          user: {
-            login: user.login,
-            name: user.name,
-            email: user.email,
-          },
-          error: 'Invalid repository path format. Use: owner/repository',
-        };
-      }
-
-      // Check repository access and permissions
-      const repoResponse = await httpUtils.get(`${this.baseUrl}/repos/${owner}/${repo}`, {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-        },
-      });
-
-      const repository: RepositoryInfo = repoResponse.data;
-
-      return {
-        isValid: true,
-        hasRepoAccess: true,
-        hasWriteAccess: repository.permissions.push,
-        user: {
-          login: user.login,
-          name: user.name,
-          email: user.email,
-        },
-      };
-    } catch (error: any) {
-      console.error('GitHub API validation error:', error);
-      
-      // Handle specific HTTP errors
-      if (error.status === 401) {
-        return {
-          isValid: false,
-          hasRepoAccess: false,
-          hasWriteAccess: false,
-          error: 'Invalid or expired GitHub token',
-        };
-      }
-      
-      if (error.status === 404) {
-        return {
-          isValid: true,
-          hasRepoAccess: false,
-          hasWriteAccess: false,
-          user: error.data?.user,
-          error: 'Repository not found or you do not have access to it',
-        };
-      }
-      
-      return {
-        isValid: false,
-        hasRepoAccess: false,
-        hasWriteAccess: false,
-        error: error.message || 'Network error or GitHub API unavailable',
-      };
-    }
+function evaluateStatus(statusCode: number | undefined): APIResponse {
+  if (!statusCode) {
+    return {
+      success: false,
+      message: 'Unexpected error occurred',
+      error: 'Unexpected error occurred',
+    };
   }
-
-  /**
-   * Validate if a branch exists in the repository
-   */
-  async validateBranch(
-    token: string,
-    repoPath: string,
-    branchName: string
-  ): Promise<BranchValidation> {
-    try {
-      const [owner, repo] = repoPath.split('/');
-      if (!owner || !repo) {
-        return {
-          exists: false,
-          branchName,
-          error: 'Invalid repository path format',
-        };
-      }
-
-      const response = await httpUtils.get(
-        `${this.baseUrl}/repos/${owner}/${repo}/branches/${branchName}`,
-        {
-          headers: {
-            'Authorization': `token ${token}`,
-            'Accept': 'application/vnd.github.v3+json',
-          },
-        }
-      );
-
-      return {
-        exists: true,
-        branchName,
-      };
-    } catch (error: any) {
-      console.error('Branch validation error:', error);
-      
-      if (error.status === 404) {
-        return {
-          exists: false,
-          branchName,
-          error: `Branch '${branchName}' does not exist in the repository`,
-        };
-      }
-      
-      return {
-        exists: false,
-        branchName,
-        error: error.message || 'Network error while checking branch',
-      };
-    }
-  }
-
-  /**
-   * Get repository information
-   */
-  async getRepositoryInfo(
-    token: string,
-    repoPath: string
-  ): Promise<{ success: boolean; data?: RepositoryInfo; error?: string }> {
-    try {
-      const [owner, repo] = repoPath.split('/');
-      if (!owner || !repo) {
-        return {
-          success: false,
-          error: 'Invalid repository path format',
-        };
-      }
-
-      const response = await httpUtils.get(`${this.baseUrl}/repos/${owner}/${repo}`, {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-        },
-      });
-
-      const data: RepositoryInfo = response.data;
-      return {
-        success: true,
-        data,
-      };
-    } catch (error: any) {
-      console.error('Repository info error:', error);
+  switch (statusCode) {
+    case 401:
       return {
         success: false,
-        error: error.message || 'Network error while fetching repository information',
+        message: 'Invalid or expired token',
+        error: 'Invalid or expired token',
       };
-    }
+    case 403:
+      return {
+        success: false,
+        message: 'Token does not have access to repository',
+        error: 'Token does not have access to repository',
+      };
+    case 404:
+      return {
+        success: false,
+        message: 'Repository not found or token does not have access',
+        error: 'Repository not found or token does not have access',
+      };
+
+    default:
+      return {
+        success: false,
+        message: 'Unexpected error occurred',
+        error: 'Unexpected error occurred',
+      };
   }
 }
+/**
+ * Validate GitHub token and check repository access
+ */
+export const validateTokenAndRepo = async (
+  token: string,
+  repoPath: string
+): Promise<APIResponse> => {
 
-export const githubApiService = new GitHubApiService();
+  // First, validate the token by getting user info
+
+  const userResponse = await httpUtils.get(`${baseUrl}/user`, defaultOptions(token));
+
+  if (!userResponse.success) {
+    return evaluateStatus(userResponse.statusCode);
+  }
+
+  // Parse repository path (format: owner/repo)
+  const [owner, repo] = repoPath.split('/');
+  if (!owner || !repo) {
+    return {
+      success: false,
+      message: 'Invalid repository path format. Use: owner/repository',
+      error: 'Invalid repository path format. Use: owner/repository',
+    };
+  }
+
+  // Check repository access and permissions
+  const repoResponse = await httpUtils.get<APIResponse<RepositoryInfo>>(`${baseUrl}/repos/${owner}/${repo}`, defaultOptions(token));
+
+
+  if (!repoResponse.success) {
+    return evaluateStatus(repoResponse.statusCode);
+  }
+
+  const repository: RepositoryInfo = repoResponse.data as RepositoryInfo;
+
+  if (!repository.permissions.admin) {
+    return evaluateStatus(repoResponse.statusCode);
+  }
+
+  return {
+    success: true,
+    message: 'Token and repository validation successful',
+  };
+
+}
+
+/**
+ * Validate if a branch exists in the repository
+ */
+export const validateBranch = async (
+  token: string,
+  repoPath: string,
+  branchName: string
+): Promise<APIResponse> => {
+
+
+  const [owner, repo] = repoPath.split('/');
+  if (!owner || !repo) {
+    return {
+      success: false,
+      message: 'Invalid repository path format. Use: owner/repository',
+      error: 'Invalid repository path format. Use: owner/repository',
+    };
+  }
+
+  const response = await httpUtils.get(
+    `${baseUrl}/repos/${owner}/${repo}/branches/${branchName}`,
+    defaultOptions(token)
+  );
+
+  if (!response.success) {
+    return evaluateStatus(response.statusCode);
+  }
+
+  return {
+    success: true,
+    message: `Branch '${branchName}' exists in repository '${repoPath}'`,
+  };
+
+}
