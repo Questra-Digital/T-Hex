@@ -1,16 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PipelineEvent } from '@/types/pipeline';
+import { PipelineEvent, PipeLineEventRequest } from '@/types/pipeline';
 import { getSSEWriter, setSSEWriter } from './connection';
 
-interface PipelineEventRequest {
-  pipeline_id: string;
-  event: PipelineEvent;
-}
 
 export async function POST(request: NextRequest) {
   try {
-    const body: PipelineEventRequest = await request.json();
-    const { pipeline_id, event } = body;
+    const body: PipeLineEventRequest = await request.json();
+    const { pipeline_id, event } = body.data as { pipeline_id: number, event: PipelineEvent };
 
     //Get writer globally
     const writer = getSSEWriter();
