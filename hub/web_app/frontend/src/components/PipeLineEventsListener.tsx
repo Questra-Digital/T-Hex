@@ -15,7 +15,7 @@ export default function PipeLineEventsListener() {
         eventSource.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data) as {
-                    pipeline_id: string;
+                    pipeline_id: number;
                     event: PipelineEvent;
                 };
 
