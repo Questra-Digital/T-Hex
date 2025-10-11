@@ -9,6 +9,7 @@ services:
     environment:
       - PORT=:8082
       - DB_URL=postgres://postgres:123456@host.docker.internal:5432/cicd_pipelines?sslmode=disable
+      # Update this with your own ngrok URL
       - CALLBACK_URL=https://48330bccb113.ngrok-free.app/hook_callback
       - SECRET=1234
       - FRONTEND_URL=http://host.docker.internal:3000
