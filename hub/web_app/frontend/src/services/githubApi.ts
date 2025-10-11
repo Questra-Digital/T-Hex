@@ -1,6 +1,5 @@
 // GitHub API service for token and repository validation
 import { APIResponse } from '@/types/API';
-import { httpUtils, HttpRequestOptions } from '@/services/httpUtils';
 
 interface RepositoryInfo {
   permissions: {
@@ -10,15 +9,19 @@ interface RepositoryInfo {
 
 const baseUrl = 'https://api.github.com';
 
+function customFetch(url: string, token: string) {
+  return fetch(url, {
+    method: 'GET',
+    headers: {
+      'Authorization': `token ${token}`,
+      'Accept': 'application/vnd.github.v3+json',
+    },
+  });
+}
+
 /*
   Default options for GitHub API requests
 */
-const defaultOptions = (token: string) => ({
-  headers: {
-    'Authorization': `token ${token}`,
-    'Accept': 'application/vnd.github.v3+json',
-  },
-}) as HttpRequestOptions;
 
 function evaluateStatus(statusCode: number | undefined): APIResponse {
   if (!statusCode) {
@@ -66,10 +69,10 @@ export const validateTokenAndRepo = async (
 
   // First, validate the token by getting user info
 
-  const userResponse = await httpUtils.get(`${baseUrl}/user`, defaultOptions(token));
+  const userResponse = await customFetch(`${baseUrl}/user`, token);
 
-  if (!userResponse.success) {
-    return evaluateStatus(userResponse.statusCode);
+  if (!userResponse.ok) {
+    return evaluateStatus(userResponse.status);
   }
 
   // Parse repository path (format: owner/repo)
@@ -83,17 +86,18 @@ export const validateTokenAndRepo = async (
   }
 
   // Check repository access and permissions
-  const repoResponse = await httpUtils.get<APIResponse<RepositoryInfo>>(`${baseUrl}/repos/${owner}/${repo}`, defaultOptions(token));
+  // Custom fetch request as response is not an APIResponse
+  const repoResponse = await customFetch(
+    `${baseUrl}/repos/${owner}/${repo}`, token);
 
-
-  if (!repoResponse.success) {
-    return evaluateStatus(repoResponse.statusCode);
+  if (!repoResponse.ok) {
+    return evaluateStatus(repoResponse.status);
   }
 
-  const repository: RepositoryInfo = repoResponse.data as RepositoryInfo;
+  const repoResponseJson: RepositoryInfo = await repoResponse.json();
 
-  if (!repository.permissions.admin) {
-    return evaluateStatus(repoResponse.statusCode);
+  if (!repoResponseJson.permissions.admin) {
+    return evaluateStatus(repoResponse.status);
   }
 
   return {
@@ -122,13 +126,13 @@ export const validateBranch = async (
     };
   }
 
-  const response = await httpUtils.get(
+  const response = await customFetch(
     `${baseUrl}/repos/${owner}/${repo}/branches/${branchName}`,
-    defaultOptions(token)
+    token
   );
 
-  if (!response.success) {
-    return evaluateStatus(response.statusCode);
+  if (!response.ok) {
+    return evaluateStatus(response.status);
   }
 
   return {
