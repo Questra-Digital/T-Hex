@@ -4,13 +4,30 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, Play, Settings, Trash2, Calendar, GitBranch, Clock, Check, X, GitCommit } from "lucide-react";
 import styles from "./PipelinesList.module.scss";
-import { useAppSelector } from "@/store/hooks";
-import { selectPipelines } from "@/store/pipelinesSlice";
-import { Pipeline } from "@/types/pipeline";
+import { Pipeline, PipelineEvent } from "@/types/pipeline";
 
-export default function PipelinesList() {
-  const pipelines = useAppSelector(selectPipelines);
+import { useSnackbar } from "@/contexts/SnackbarContext";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { selectPipelines, setPipelines } from "@/store/pipelinesSlice";
+
+export default function PipelinesList({ initialPipelines, error }: { initialPipelines: Pipeline[], error: string | null }) {
   const [expandedPipeline, setExpandedPipeline] = useState<string | null>(null);
+
+  const { showSnackbar } = useSnackbar();
+  const dispatch = useAppDispatch();
+  const pipelines: Pipeline[] = useAppSelector(selectPipelines);
+
+  //Hydrate store with initial pipelines
+  useEffect(() => {
+    if (error) {
+      showSnackbar(error, "error", 5000);
+      return;
+    }
+    if (initialPipelines.length > 0) {
+      dispatch(setPipelines(initialPipelines));
+    }
+  }, [error, initialPipelines]);
 
   const togglePipeline = (pipelineId: string) => {
     setExpandedPipeline(expandedPipeline === pipelineId ? null : pipelineId);
@@ -48,11 +65,29 @@ export default function PipelinesList() {
     return new Date(dateString).toLocaleString();
   };
 
+  const formatDuration = (duration: number) => {
+    // Convert nanoseconds to total seconds
+    let totalSeconds = Math.floor(duration / 1_000_000_000);
+
+    const hours = Math.floor(totalSeconds / 3600);
+    totalSeconds %= 3600;
+
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    const parts = [];
+    if (hours > 0) parts.push(`${hours}h`);
+    if (minutes > 0) parts.push(`${minutes}m`);
+    if (seconds > 0 || parts.length === 0) parts.push(`${seconds}s`);
+
+    return parts.join(" ");
+  };
+
   return (
     <div className={styles.pipelinesList}>
       {pipelines.map((pipeline: Pipeline) => (
         <motion.div
-          key={pipeline.id}
+          key={pipeline.id.toString()}
           className={styles.pipelineCard}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -60,7 +95,7 @@ export default function PipelinesList() {
         >
           <div
             className={styles.pipelineHeader}
-            onClick={() => togglePipeline(pipeline.id)}
+            onClick={() => togglePipeline(pipeline.id.toString())}
           >
             <div className={styles.pipelineInfo}>
               <div className={styles.pipelineName}>
@@ -75,22 +110,22 @@ export default function PipelinesList() {
               </div>
               <p className={styles.pipelineDescription}>
                 {pipeline.description}
-                {pipeline.triggerType === "commit" && (
-                  <span className={styles.commitInfo}> • Commit to {pipeline.branchName} branch</span>
+                {pipeline.trigger_type === "commit" && (
+                  <span className={styles.commitInfo}> • Commit to {pipeline.branch_name} branch</span>
                 )}
               </p>
               <div className={styles.pipelineMeta}>
                 <div className={styles.metaItem}>
                   <GitBranch size={14} />
-                  <span>{pipeline.branchName}</span>
+                  <span>{pipeline.branch_name}</span>
                 </div>
                 <div className={styles.metaItem}>
                   <GitCommit size={14} />
-                  <span>{pipeline.repositoryPath}</span>
+                  <span>{pipeline.repository_path}</span>
                 </div>
                 <div className={styles.metaItem}>
                   <Calendar size={14} />
-                  <span>Last run: {formatDate(pipeline.lastRun)}</span>
+                  <span>Last run: {formatDate(pipeline.last_run)}</span>
                 </div>
                 <div className={styles.labels}>
                   {pipeline.labels.map((label) => (
@@ -108,7 +143,7 @@ export default function PipelinesList() {
               <button className={styles.actionButton}>
                 <Trash2 size={16} />
               </button>
-              {expandedPipeline === pipeline.id ? (
+              {expandedPipeline === pipeline.id.toString() ? (
                 <ChevronUp size={20} className={styles.expandIcon} />
               ) : (
                 <ChevronDown size={20} className={styles.expandIcon} />
@@ -117,7 +152,7 @@ export default function PipelinesList() {
           </div>
 
           <AnimatePresence>
-            {expandedPipeline === pipeline.id && (
+            {expandedPipeline === pipeline.id.toString() && (
               <motion.div
                 className={styles.pipelineDetails}
                 initial={{ height: 0, opacity: 0 }}
@@ -129,7 +164,7 @@ export default function PipelinesList() {
                   <div className={styles.eventsSection}>
                     <h4 className={styles.sectionTitle}>Recent Events</h4>
                     <div className={styles.eventsList}>
-                      {pipeline.events.map((event) => (
+                      {pipeline.events.length > 0 && pipeline.events.map((event: PipelineEvent) => (
                         <div key={event.id} className={styles.eventItem}>
                           <div className={styles.eventHeader}>
                             <div className={styles.eventType}>
@@ -142,7 +177,7 @@ export default function PipelinesList() {
                               </div>
                             </div>
                             <div className={styles.eventMeta}>
-                              <span className={styles.eventDuration}>{event.duration}</span>
+                              <span className={styles.eventDuration}>{formatDuration(event.duration)}</span>
                               <span className={styles.eventTime}>{formatDate(event.timestamp)}</span>
                             </div>
                           </div>
