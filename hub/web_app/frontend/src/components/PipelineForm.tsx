@@ -46,7 +46,7 @@ function PipelineFormContent({ onStepChange, onStepComplete, onStepIncomplete }:
   // Current step state
   const [currentStep, setCurrentStep] = useState(0);
   const [isValidating, setIsValidating] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   // Form data state
   const [formData, setFormData] = useState<PipelineFormData>({
     pipelineName: "",
@@ -233,7 +233,7 @@ function PipelineFormContent({ onStepChange, onStepComplete, onStepIncomplete }:
               <button
                 className={styles.button}
                 onClick={handleNextStep}
-                disabled={isValidating}
+                disabled={isValidating || isLoading}
               >
                 {isValidating ? (
                   <>
@@ -270,6 +270,8 @@ function PipelineFormContent({ onStepChange, onStepComplete, onStepIncomplete }:
                       access_token: formData.githubToken,
                     };
 
+                    setIsLoading(true);
+
                     // Create pipeline via API service
                     const result = await createPipeline(createPipelineRequest);
 
@@ -293,14 +295,24 @@ function PipelineFormContent({ onStepChange, onStepComplete, onStepIncomplete }:
                     } else {
                       // Show error snackbar
                       showSnackbar(result.error || result.message, "error", 5000);
+                      setIsLoading(false);
                     }
                   } catch (error) {
                     console.error("Pipeline creation error:", error);
                     showSnackbar("Failed to create pipeline. Please try again.", "error", 5000);
+                    setIsLoading(false);
                   }
                 }}
+                disabled={isLoading}
               >
-                Create Pipeline
+                {isLoading ? (
+                  <>
+                    <Loader2 className={styles.spinner} size={26} />
+                    Creating Pipeline...
+                  </>
+                ) : (
+                  "Create Pipeline"
+                )}
               </button>
             )}
           </div>
