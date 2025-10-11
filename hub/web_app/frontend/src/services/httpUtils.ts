@@ -35,12 +35,10 @@ class HttpUtils {
       }
 
 
-      const data = await response.json() as T;
+      const responseJson = await response.json();
 
       return {
-        success: true,
-        message: "Request successful",
-        data: data as T,
+        ...responseJson,
         statusCode: response.status,
       } as T;
 
