@@ -3,6 +3,7 @@ package main
 import (
 	"cicd_runner/config"
 	"cicd_runner/routes"
+	"cicd_runner/utils"
 	"context"
 	"log"
 	"net/http"
@@ -41,10 +42,25 @@ func main() {
 		c.Next()
 	})
 
+	proxy, err := utils.CreateReverseProxy()
+	if err != nil {
+		log.Fatalf("Error creating reverse proxy: %s", err.Error())
+	}
+
+	handler := func(c *gin.Context) {
+		log.Printf("Reverse proxy request received: %s %s", c.Request.Method, c.Request.URL.Path)
+		proxy.ServeHTTP(c.Writer, c.Request)
+	}
+
+	router.Any("/reverse_proxy/*path", handler)
+
 	router.POST("/create_pipeline", routes.CreatePipeline)
 	router.POST("/hook_callback", routes.CommitCallback)
-	router.GET("/pipelines", routes.GetPipelines)
-
+	router.POST("/pipelines", routes.GetPipelines)
+	router.POST("/pull_test_cases", routes.PullTestCasesFromRepository)
+	router.POST("/test-session", routes.FetchTestSession)
+	router.POST("/selenium-sessions", routes.FetchSeleniumSessions)
+	router.POST("/selenium-events", routes.FetchSeleniumEvents)
 	// Create HTTP server
 	srv := &http.Server{
 		Addr:    config.EnvConfig.Port,
