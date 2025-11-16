@@ -17,6 +17,8 @@ import LabelsInput, { LabelsInputRef } from "@/components/PipeLineForm/LabelsInp
 import Triggers, { TriggersRef } from "@/components/PipeLineForm/Triggers/Triggers";
 import RepoConfig, { RepoConfigRef } from "@/components/PipeLineForm/RepoConfig/RepoConfig";
 import Summary, { SummaryRef } from "@/components/PipeLineForm/Summary/Summary";
+import { selectUserData } from "@/store/userData";
+import { UserData } from "@/types/user";
 
 interface PipelineFormProps {
   onStepChange?: (stepIndex: number) => void;
@@ -41,7 +43,7 @@ function PipelineFormContent({ onStepChange, onStepComplete, onStepIncomplete }:
   const { showSnackbar } = useSnackbar();
   const dispatch = useAppDispatch();
   const newPipelineId = useAppSelector(selectNewPipelineId);
-
+  const userData: UserData = useAppSelector(selectUserData);
 
   // Current step state
   const [currentStep, setCurrentStep] = useState(0);
@@ -252,8 +254,8 @@ function PipelineFormContent({ onStepChange, onStepComplete, onStepIncomplete }:
               <button
                 className={styles.button}
                 onClick={async () => {
+                  setIsLoading(true); // Move to first line to prevent race condition
                   try {
-
                     const newPipeLine: Omit<Pipeline, "id" | "events"> = {
                       name: formData.pipelineName,
                       description: formData.description,
@@ -268,9 +270,8 @@ function PipelineFormContent({ onStepChange, onStepComplete, onStepIncomplete }:
                     const createPipelineRequest: CreatePipelineRequest = {
                       pipeline: newPipeLine,
                       access_token: formData.githubToken,
+                      user_id: userData.user_id,
                     };
-
-                    setIsLoading(true);
 
                     // Create pipeline via API service
                     const result = await createPipeline(createPipelineRequest);

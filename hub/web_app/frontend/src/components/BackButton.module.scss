@@ -1,0 +1,36 @@
+@use '@/styles/abstracts/mixins' as mx;
+@use '@/styles/abstracts/variables' as var;
+
+.backButton {
+  @include mx.flex-container(row, center, flex-start);
+  gap: 8px;
+  @include mx.text-style($font: var(--font-outfit), $size: 14px, $weight: 500, $shadow: none, $line_height: 18px, $color: #3D8D7A);
+  background: rgba(61, 141, 122, 0.1);
+  border: 1px solid rgba(61, 141, 122, 0.2);
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 20px;
+  width: 180px;
+  
+  &:hover {
+    background: rgba(61, 141, 122, 0.15);
+    border-color: rgba(61, 141, 122, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(61, 141, 122, 0.1);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  svg {
+    color: #3D8D7A;
+    transition: transform 0.2s ease;
+  }
+  
+  &:hover svg {
+    transform: translateX(-2px);
+  }
+}

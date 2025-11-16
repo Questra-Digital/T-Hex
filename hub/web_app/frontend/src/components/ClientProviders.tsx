@@ -2,9 +2,10 @@
 
 import { SnackbarProvider } from "@/contexts/SnackbarContext";
 import { Provider } from "react-redux";
-import { store } from "@/store/store";
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from "@/store/store";
 import { ReactNode } from "react";
-import PipeLineEventsListener from "./PipeLineEventsListener";
+import SessionInitializer from "./SessionInitializer";
 
 interface ClientProvidersProps {
     children: ReactNode;
@@ -14,9 +15,10 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
     return (
         <SnackbarProvider>
             <Provider store={store}>
-                {/* Listen to pipeline events */}
-                <PipeLineEventsListener />
-                {children}
+                <PersistGate loading={null} persistor={persistor}>
+                    <SessionInitializer />
+                    {children}
+                </PersistGate>
             </Provider>
         </SnackbarProvider>
     );

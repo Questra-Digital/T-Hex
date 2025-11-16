@@ -1,5 +1,7 @@
+"use client";
 import styles from "@/styles/components/HeroSection.module.scss";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 // Constants
 const COMPANY_LOGOS = [
@@ -16,6 +18,15 @@ const DASHBOARD_SIZE = { width: 865.5, height: 577 };
 const PLAY_CIRCLE_SIZE = 48;
 
 export default function HeroSection() {
+  const router = useRouter();
+
+  const handleGoogleSignUp = () => {
+    router.push('/getting_started');
+  };
+
+  const handleEmailSignUp = () => {
+    router.push('/getting_started');
+  };
   const renderCompanyLogos = () => (
     <div className={styles.usersIcons}>
       {COMPANY_LOGOS.map((logo) => {
@@ -37,7 +48,7 @@ export default function HeroSection() {
 
   const renderButtons = () => (
     <div className={styles.buttonsGroup}>
-      <button className={styles.googleButton}>
+      <button className={styles.googleButton} onClick={handleGoogleSignUp}>
         <Image
           className={styles.googleIcon}
           src="/Icons/Google Icon.svg"
@@ -47,7 +58,7 @@ export default function HeroSection() {
         />
         Start Free with Google
       </button>
-      <button>Start Free with Email</button>
+      <button onClick={handleEmailSignUp}>Start Free with Email</button>
     </div>
   );
 

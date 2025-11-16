@@ -1,6 +1,8 @@
+"use client";
 import styles from "@/styles/components/PricingSection.module.scss";
 import Image from "next/image";
 import { dm_sans } from "../fonts/fonts";
+import { useRouter } from "next/navigation";
 
 // Constants
 const FREE_TRIAL_FEATURES = [
@@ -28,6 +30,11 @@ const ICON_SIZE = 72;
 const CHECK_ICON_SIZE = 26;
 
 export default function PricingSection() {
+  const router = useRouter();
+
+  const handleGetStarted = () => {
+    router.push('/getting_started');
+  };
   const renderFeatureList = (features: string[]) => (
     <ul className={styles.contentList}>
       {features.map((feature, index) => (
@@ -72,7 +79,7 @@ export default function PricingSection() {
           </p>
         </div>
 
-        <button className={styles.cardButton}>Get Started</button>
+        <button className={styles.cardButton} onClick={handleGetStarted}>Get Started</button>
       </div>
     </div>
   );
