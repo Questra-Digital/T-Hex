@@ -112,6 +112,23 @@
                     }
                 }
             }
+
+            .userIcon {
+                @include mx.flex-container(row, center, center);
+                width: 42px;
+                height: 42px;
+                background: #3d8d7a;
+                border-radius: 50%;
+                color: #ffffff;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin-bottom: 5%;
+
+                &:hover {
+                    background: #2e6e5d;
+                    transform: scale(1.05);
+                }
+            }
         }
     }
 }
