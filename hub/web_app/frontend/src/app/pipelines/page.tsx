@@ -1,9 +1,13 @@
+"use client";
+
 import PipelinesList from "@/components/PipelinesDashboard/PipelinesList/PipelinesList";
 import AnalyticsPanel from "@/components/PipelinesDashboard/AnalyticsPanel/AnalyticsPanel";
 import styles from "@/styles/pages/PipelinesPage.module.scss";
 import { GetPipelinesResponse, Pipeline } from "@/types/pipeline";
 import {getPipelines} from "@/services/pipelineService";
-
+import { useAppSelector } from "@/store/hooks";
+import { selectUserData } from "@/store/userData";
+import { useEffect, useState } from "react";
 
 // Simulated analytics data from the backend server
 const stubAnalytics = {
@@ -26,10 +30,43 @@ const stubAnalytics = {
   ]
 };
 
-export default async function PipelinesPage() {
-  const response: GetPipelinesResponse = await getPipelines();
-  const pipelines: Pipeline[] = response.success ? response.data?.pipelines ?? [] : [];
-  const error = response.success ? null : response.error || response.message || "Failed to fetch pipelines";
+export default function PipelinesPage() {
+  const userData = useAppSelector(selectUserData);
+  const [pipelines, setPipelines] = useState<Pipeline[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPipelines = async () => {
+      if (!userData.user_id || userData.user_id === 0) {
+        setError("User not authenticated");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response: GetPipelinesResponse = await getPipelines(userData.user_id);
+        if (response.success) {
+          setPipelines(response.data?.pipelines ?? []);
+          setError(null);
+        } else {
+          setError(response.error || response.message || "Failed to fetch pipelines");
+        }
+      } catch (err) {
+        setError("Failed to fetch pipelines");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPipelines();
+  }, [userData.user_id]);
+  
+  
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className={`${styles.pipelinesPage}`}>
