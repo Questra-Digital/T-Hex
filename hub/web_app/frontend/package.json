@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.0",
+    "@types/redux-persist": "^4.0.0",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.543.0",
     "next": "15.3.3",
@@ -17,7 +18,8 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
-    "react-select": "^5.10.2"
+    "react-select": "^5.10.2",
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
