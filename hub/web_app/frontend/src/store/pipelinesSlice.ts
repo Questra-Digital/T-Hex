@@ -31,7 +31,15 @@ const pipelinesSlice = createSlice({
         addEventToPipeline: (state, action: PayloadAction<{ pipelineId: number, event: PipelineEvent }>) => {
             const index = state.pipelines.findIndex(pipeline => pipeline.id === action.payload.pipelineId);
             if (index !== -1) {
-                state.pipelines[index].events.push(action.payload.event);
+                const eventIndex = state.pipelines[index].events.findIndex(event => event.id === action.payload.event.id);
+                //Update the event with the new one
+                if (eventIndex !== -1) {
+                    state.pipelines[index].events[eventIndex] = action.payload.event;
+                }
+                else {
+                    //Add the event to the pipeline
+                    state.pipelines[index].events.push(action.payload.event);
+                }
             }
         },
         resetPipelines: (state) => {
