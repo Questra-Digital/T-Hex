@@ -16,6 +16,35 @@ export interface PipelineEvent {
   type: EventType;
 }
 
+export interface TestSession{
+  test_id: number;
+  pipeline_event_id: number;
+  time: number;
+  key: string;
+  proj: string;
+  current: boolean;
+}
+
+export interface SessionSelenium{
+  session_id: string;
+  test_id: number;
+  time: number;
+  valid: boolean;
+  status: boolean;
+  message: string;
+}
+
+export interface Event{
+  id: number;
+  session_id: string;
+  time: number;
+  method: string;
+  path: string;
+  req_body: string;
+  status: number;
+  res: string;
+}
+
 export interface Pipeline {
   id?: number;
   name: string;
@@ -32,6 +61,7 @@ export interface Pipeline {
 export interface CreatePipelineRequest {
   pipeline: Omit<Pipeline, "id" | "events">;
   access_token: string;
+  user_id: number;
 }
 
 export interface CreatePipelineResponse extends APIResponse<{"pipeline_id": number}> {}
@@ -39,3 +69,9 @@ export interface CreatePipelineResponse extends APIResponse<{"pipeline_id": numb
 export interface GetPipelinesResponse extends APIResponse<{"pipelines": Pipeline[]}> {}
 
 export interface PipeLineEventRequest extends APIResponse<{"pipeline_id": number, "event": PipelineEvent}> {}
+
+export interface GetTestSessionsResponse extends APIResponse<{"test_sessions": TestSession[]}> {}
+
+export interface GetSeleniumSessionsResponse extends APIResponse<{"selenium_sessions": SessionSelenium[]}> {}
+
+export interface GetSeleniumEventsResponse extends APIResponse<{"selenium_events": Event[]}> {}
