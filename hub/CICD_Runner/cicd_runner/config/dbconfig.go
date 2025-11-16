@@ -31,21 +31,21 @@ var initialPipelines = []struct {
 				Type:      "test",
 				Status:    "success",
 				Timestamp: parseTime("2024-01-15T10:30:00Z"),
-				Duration:  int64(2*time.Minute + 34*time.Second),
+				Duration:  (2*time.Minute + 34*time.Second).Nanoseconds(),
 				Details:   "Unit tests completed successfully with 0 errors",
 			},
 			{
 				Type:      "test",
 				Status:    "success",
 				Timestamp: parseTime("2024-01-15T10:32:34Z"),
-				Duration:  int64(1*time.Minute + 12*time.Second),
+				Duration:  (1*time.Minute + 12*time.Second).Nanoseconds(),
 				Details:   "Integration tests passed - All 156 tests passed",
 			},
 			{
 				Type:      "test",
 				Status:    "running",
 				Timestamp: parseTime("2024-01-15T10:33:46Z"),
-				Duration:  int64(45 * time.Second),
+				Duration:  (45 * time.Second).Nanoseconds(),
 				Details:   "E2E tests running...",
 			},
 		},
@@ -66,7 +66,7 @@ var initialPipelines = []struct {
 				Type:      "test",
 				Status:    "success",
 				Timestamp: parseTime("2024-01-15T09:15:00Z"),
-				Duration:  int64(5*time.Minute + 23*time.Second),
+				Duration:  (5*time.Minute + 23*time.Second).Nanoseconds(),
 				Details:   "Security tests completed - no critical vulnerabilities found",
 			},
 		},
@@ -87,7 +87,7 @@ var initialPipelines = []struct {
 				Type:      "test",
 				Status:    "failed",
 				Timestamp: parseTime("2024-01-15T08:45:00Z"),
-				Duration:  int64(3*time.Minute + 12*time.Second),
+				Duration:  (3*time.Minute + 12*time.Second).Nanoseconds(),
 				Details:   "Performance tests failed - response time exceeded threshold",
 			},
 		},
@@ -120,42 +120,49 @@ func DBInit() {
 
 	AutoMigrate(db)
 
-	// Insert initial pipelines if DB is empty
-	var count int64
-	db.Model(&models.Pipeline{}).Count(&count)
-	if count == 0 {
-		log.Println("Inserting initial pipelines and events...")
-		for _, item := range initialPipelines {
-			// Create pipeline
-			if err := db.Create(&item.Pipeline).Error; err != nil {
-				log.Fatalf("Failed to insert pipeline: %s", err.Error())
-			}
+	/*
+		// Insert initial pipelines if DB is empty
+		var count int64
+		db.Model(&models.Pipeline{}).Count(&count)
+		if count == 0 {
+			log.Println("Inserting initial pipelines and events...")
+			for _, item := range initialPipelines {
+				// Create pipeline
+				if err := db.Create(&item.Pipeline).Error; err != nil {
+					log.Fatalf("Failed to insert pipeline: %s", err.Error())
+				}
 
-			// Create access token for the pipeline
-			accessToken := models.AccessTokens{
-				AccessToken: "initial-token-" + item.Pipeline.Name,
-				PipelineID:  item.Pipeline.ID,
-			}
-			if err := db.Create(&accessToken).Error; err != nil {
-				log.Fatalf("Failed to insert access token: %s", err.Error())
-			}
+				// Create access token for the pipeline
+				accessToken := models.AccessTokens{
+					AccessToken: "initial-token-" + item.Pipeline.Name,
+					PipelineID:  item.Pipeline.ID,
+				}
+				if err := db.Create(&accessToken).Error; err != nil {
+					log.Fatalf("Failed to insert access token: %s", err.Error())
+				}
 
-			// Assign pipeline ID to events and insert them
-			for i := range item.Events {
-				item.Events[i].PipelineID = item.Pipeline.ID
-				if err := db.Create(&item.Events[i]).Error; err != nil {
-					log.Fatalf("Failed to insert pipeline event: %s", err.Error())
+				// Assign pipeline ID to events and insert them
+				for i := range item.Events {
+					item.Events[i].PipelineID = item.Pipeline.ID
+					if err := db.Create(&item.Events[i]).Error; err != nil {
+						log.Fatalf("Failed to insert pipeline event: %s", err.Error())
+					}
 				}
 			}
+			log.Println("Initial pipelines and events inserted successfully")
 		}
-		log.Println("Initial pipelines and events inserted successfully")
-	}
-
+	*/
 	DB = db
 	log.Println("Database initialization complete")
 }
 
 func AutoMigrate(db *gorm.DB) {
+	if err := db.AutoMigrate(&models.User{}); err != nil {
+		log.Fatalf("Failed to migrate User model: %s", err.Error())
+	}
+	if err := db.AutoMigrate(&models.Keys{}); err != nil {
+		log.Fatalf("Failed to migrate Keys model: %s", err.Error())
+	}
 	if err := db.AutoMigrate(&models.Pipeline{}); err != nil {
 		log.Fatalf("Failed to migrate Pipeline model: %s", err.Error())
 	}
@@ -165,4 +172,14 @@ func AutoMigrate(db *gorm.DB) {
 	if err := db.AutoMigrate(&models.AccessTokens{}); err != nil {
 		log.Fatalf("Failed to migrate AccessTokens model: %s", err.Error())
 	}
+	if err := db.AutoMigrate(&models.TestSession{}); err != nil {
+		log.Fatalf("Failed to migrate TestSession model: %s", err.Error())
+	}
+	if err := db.AutoMigrate(&models.SessionSelenium{}); err != nil {
+		log.Fatalf("Failed to migrate SessionSelenium model: %s", err.Error())
+	}
+	if err := db.AutoMigrate(&models.Event{}); err != nil {
+		log.Fatalf("Failed to migrate Event model: %s", err.Error())
+	}
+	log.Println("Database migration completed successfully")
 }

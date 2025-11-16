@@ -1,17 +1,43 @@
 package config
 
 import (
+	"log"
 	"os"
+	"sync"
 )
 
-import "log"
-
 var EnvConfig struct {
-	Port        string
-	DbUrl       string
-	CallbackUrl string
-	Secret      string
-	FrontendUrl string
+	Port            string
+	DbUrl           string
+	CallbackUrl     string
+	Secret          string
+	FrontendUrl     string
+	ReverseProxyUrl string
+}
+
+// ProxySettings struct to store proxy configuration
+
+type ProxySettings struct {
+	TestId       string
+	APIKey       string
+	PipelineName string
+	mu           sync.RWMutex
+}
+
+var ProxyConfig = &ProxySettings{}
+
+func (c *ProxySettings) GetValues() (string, string, string) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.APIKey, c.PipelineName, c.TestId
+}
+
+func (c *ProxySettings) SetValues(apiKey, pipelineName, testId string) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.APIKey = apiKey
+	c.PipelineName = pipelineName
+	c.TestId = testId
 }
 
 func LoadEnv() {
@@ -36,6 +62,11 @@ func LoadEnv() {
 	EnvConfig.FrontendUrl = os.Getenv("FRONTEND_URL")
 	if EnvConfig.FrontendUrl == "" {
 		log.Fatalf("FRONTEND_URL is not set")
+	}
+
+	EnvConfig.ReverseProxyUrl = os.Getenv("REVERSE_PROXY_URL")
+	if EnvConfig.ReverseProxyUrl == "" {
+		log.Fatalf("REVERSE_PROXY_URL is not set")
 	}
 
 	log.Printf("Env loaded successfully")
