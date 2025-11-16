@@ -17,8 +17,12 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o main main
 RUN chmod +x /app/main
 
 # -----Final Stage-----
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
+FROM python:3.12-alpine AS runtime
+
+RUN apk --no-cache add ca-certificates git 
+
+RUN pip install --no-cache-dir selenium
+
 WORKDIR /app
 COPY --from=builder /app/main .
 ENTRYPOINT ["./main"]
