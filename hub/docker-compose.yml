@@ -38,58 +38,22 @@ services:
     networks:
       - selenium-network
 
-  db:
-    image: postgres:latest
-    environment:
-      POSTGRES_USER: thex
-      POSTGRES_PASSWORD: thex1234
-      POSTGRES_DB: thex
-      PGUSER: thex
-    ports:
-      - "5432:5432"
-    networks:
-      - web-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-U", "thex", "-d", "thex", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 80s
-
-  am:
-    image: am:latest
-    networks:
-      - web-network
-    environment:
-      - AM_DEMO=1
-    depends_on:
-      db:
-        condition: service_healthy
-
-  proxse:
-    image: proxse:latest
+ 
+  reverse-proxy-server:
+    build:
+      context: ./ReverseProxyServer
+      dockerfile: Dockerfile
     ports:
       - "4445:4445"
     networks:
       - selenium-network
-      - web-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file:
+      - ./ReverseProxyServer/.env
     depends_on:
-      db:
-        condition: service_healthy
-      am:
-        condition: service_completed_successfully
-
-  fe:
-    image: fe:latest
-    ports:
-      - "8080:8080"
-    networks:
-      - web-network
-    depends_on:
-      db:
-        condition: service_healthy
-      am:
-        condition: service_completed_successfully
+      - selenium-hub
+      
 
 networks:
   selenium-network:
