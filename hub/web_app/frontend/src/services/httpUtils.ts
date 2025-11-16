@@ -3,14 +3,15 @@ import { APIResponse } from "@/types/API";
 export interface HttpRequestOptions {
   body?: any;
   headers?: Record<string, string>;
+  credentials?: RequestCredentials;
 }
 
 class HttpUtils {
   private getBaseUrl(): string {
-    return process.env.NEXT_PUBLIC_CICD_RUNNER_URL || 'http://localhost:8082';
+    return process.env.NEXT_PUBLIC_CICD_RUNNER_URL || 'http://localhost:8086';
   }
 
-  private async httpRequest<T extends APIResponse<any>>(
+  private async httpRequest<T extends APIResponse>(
     endpoint: string,
     method: "GET" | "POST" | "PUT" | "DELETE",
     options?: HttpRequestOptions
@@ -23,24 +24,12 @@ class HttpUtils {
         method: method || "GET",
         body: options?.body ? JSON.stringify(options.body) : undefined,
         headers: { "Content-Type": "application/json", ...options?.headers },
+        credentials: options?.credentials || 'same-origin',
       });
-
-      if (!response.ok) {
-        return {
-          success: false,
-          message: `HTTP error: ${response.status}`,
-          error: response.statusText,
-          statusCode: response.status,
-        } as T;
-      }
-
 
       const responseJson = await response.json();
 
-      return {
-        ...responseJson,
-        statusCode: response.status,
-      } as T;
+      return responseJson as T;
 
     } catch (err: any) {
       return {
