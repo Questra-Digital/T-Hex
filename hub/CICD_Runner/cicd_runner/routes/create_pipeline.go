@@ -15,6 +15,7 @@ import (
 type PipelineRequest struct {
 	Pipeline    models.Pipeline `json:"pipeline"`
 	AccessToken string          `json:"access_token"`
+	UserId      int64          `json:"user_id"`
 }
 
 func CreatePipeline(c *gin.Context) {
@@ -31,6 +32,13 @@ func CreatePipeline(c *gin.Context) {
 
 	//No other input validation for now.
 	pipeline := requestBody.Pipeline
+	userId, err := db.VerifyUserId(requestBody.UserId)
+	if err != nil {
+		log.Printf("Failed to verify user ID: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+	pipeline.UserId = userId
 
 	if err := db.CreatePipeline(&pipeline, requestBody.AccessToken); err != nil {
 		log.Printf("Failed to create pipeline in database: %v", err)
@@ -48,7 +56,7 @@ func CreatePipeline(c *gin.Context) {
 
 	//No validations now for repoPath, branchName and accessToken
 	owner, repo := extractOwnerAndRepo(repoPath)
-	err := github.CreateWebhook(owner, repo, accessToken, config.EnvConfig.CallbackUrl, branchName, config.EnvConfig.Secret)
+	err = github.CreateWebhook(owner, repo, accessToken, config.EnvConfig.CallbackUrl, branchName, config.EnvConfig.Secret)
 	if err != nil {
 		log.Printf("Failed to create webhook: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
