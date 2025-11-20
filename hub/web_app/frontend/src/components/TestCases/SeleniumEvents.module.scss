@@ -1,0 +1,378 @@
+@use '@/styles/abstracts/mixins' as mx;
+@use '@/styles/abstracts/variables' as var;
+@use '@/styles/abstracts/breakpoints' as break;
+
+.seleniumEventsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+  min-width: 0;
+  padding: 20px;
+}
+
+.sessionInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: rgba(61, 141, 122, 0.05);
+  border: 1px solid rgba(61, 141, 122, 0.15);
+  border-radius: 12px;
+  
+  .sessionIdDisplay {
+    @include mx.flex-container(row, center, flex-start);
+    gap: 8px;
+    
+    svg {
+      color: #3D8D7A;
+      flex-shrink: 0;
+    }
+    
+    span {
+      @include mx.text-style($font: var(--font-outfit), $size: 16px, $weight: 600, $shadow: none, $line_height: 20px, $color: #1E1E1E);
+    }
+  }
+  
+  .eventsCount {
+    @include mx.flex-container(row, center, center);
+    gap: 8px;
+    
+    svg {
+      color: #3D8D7A;
+      flex-shrink: 0;
+    }
+    
+    span {
+      @include mx.text-style($font: var(--font-outfit), $size: 14px, $weight: 500, $shadow: none, $line_height: 18px, $color: #3D8D7A);
+    }
+  }
+}
+
+.eventsTable {
+  background: rgba(61, 141, 122, 0.05);
+  border: 1px solid rgba(61, 141, 122, 0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  
+  // Top border accent - matching PipelinesList style
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #3D8D7A;
+    border-radius: 12px 12px 0 0;
+    z-index: 1;
+  }
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr 2fr 1fr 2fr 2fr 1.5fr;
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(61, 141, 122, 0.08);
+  border-bottom: 1px solid rgba(61, 141, 122, 0.15);
+  
+  .headerCell {
+    @include mx.text-style($font: var(--font-outfit), $size: 14px, $weight: 600, $shadow: none, $line_height: 18px, $color: #1E1E1E);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.tableBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr 2fr 1fr 2fr 2fr 1.5fr;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(61, 141, 122, 0.1);
+  transition: all 0.2s ease;
+  align-items: start;
+  
+  &:hover {
+    background: rgba(61, 141, 122, 0.05);
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.cell {
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+  
+  // For cells with single-line content, center align
+  &:not(.bodyCell):not(.responseCell) {
+    align-items: center;
+  }
+}
+
+.eventIdCell {
+  @include mx.flex-container(row, center, flex-start);
+  gap: 8px;
+  
+  svg {
+    color: #3D8D7A;
+    flex-shrink: 0;
+  }
+  
+  .eventId {
+    @include mx.text-style($font: var(--font-outfit), $size: 14px, $weight: 500, $shadow: none, $line_height: 18px, $color: #1E1E1E);
+    font-family: 'Courier New', monospace;
+    background: rgba(61, 141, 122, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(61, 141, 122, 0.2);
+  }
+}
+
+.methodCell {
+  @include mx.flex-container(row, center, flex-start);
+  gap: 8px;
+  
+  svg {
+    color: #3D8D7A;
+    flex-shrink: 0;
+  }
+  
+  .method {
+    @include mx.text-style($font: var(--font-outfit), $size: 14px, $weight: 600, $shadow: none, $line_height: 18px, $color: #1E1E1E);
+    font-family: 'Courier New', monospace;
+    background: rgba(61, 141, 122, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(61, 141, 122, 0.2);
+    text-transform: uppercase;
+  }
+}
+
+.pathCell {
+  .pathText {
+    @include mx.text-style($font: var(--font-outfit), $size: 14px, $weight: 500, $shadow: none, $line_height: 1.4, $color: #1E1E1E);
+    display: block;
+    word-break: break-all;
+    font-family: 'Courier New', monospace;
+    background: rgba(61, 141, 122, 0.05);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(61, 141, 122, 0.1);
+  }
+}
+
+.statusBadge {
+  @include mx.flex-container(row, center, center);
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: #ffffff;
+  flex-shrink: 0;
+  width: fit-content;
+  
+  span {
+    @include mx.text-style($font: var(--font-outfit), $size: 12px, $weight: 600, $shadow: none, $line_height: 15px, $color: #ffffff);
+    text-transform: capitalize;
+  }
+  
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.bodyCell {
+  .bodyText {
+    @include mx.text-style($font: var(--font-outfit), $size: 13px, $weight: 400, $shadow: none, $line_height: 1.4, $color: #1E1E1E);
+    display: block;
+    word-break: break-word;
+    max-width: 100%;
+    white-space: pre-wrap;
+    font-family: 'Courier New', monospace;
+    background: rgba(61, 141, 122, 0.05);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(61, 141, 122, 0.1);
+    max-height: 120px;
+    overflow-y: auto;
+  }
+}
+
+.responseCell {
+  .responseText {
+    @include mx.text-style($font: var(--font-outfit), $size: 13px, $weight: 400, $shadow: none, $line_height: 1.4, $color: #1E1E1E);
+    display: block;
+    word-break: break-word;
+    max-width: 100%;
+    white-space: pre-wrap;
+    font-family: 'Courier New', monospace;
+    background: rgba(61, 141, 122, 0.05);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(61, 141, 122, 0.1);
+    max-height: 120px;
+    overflow-y: auto;
+  }
+}
+
+.timestampCell {
+  @include mx.flex-container(row, flex-start, flex-start);
+  gap: 8px;
+  
+  svg {
+    color: #3D8D7A;
+    flex-shrink: 0;
+    margin-top: 2px; // Slight offset to align with first line of text
+  }
+  
+  span {
+    @include mx.text-style($font: var(--font-outfit), $size: 13px, $weight: 500, $shadow: none, $line_height: 18px, $color: #8F8A8A);
+  }
+}
+
+.successIcon {
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3D8D7A;
+}
+
+.failedIcon {
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+}
+
+.noEventsMessage,
+.loadingMessage,
+.errorMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: rgba(61, 141, 122, 0.05);
+  border: 1px solid rgba(61, 141, 122, 0.15);
+  border-radius: 12px;
+  
+  svg {
+    color: #8F8A8A;
+    margin-bottom: 16px;
+  }
+  
+  h3 {
+    @include mx.text-style($font: var(--font-outfit), $size: 20px, $weight: 600, $shadow: none, $line_height: 26px, $color: #1E1E1E);
+    margin: 0 0 8px 0;
+  }
+  
+  p {
+    @include mx.text-style($font: var(--font-outfit), $size: 14px, $weight: 400, $shadow: none, $line_height: 1.5, $color: #8F8A8A);
+    margin: 0;
+  }
+}
+
+.loadingMessage {
+  svg {
+    color: #3D8D7A;
+    animation: spin 2s linear infinite;
+  }
+}
+
+.errorMessage {
+  svg {
+    color: #ef4444;
+  }
+  
+  h3 {
+    color: #ef4444;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Responsive Design
+@include break.respond-to(md) {
+  .seleniumEventsContainer {
+    padding: 24px;
+  }
+  
+  .tableHeader,
+  .tableRow {
+    padding: 18px 24px;
+  }
+}
+
+@include break.respond-to(lg) {
+  .sessionInfo {
+    .sessionIdDisplay {
+      span {
+        font-size: 18px;
+        line-height: 22px;
+      }
+    }
+  }
+}
+
+@include break.respond-to(xl) {
+  .sessionInfo {
+    .sessionIdDisplay {
+      span {
+        font-size: 20px;
+        line-height: 24px;
+      }
+    }
+  }
+}
+
+// Mobile responsive adjustments
+@media (max-width: 768px) {
+  .eventsTable {
+    overflow-x: auto;
+  }
+  
+  .tableHeader,
+  .tableRow {
+    min-width: 1000px; // Ensure table doesn't get too cramped
+  }
+  
+  .tableHeader {
+    grid-template-columns: 0.6fr 0.8fr 1.5fr 0.8fr 1.5fr 1.5fr 1.2fr;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+  
+  .tableRow {
+    grid-template-columns: 0.6fr 0.8fr 1.5fr 0.8fr 1.5fr 1.5fr 1.2fr;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+}

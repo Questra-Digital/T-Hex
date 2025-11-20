@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Play, GitBranch, Loader2 } from "lucide-react";
 import InputField from "@/components/InputField/InputField";
 import { useState, forwardRef, useImperativeHandle, useCallback } from "react";
-import { githubApiService } from "@/services/githubApi";
+import { validateBranch } from "@/services/githubApi";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 
 type TriggerType = "manual" | "commit";
@@ -64,12 +64,12 @@ const Triggers = forwardRef<TriggersRef, TriggersProps>(
       setShowError(false);
 
       try {
-        const validation = await githubApiService.validateBranch(githubToken, repoPath, branchName);
+        const response = await validateBranch(githubToken, repoPath, branchName);
 
-        if (!validation.exists) {
-          setError(validation.error || "Branch does not exist");
+        if (!response.success) {
+          setError(response.error || response.message || "Branch validation failed");
           setShowError(true);
-          showSnackbar(validation.error || "Branch does not exist", "error");
+          showSnackbar(response.error || response.message || "Branch validation failed", "error");
           return false;
         }
 

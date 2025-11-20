@@ -1,0 +1,15 @@
+.env
+
+# Ignore the Dockerfile itself
+Dockerfile
+.dockerignore
+
+# Git and version control
+.git
+.gitignore
+
+# Build and binary output
+bin/
+main
+*.exe
+*.out

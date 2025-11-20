@@ -5,6 +5,10 @@ import { montserrat, outfit } from "../../fonts/fonts";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import MenuDrawer from "./MenuDrawer/MenuDrawer";
+import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
+import { selectUserData } from "@/store/userData";
+import { User } from "lucide-react";
 
 // Constants
 const NAVIGATION_LINKS = [
@@ -22,6 +26,11 @@ const ARROW_ICON_SIZE = 32;
 
 export default function Header() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const router = useRouter();
+  const userData = useAppSelector(selectUserData);
+  
+  // Check if user is logged in
+  const isLoggedIn = userData.user_id && userData.user_id > 0;
 
   useEffect(() => {
     const handleScreenResize = () => {
@@ -40,6 +49,14 @@ export default function Header() {
 
   const handleMenuToggle = () => {
     setIsDrawerOpen(!isDrawerOpen);
+  };
+
+  const handleLoginClick = () => {
+    router.push('/login');
+  };
+
+  const handleGetStartedClick = () => {
+    router.push('/getting_started');
   };
 
   const renderNavigationLinks = () => (
@@ -63,8 +80,16 @@ export default function Header() {
 
   const renderButtons = () => (
     <div className={styles.buttonsGroup}>
-      <button className={styles.button}>Login</button>
-      <button className={`${styles.getStarted} ${styles.button}`}>
+      {isLoggedIn ? (
+        <div className={styles.userIcon}>
+          <User size={24} />
+        </div>
+      ) : (
+        <button className={styles.button} onClick={handleLoginClick}>
+          Login
+        </button>
+      )}
+      <button className={`${styles.getStarted} ${styles.button}`} onClick={handleGetStartedClick}>
         Get Started Free
       </button>
     </div>

@@ -1,0 +1,257 @@
+@use '@/styles/abstracts/mixins' as mx;
+@use '@/styles/abstracts/variables' as var;
+@use '@/styles/abstracts/breakpoints' as break;
+
+// Analytics Panel Styles
+.analyticsPanel {
+  width: 320px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(61, 141, 122, 0.15);
+  border-radius: 12px;
+  padding: 20px;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+  
+  // Top border accent
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #3D8D7A;
+    border-radius: 12px 12px 0 0;
+  }
+}
+
+.analyticsHeader {
+  margin-bottom: 20px;
+  
+  .analyticsTitle {
+    @include mx.text-style($font: var(--font-outfit), $size: 18px, $weight: 600, $shadow: none, $line_height: 1.4, $color: #1E1E1E);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    letter-spacing: -0.01em;
+    
+    svg {
+      color: #3D8D7A;
+    }
+  }
+}
+
+.metricsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.metricCard {
+  background: rgba(61, 141, 122, 0.05);
+  border: 1px solid rgba(61, 141, 122, 0.15);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(61, 141, 122, 0.08);
+    border-color: rgba(61, 141, 122, 0.25);
+  }
+  
+  .metricIcon {
+    width: 32px;
+    height: 32px;
+    background: #3D8D7A;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+  }
+  
+  .metricContent {
+    flex: 1;
+    min-width: 0;
+    
+    .metricValue {
+      @include mx.text-style($font: var(--font-outfit), $size: 20px, $weight: 600, $shadow: none, $line_height: 1.2, $color: #1E1E1E);
+      margin-bottom: 2px;
+    }
+    
+    .metricLabel {
+      @include mx.text-style($font: var(--font-outfit), $size: 12px, $weight: 500, $shadow: none, $line_height: 1.2, $color: #8F8A8A);
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+    }
+  }
+}
+
+.chartSection {
+  margin-bottom: 24px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  .chartTitle {
+    @include mx.text-style($font: var(--font-outfit), $size: 14px, $weight: 600, $shadow: none, $line_height: 1.4, $color: #1E1E1E);
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+}
+
+.barChart {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  height: 120px;
+  gap: 4px;
+  padding: 0 4px;
+}
+
+.barContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  position: relative;
+  
+  .bar {
+    width: 100%;
+    background: linear-gradient(to top, #3D8D7A, #4cab94);
+    border-radius: 4px 4px 0 0;
+    min-height: 4px;
+    transition: all 0.3s ease;
+    position: relative;
+    
+    &:hover {
+      background: linear-gradient(to top, #2e6e5d, #3D8D7A);
+    }
+  }
+  
+  .barLabel {
+    @include mx.text-style($font: var(--font-outfit), $size: 11px, $weight: 500, $shadow: none, $line_height: 1.2, $color: #8F8A8A);
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+  
+  .barValue {
+    @include mx.text-style($font: var(--font-outfit), $size: 10px, $weight: 600, $shadow: none, $line_height: 1.2, $color: #3D8D7A);
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(61, 141, 122, 0.2);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  
+  &:hover .barValue {
+    opacity: 1;
+  }
+}
+
+.pipelineStats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pipelineStat {
+  .pipelineStatHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    
+    .pipelineStatName {
+      @include mx.text-style($font: var(--font-outfit), $size: 12px, $weight: 600, $shadow: none, $line_height: 1.2, $color: #1E1E1E);
+      letter-spacing: -0.01em;
+    }
+    
+    .pipelineStatRate {
+      @include mx.text-style($font: var(--font-outfit), $size: 12px, $weight: 600, $shadow: none, $line_height: 1.2, $color: #3D8D7A);
+    }
+  }
+  
+  .pipelineStatBar {
+    height: 6px;
+    background: rgba(61, 141, 122, 0.15);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 4px;
+    
+    .pipelineStatBarFill {
+      height: 100%;
+      background: linear-gradient(to right, #3D8D7A, #4cab94);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+  }
+  
+  .pipelineStatDetails {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .successCount {
+      @include mx.text-style($font: var(--font-outfit), $size: 10px, $weight: 500, $shadow: none, $line_height: 1.2, $color: #3D8D7A);
+    }
+    
+    .failedCount {
+      @include mx.text-style($font: var(--font-outfit), $size: 10px, $weight: 500, $shadow: none, $line_height: 1.2, $color: #ef4444);
+    }
+  }
+}
+
+// Responsive Design
+@include break.respond-to(md) {
+  .analyticsPanel {
+    width: 280px;
+  }
+}
+
+@include break.respond-to(lg) {
+  .analyticsPanel {
+    width: 300px;
+  }
+}
+
+@include break.respond-to(xl) {
+  .analyticsPanel {
+    width: 320px;
+  }
+}
+
+@include break.respond-to(xxl) {
+  .analyticsPanel {
+    width: 340px;
+  }
+}
+
+@include break.respond-to(desktop) {
+  .analyticsPanel {
+    width: 360px;
+  }
+}
+
+// Mobile responsive - stack analytics below pipelines
+@media (max-width: 768px) {
+  .analyticsPanel {
+    width: 100%;
+    position: static;
+  }
+}

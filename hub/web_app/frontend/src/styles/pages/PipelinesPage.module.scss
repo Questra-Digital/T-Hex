@@ -1,0 +1,101 @@
+@use '../abstracts/mixins' as mx;
+@use '../abstracts/variables' as var;
+@use '../abstracts/breakpoints' as break;
+
+.pipelinesPage {
+  min-height: 100vh;
+  background-color: #EEEEEE;
+  padding: 3% 3%;
+  
+  // Base text style applied to all text elements
+  @include mx.text-style($font: var(--font-outfit), $size: var.$font-lg, $weight: 400, $line_height: 1.4, $shadow: none, $letter-spacing: -0.02em);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4%;
+  
+  .title {
+    @include mx.text-style($font: var(--font-outfit), $size: 48px, $weight: 500, $shadow: none, $line_height: 60px);
+    margin-bottom: var.$space-2;
+    color: #1E1E1E;
+    letter-spacing: -0.02em;
+    
+    span {
+      color: #1B39CE;
+    }
+  }
+  
+  .subtitle {
+    @include mx.text-style($font: var(--font-outfit), $size: 18px, $weight: 400, $shadow: none, $line_height: 23px, $color: #8F8A8A);
+  }
+}
+
+.dashboardContent {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+// Responsive Design
+@include break.respond-to(md) {
+  .header {
+    .title {
+      font-size: 36px;
+      line-height: 45px;
+    }
+  }
+}
+
+@include break.respond-to(lg) {
+  .header {
+    .title {
+      font-size: 38px;
+      line-height: 48px;
+    }
+  }
+}
+
+@include break.respond-to(xl) {
+  .header {
+    .title {
+      font-size: 40px;
+      line-height: 50px;
+    }
+  }
+}
+
+@include break.respond-to(xxl) {
+  .header {
+    .title {
+      font-size: 48px;
+      line-height: 60px;
+    }
+  }
+}
+
+@include break.respond-to(desktop) {
+  .container {
+    max-width: 1600px;
+  }
+  
+  .header {
+    .title {
+      font-size: 50px;
+      line-height: 62px;
+    }
+  }
+}
+
+// Mobile responsive - stack analytics below pipelines
+@media (max-width: 768px) {
+  .dashboardContent {
+    flex-direction: column;
+  }
+}

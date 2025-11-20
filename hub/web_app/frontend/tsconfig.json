@@ -2,11 +2,16 @@
   "compilerOptions": {
     "baseUrl": "src",
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
+    "ignoreDeprecations": "5.0",
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -20,15 +25,45 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@/components/*": ["components/*"],
-      "@/fonts/*":["fonts/*"],
-      "@/styles/*":["styles/*"],
-      "@/assets/*":["assets/*"],
-      "@/services/*":["services/*"],
-      "@/contexts/*":["contexts/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/fonts/*": [
+        "fonts/*"
+      ],
+      "@/styles/*": [
+        "styles/*"
+      ],
+      "@/assets/*": [
+        "assets/*"
+      ],
+      "@/services/*": [
+        "services/*"
+      ],
+      "@/contexts/*": [
+        "contexts/*"
+      ],
+      "@/types/*": [
+        "types/*"
+      ],
+      "@/state/*": [
+        "state/*"
+      ],
+      "@/store/*": [
+        "store/*"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -1,0 +1,24 @@
+services:
+  cicd_runner:
+    build:
+      context: ./cicd_runner
+      dockerfile: Dockerfile
+    container_name: cicd_runner
+    ports:
+      - "8086:8086"
+    environment:
+      - PORT=:8086
+      - DB_URL=postgres://postgres:123456@host.docker.internal:5432/t_hex?sslmode=disable
+      # Update this with your own ngrok URL
+      - CALLBACK_URL=https://c1aaf2a481b5.ngrok-free.app/hook_callback
+      - SECRET=1234
+      - FRONTEND_URL=http://host.docker.internal:3000
+      - REVERSE_PROXY_URL=http://host.docker.internal:4445
+    volumes:
+      - test_cases:/app/test_cases
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  test_cases:

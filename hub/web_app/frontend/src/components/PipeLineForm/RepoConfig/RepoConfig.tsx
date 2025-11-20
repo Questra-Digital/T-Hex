@@ -3,7 +3,7 @@ import { useState, forwardRef, useImperativeHandle, useCallback } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import React from "react";
 import InputField from "@/components/InputField/InputField";
-import { githubApiService } from "@/services/githubApi";
+import { validateTokenAndRepo } from "@/services/githubApi";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 
 interface RepoConfigProps {
@@ -66,28 +66,13 @@ const RepoConfig = forwardRef<RepoConfigRef, RepoConfigProps>(
       setShowErrors(false);
 
       try {
-        const validation = await githubApiService.validateTokenAndRepo(githubToken, repoPath);
+        const response = await validateTokenAndRepo(githubToken, repoPath);
 
-        if (!validation.isValid) {
-          setErrors({ githubToken: validation.error });
+        if (!response.success) {
+          setErrors({ githubToken: response.error || response.message });
           setShowErrors(true);
-          showSnackbar(validation.error || "Invalid GitHub token", "error");
+          showSnackbar(response.error || response.message || "GitHub validation failed", "error");
           return false;
-        }
-
-        if (!validation.hasRepoAccess) {
-          setErrors({ repoPath: validation.error });
-          setShowErrors(true);
-          showSnackbar(validation.error || "Cannot access repository", "error");
-          return false;
-        }
-
-        if (!validation.hasWriteAccess) {
-          showSnackbar(
-            "Warning: Token has read-only access. Some pipeline features may not work properly.",
-            "info",
-            7000
-          );
         }
 
         setIsValidated(true);

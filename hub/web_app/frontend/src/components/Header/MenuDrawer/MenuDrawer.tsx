@@ -2,6 +2,10 @@ import styles from "@/styles/components/Header/MenuDrawer.module.scss";
 import Image from "next/image";
 import { outfit } from "../../../fonts/fonts";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
+import { selectUserData } from "@/store/userData";
+import { User } from "lucide-react";
 
 interface Link {
   name: string;
@@ -22,6 +26,11 @@ export default function MenuDrawer({
   isDrawerOpen = false,
 }: MenuDrawerProps) {
   const [shouldRender, setShouldRender] = useState(isDrawerOpen);
+  const router = useRouter();
+  const userData = useAppSelector(selectUserData);
+  
+  // Check if user is logged in
+  const isLoggedIn = userData.user_id && userData.user_id > 0;
 
   useEffect(() => {
     if (!isDrawerOpen) {
@@ -31,6 +40,14 @@ export default function MenuDrawer({
       setShouldRender(true);
     }
   }, [isDrawerOpen]);
+
+  const handleLoginClick = () => {
+    router.push('/login');
+  };
+
+  const handleGetStartedClick = () => {
+    router.push('/getting_started');
+  };
 
   const renderNavigationLinks = () => (
     <>
@@ -53,8 +70,16 @@ export default function MenuDrawer({
 
   const renderButtons = () => (
     <div className={styles.linkCard}>
-      <button className={outfit.variable}>Login</button>
-      <button className={`${styles.getStarted}`}>
+      {isLoggedIn ? (
+        <div className={styles.userIcon}>
+          <User size={24} />
+        </div>
+      ) : (
+        <button className={outfit.variable} onClick={handleLoginClick}>
+          Login
+        </button>
+      )}
+      <button className={`${styles.getStarted}`} onClick={handleGetStartedClick}>
         Get Started Free
       </button>
     </div>
