@@ -11,7 +11,7 @@ jobs:
     env:
       REGISTRY: ghcr.io
       OWNER: ${{ github.repository_owner }}
-      REPO: ${{ github.repository }} 
+      REPO_NAME: ${{ github.repository.split('/')[1] }}  # only "T-Hex"
 
     strategy:
       matrix:
@@ -43,4 +43,4 @@ jobs:
           context: ${{ github.workspace }}/${{ matrix.service.context }}
           file: ${{ github.workspace }}/${{ matrix.service.dockerfile }}
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.REPO }}/{{ matrix.service.name }}:latest
+          tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.REPO_NAME }}/{{ matrix.service.name }}:latest
