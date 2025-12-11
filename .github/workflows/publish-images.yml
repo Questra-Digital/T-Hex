@@ -10,7 +10,8 @@ jobs:
 
     env:
       REGISTRY: ghcr.io
-      OWNER: ${{ lower(github.repository) }}  # lowercase
+      OWNER: questra-digital        # hardcoded lowercase
+      REPO_NAME: t-hex              # hardcoded lowercase
 
     strategy:
       matrix:
@@ -23,9 +24,11 @@ jobs:
             dockerfile: hub/ReverseProxyServer/Dockerfile
 
     steps:
+      # Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Log in to GHCR
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -33,10 +36,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Build and push Docker images
       - name: Build & Push Docker image
         uses: docker/build-push-action@v5
         with:
           context: ${{ github.workspace }}/${{ matrix.service.context }}
           file: ${{ github.workspace }}/${{ matrix.service.dockerfile }}
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/t-hex/${{ matrix.service.name }}:latest
+          tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.REPO_NAME }}/${{ matrix.service.name }}:latest
