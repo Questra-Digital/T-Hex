@@ -42,4 +42,4 @@ jobs:
           context: ${{ github.workspace }}/${{ matrix.service.context }}
           file: ${{ github.workspace }}/${{ matrix.service.dockerfile }}
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/T-Hex/{{ matrix.service.name }}:latest
+          tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/T-Hex/${{ matrix.service.name }}:latest
