@@ -10,7 +10,7 @@ jobs:
 
     env:
       REGISTRY: ghcr.io
-      OWNER: questra-digital        # hardcoded lowercase
+      OWNER: bilal-os       # hardcoded lowercase
       REPO_NAME: t-hex              # hardcoded lowercase
 
     strategy:
