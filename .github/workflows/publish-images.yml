@@ -10,7 +10,7 @@ jobs:
 
     env:
       REGISTRY: ghcr.io
-      OWNER: ${{ github.repository_owner.toLowerCase() }}  # lowercase
+      OWNER: ${{ lower(github.repository) }}  # lowercase
 
     strategy:
       matrix:
