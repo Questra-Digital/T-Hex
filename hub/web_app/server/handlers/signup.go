@@ -14,7 +14,7 @@ type SignupRequest struct {
 }
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
-	
+
 	// Ensure request method is POST
 	if r.Method != http.MethodPost {
 		utils.RespondError(w, "Invalid request method", http.StatusMethodNotAllowed)

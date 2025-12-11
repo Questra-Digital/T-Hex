@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"strconv"
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -59,8 +59,7 @@ type StringInt struct {
 }
 
 // cache for Key to Session Id mapping
-var ksessCache map[StringPair]KSessCacheEntry =
-	make(map[StringPair]KSessCacheEntry)
+var ksessCache map[StringPair]KSessCacheEntry = make(map[StringPair]KSessCacheEntry)
 
 // whether a key is valid for a session or not
 func KeyIsValidForSess(key string, sessId string) bool {
@@ -89,8 +88,7 @@ func KeyIsValidForSess(key string, sessId string) bool {
 }
 
 // cache for Key to test Id mapping
-var ktestCache map[StringInt]KSessCacheEntry =
-	make(map[StringInt]KSessCacheEntry)
+var ktestCache map[StringInt]KSessCacheEntry = make(map[StringInt]KSessCacheEntry)
 
 // whether a key is valid for a test or not
 func KeyIsValidForTest(key string, testId int64) bool {
@@ -118,20 +116,20 @@ func KeyIsValidForTest(key string, testId int64) bool {
 
 // makes a key valid for a session id, with a project name
 func KeyMakeValidForSess(testId int64, key string, sessId string, proj string,
-		) error {
+) error {
 	if key == "" || sessId == "" {
 		return errors.New("key or session Id is empty")
 	}
 	cacheEntry := KSessCacheEntry{
-		Time: time.Now().Unix(),
+		Time:  time.Now().Unix(),
 		Valid: true,
 	}
 	ksessCache[StringPair{key, sessId}] = cacheEntry
 	entry := SessionSelenium{
-		Time: cacheEntry.Time,
-		TestId: testId,
+		Time:      cacheEntry.Time,
+		TestId:    testId,
 		SessionId: sessId,
-		Valid: true,
+		Valid:     true,
 	}
 	err := db.Create(entry).Error
 	if err != nil {
@@ -161,9 +159,9 @@ func KeyMakeInvalidForSess(key string, sessId string) error {
 // makes a new Testing Session for a key and proj
 func TestSessCreate(key string, proj string) (int64, error) {
 	test := TestSession{
-		Time: time.Now().Unix(),
-		Key: key,
-		Proj: proj,
+		Time:    time.Now().Unix(),
+		Key:     key,
+		Proj:    proj,
 		Current: true,
 	}
 	err := db.Create(&test).Error
@@ -277,18 +275,18 @@ func GetReqBody(r *http.Request) ([]byte, error) {
 
 // logs request response
 func LogReqRes(r *http.Request, statusCode int,
-		res, key, proj, sessId string) error {
+	res, key, proj, sessId string) error {
 	body, err := GetReqBody(r)
 	if err != nil {
 		return err
 	}
 	entry := &Event{
-		Time:    time.Now().Unix(),
-		Method:  r.Method,
-		Path:    r.URL.Path,
-		ReqBody: string(body),
-		Status:  statusCode,
-		Res:     string(res),
+		Time:      time.Now().Unix(),
+		Method:    r.Method,
+		Path:      r.URL.Path,
+		ReqBody:   string(body),
+		Status:    statusCode,
+		Res:       string(res),
 		SessionId: sessId,
 	}
 	err = db.Create(&entry).Error

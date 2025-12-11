@@ -23,7 +23,7 @@ func main() {
 		log.Println("\tConsider setting the THEX_URL env var")
 	}
 	if local == "" {
-		local = ":4444"
+		local = ":8888"
 		log.Printf("Using default `%s` for listener", local)
 		log.Println("\tConsider setting the LOCAL env var")
 	}
