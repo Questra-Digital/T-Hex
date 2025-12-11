@@ -15,10 +15,10 @@ jobs:
     strategy:
       matrix:
         service:
-          - name: CICD_Runner
+          - name: cicd_runner
             context: hub/CICD_Runner/cicd_runner
             dockerfile: hub/CICD_Runner/cicd_runner/Dockerfile
-          - name: ReverseProxyServer
+          - name: reverse_proxy_server
             context: hub/ReverseProxyServer
             dockerfile: hub/ReverseProxyServer/Dockerfile
 
@@ -42,4 +42,4 @@ jobs:
           context: ${{ github.workspace }}/${{ matrix.service.context }}
           file: ${{ github.workspace }}/${{ matrix.service.dockerfile }}
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/t_hex/${{ matrix.service.name }}:latest
+          tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/t-hex/${{ matrix.service.name }}:latest
