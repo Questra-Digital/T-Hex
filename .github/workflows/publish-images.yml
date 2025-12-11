@@ -15,10 +15,10 @@ jobs:
     strategy:
       matrix:
         service:
-          - name: cicd_runner
+          - name: cicd-runner
             context: hub/CICD_Runner/cicd_runner
             dockerfile: hub/CICD_Runner/cicd_runner/Dockerfile
-          - name: reverse_proxy_server
+          - name: reverse-proxy-server
             context: hub/ReverseProxyServer
             dockerfile: hub/ReverseProxyServer/Dockerfile
 
