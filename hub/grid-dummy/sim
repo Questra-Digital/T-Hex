@@ -1,0 +1,59 @@
+2025/03/25 01:18:47 POST /session
+2025/03/25 01:18:54 Response Body: {
+  "value": {
+    "sessionId": "db340c63b9f9d07d4a9e05c303b620f8",
+    "capabilities": {
+      "acceptInsecureCerts": false,
+      "browserName": "chrome",
+      "browserVersion": "132.0.6834.159",
+      "chrome": {
+        "chromedriverVersion": "132.0.6834.159 (2d77d3fc4452661469b78f115e0aed4d71269739-refs\u002fbranch-heads\u002f6834@{#4408})",
+        "userDataDir": "\u002ftmp\u002f.org.chromium.Chromium.6yHaYq"
+      },
+      "fedcm:accounts": true,
+      "goog:chromeOptions": {
+        "debuggerAddress": "localhost:44217"
+      },
+      "networkConnectionEnabled": false,
+      "pageLoadStrategy": "normal",
+      "platformName": "linux",
+      "proxy": {
+      },
+      "se:bidiEnabled": false,
+      "se:cdp": "ws:\u002f\u002f172.18.0.3:4444\u002fsession\u002fdb340c63b9f9d07d4a9e05c303b620f8\u002fse\u002fcdp",
+      "se:cdpVersion": "132.0.6834.159",
+      "se:containerName": "61ce70b0af19",
+      "se:noVncPort": 7900,
+      "se:vnc": "ws:\u002f\u002f172.18.0.3:4444\u002fsession\u002fdb340c63b9f9d07d4a9e05c303b620f8\u002fse\u002fvnc",
+      "se:vncEnabled": true,
+      "se:vncLocalAddress": "ws:\u002f\u002f172.18.0.3:7900",
+      "setWindowRect": true,
+      "strictFileInteractability": false,
+      "timeouts": {
+        "implicit": 0,
+        "pageLoad": 300000,
+        "script": 30000
+      },
+      "unhandledPromptBehavior": "dismiss and notify",
+      "webauthn:extension:credBlob": true,
+      "webauthn:extension:largeBlob": true,
+      "webauthn:extension:minPinLength": true,
+      "webauthn:extension:prf": true,
+      "webauthn:virtualAuthenticators": true
+    }
+  }
+}
+2025/03/25 01:18:54 POST /session/db340c63b9f9d07d4a9e05c303b620f8/url
+2025/03/25 01:18:55 Response Body: {"value":null}
+2025/03/25 01:18:55 POST /session/db340c63b9f9d07d4a9e05c303b620f8/element
+2025/03/25 01:18:55 Response Body: {"value":{"element-6066-11e4-a52e-4f735466cecf":"f.4EAD520AFB50144BE8FB66714C33A436.d.E0D8AF7CE8F9997266496C71162376EC.e.3"}}
+2025/03/25 01:18:55 POST /session/db340c63b9f9d07d4a9e05c303b620f8/execute/sync
+2025/03/25 01:18:56 Response Body: {"value":true}
+2025/03/25 01:18:56 GET /session/db340c63b9f9d07d4a9e05c303b620f8/title
+2025/03/25 01:18:56 Response Body: {"value":"Example Domain"}
+2025/03/25 01:18:56 POST /session/db340c63b9f9d07d4a9e05c303b620f8/element
+2025/03/25 01:18:57 Response Body: {"value":{"element-6066-11e4-a52e-4f735466cecf":"f.4EAD520AFB50144BE8FB66714C33A436.d.E0D8AF7CE8F9997266496C71162376EC.e.4"}}
+2025/03/25 01:18:57 GET /session/db340c63b9f9d07d4a9e05c303b620f8/element/f.4EAD520AFB50144BE8FB66714C33A436.d.E0D8AF7CE8F9997266496C71162376EC.e.4/text
+2025/03/25 01:18:58 Response Body: {"value":"More information..."}
+2025/03/25 01:18:58 DELETE /session/db340c63b9f9d07d4a9e05c303b620f8
+2025/03/25 01:18:58 Response Body: {"value":null}

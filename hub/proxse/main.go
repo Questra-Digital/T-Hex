@@ -1,14 +1,17 @@
 package main
 
 import (
+	"io"
 	"log"
 	"net/http"
 	"net/http/httputil"
-	"gorm.io/gorm"
 	"net/url"
 	"os"
 	"strconv"
 	"time"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 const ENV_END = "GRID"
@@ -19,6 +22,9 @@ const ENV_LISTEN_DEF = ":4445"
 
 const ENV_TTL = "TTL"
 const ENV_TTL_DEF = "120"
+
+const ENV_NODB = "THEX_NODB"
+const ENV_NODB_DEF = "DB"
 
 const SUB_URL = "/wd/hub"
 
@@ -31,6 +37,8 @@ const HEAD_NAME_DEF = "UNNAMED PROJECT"
 var ttl int32
 
 var db *gorm.DB
+
+var noDb bool; // if running under no database mode.
 
 // Get env var, or default val
 func Getenv(key string, def string) string {
@@ -45,6 +53,19 @@ func main() {
 	endpoint := Getenv(ENV_END, ENV_END_DEF)
 	local := Getenv(ENV_LISTEN, ENV_LISTEN_DEF)
 	ttlStr := Getenv(ENV_TTL, ENV_TTL_DEF)
+	noDb = Getenv(ENV_NODB, ENV_NODB_DEF) != ENV_NODB_DEF;
+
+	if noDb {
+		if isDummyGrid(endpoint) {
+			log.Println("Failed to detect dummy grid. Will not run in NODB mode!");
+			noDb = false
+		} else {
+			log.Println("RUNNING UNDER THEX_NODB. DO NOT USE THIS OUTSIDE TESTING.")
+			log.Println("FOLLOWING IS VALID AUTHENTICATION:")
+			log.Println("\tUsername:\tnodb")
+			log.Println("\tAPI KEY:\tabcd1234")
+		}
+	}
 
 	targetURL, err := url.Parse(endpoint)
 	if err != nil {
@@ -60,7 +81,11 @@ func main() {
 		ttl = int32(i)
 	}
 
-	db = DBInit()
+	if noDb{
+		db = DBInitNoDB()
+	} else {
+		db = DBInit()
+	}
 
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
 	proxy.Director = func(req *http.Request) {
@@ -188,4 +213,60 @@ func ProxyReverseHandlerSession(proxy *httputil.ReverseProxy) func(
 		proxy.ServeHTTP(sw, r)
 		LogReqRes(r, sw.statusCode, sw.body.String(), key, proj, sessId)
 	}
+}
+
+// initializes DB for THEX_NODB
+func DBInitNoDB() *gorm.DB {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		log.Println("Failed to initialize dummy DB:", err)
+		return db
+	}
+
+	err = db.AutoMigrate(&User{})
+	if err != nil {
+		log.Fatalf("Error: %s", err.Error())
+	}
+	err = db.AutoMigrate(&UserKey{})
+	if err != nil {
+		log.Fatalf("Error: %s", err.Error())
+	}
+	err = db.AutoMigrate(&Event{})
+	if err != nil {
+		log.Fatalf("Error: %s", err.Error())
+	}
+	err = db.AutoMigrate(&SessionSelenium{})
+	if err != nil {
+		log.Fatalf("Error: %s", err.Error())
+	}
+	err = db.AutoMigrate(&TestSession{})
+	if err != nil {
+		log.Fatalf("Error: %s", err.Error())
+	}
+	err = db.AutoMigrate(&ContactUsMessage{})
+	if err != nil {
+		log.Fatalf("Error: %s", err.Error())
+	}
+	if err = db.Create(&User{"nodb", "DUMMY STRING"}).Error; err != nil {
+		log.Fatalf("Error: %s", err.Error());
+	}
+	if err = db.Create(&UserKey{"nodb", "abcd1234"}).Error; err != nil {
+		log.Fatalf("Error: %s", err.Error());
+	}
+
+	log.Println("Dummy Gorm DB initialized")
+	return db
+}
+
+func isDummyGrid(endpoint string) bool {
+	resp, err := http.Get(endpoint + "/is-dummy-grid")
+	if err != nil {
+		return true
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return true
+	}
+	return string(body) == "true\n"
 }
