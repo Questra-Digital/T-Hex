@@ -1,10 +1,10 @@
 package main
 
 import (
+	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"net/http/httputil"
-	"gorm.io/gorm"
 	"net/url"
 	"os"
 	"strconv"
@@ -113,8 +113,7 @@ func THexTestSessSetupHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("\tassigned testId: %s %s; proj: `%s`; key: `%s`; testId: `%d",
 			r.Method, r.URL.String(), proj, key, testId)
 		return
-	} else
-	if r.Method == "DELETE" {
+	} else if r.Method == "DELETE" {
 		// TODO implement closing session
 	} else {
 		http.Error(w, "bad", http.StatusBadRequest)
@@ -127,7 +126,7 @@ func ProxyReverseHandlerSessionSetup(proxy *httputil.ReverseProxy) func(
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Session Setup Handler")
 		key, proj, testId, valid := GetKeyProjTestIdValidate(r)
-		if !valid || !KeyIsValidForTest(key, testId){
+		if !valid || !KeyIsValidForTest(key, testId) {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
@@ -176,7 +175,7 @@ func ProxyReverseHandlerSession(proxy *httputil.ReverseProxy) func(
 		}
 
 		// handle DELETE
-		if r.Method == "DELETE" && r.URL.Path == "/session/" + sessId {
+		if r.Method == "DELETE" && r.URL.Path == "/session/"+sessId {
 			log.Printf("\tDeleting session %s", sessId)
 			err := KeyMakeInvalidForSess(key, sessId)
 			if err != nil {

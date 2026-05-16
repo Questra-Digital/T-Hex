@@ -1,15 +1,18 @@
+import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import time
+
+# Get executor URL from command line
+executor_url = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8888/"
 
 chrome_options = Options()
 chrome_options.add_argument("--start-maximized")
 
 driver = webdriver.Remote(
-	command_executor="http://localhost:8888/",
+	command_executor=executor_url,
 	options=chrome_options
 )
 
