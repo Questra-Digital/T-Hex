@@ -53,6 +53,7 @@ export default function PipelinesPage() {
           setError(response.error || response.message || "Failed to fetch pipelines");
         }
       } catch (err) {
+        console.log("Error fetching pipelines:", err);
         setError("Failed to fetch pipelines");
       } finally {
         setLoading(false);

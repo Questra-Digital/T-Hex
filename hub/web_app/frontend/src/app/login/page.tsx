@@ -71,6 +71,7 @@ export default function LoginPage() {
                 showSnackbar(response.message || "Failed to send OTP", "error");
             }
         } catch (error) {
+            console.log(error);
             showSnackbar("An error occurred. Please try again.", "error");
         } finally {
             setIsLoading(false);
@@ -106,6 +107,7 @@ export default function LoginPage() {
                 showSnackbar(response.message || "Invalid OTP", "error");
             }
         } catch (error) {
+            console.log(error);
             showSnackbar("An error occurred. Please try again.", "error");
         } finally {
             setIsLoading(false);
@@ -239,7 +241,7 @@ export default function LoginPage() {
                         >
                             <div className={styles.otpInfo}>
                                 <p className={styles.otpInfoText}>
-                                    We've sent a 6-digit code to <strong>{userEmail}</strong>
+                                    We have sent a 6-digit code to <strong>{userEmail}</strong>
                                 </p>
                                 <button 
                                     type="button" 

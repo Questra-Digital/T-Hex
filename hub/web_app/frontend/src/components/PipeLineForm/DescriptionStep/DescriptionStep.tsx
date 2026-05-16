@@ -67,4 +67,6 @@ const DescriptionStep = forwardRef<DescriptionStepRef, DescriptionStepProps>(
   }
 );
 
+DescriptionStep.displayName = "DescriptionStep";
+
 export default DescriptionStep;

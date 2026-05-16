@@ -1,6 +1,6 @@
 import styles from "./RepoConfig.module.scss";
-import { useState, forwardRef, useImperativeHandle, useCallback } from "react";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useState, forwardRef, useImperativeHandle} from "react";
+import { Eye, EyeOff} from "lucide-react";
 import React from "react";
 import InputField from "@/components/InputField/InputField";
 import { validateTokenAndRepo } from "@/services/githubApi";
@@ -27,6 +27,7 @@ const RepoConfig = forwardRef<RepoConfigRef, RepoConfigProps>(
     const [errors, setErrors] = useState<{ githubToken?: string; repoPath?: string }>({});
     const [showErrors, setShowErrors] = useState(false);
     const [isValidated, setIsValidated] = useState(false);
+    console.log(isValidated)
 
     const { showSnackbar } = useSnackbar();
 
@@ -234,5 +235,7 @@ const RepoConfig = forwardRef<RepoConfigRef, RepoConfigProps>(
       </div>
     );
   });
+
+RepoConfig.displayName = "RepoConfig";
 
 export default RepoConfig;

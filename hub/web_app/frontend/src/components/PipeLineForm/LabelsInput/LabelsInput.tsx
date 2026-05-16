@@ -267,4 +267,6 @@ const LabelsInput = forwardRef<LabelsInputRef, LabelsInputProps>(
   }
 );
 
+LabelsInput.displayName = "LabelsInput";
+
 export default LabelsInput;
