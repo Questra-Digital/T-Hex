@@ -65,4 +65,6 @@ const PipelineNameStep = forwardRef<PipelineNameStepRef, PipelineNameStepProps>(
   }
 );
 
+PipelineNameStep.displayName = "PipelineNameStep";
+
 export default PipelineNameStep;

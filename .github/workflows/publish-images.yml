@@ -2,7 +2,7 @@ name: Build and Publish Docker Images
 
 on: 
   push:
-    branches: [ "feature/pipelines" ]
+    branches: [ "main" ]
 
 jobs:
   build-and-push:
@@ -10,8 +10,8 @@ jobs:
 
     env:
       REGISTRY: ghcr.io
-      OWNER: bilal-os       # hardcoded lowercase
-      REPO_NAME: t-hex              # hardcoded lowercase
+      OWNER: ${{ github.repository_owner }}
+      REPO_NAME: t-hex  # lowercase manually, must match Docker tag rules
 
     strategy:
       matrix:
@@ -24,11 +24,9 @@ jobs:
             dockerfile: hub/ReverseProxyServer/Dockerfile
 
     steps:
-      # Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Log in to GHCR
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -36,7 +34,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Build and push Docker images
       - name: Build & Push Docker image
         uses: docker/build-push-action@v5
         with:

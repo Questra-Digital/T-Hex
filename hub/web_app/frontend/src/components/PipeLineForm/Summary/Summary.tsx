@@ -1,7 +1,7 @@
 import styles from "./Summary.module.scss";
 import { Eye, EyeOff, Play, GitBranch, Tag, FileText } from "lucide-react";
 import { useState, forwardRef, useImperativeHandle } from "react";
-import { PipelineFormData } from "../types";
+import { PipelineFormData } from "../../PipelineForm";
 
 interface SummaryProps {
   data: PipelineFormData;

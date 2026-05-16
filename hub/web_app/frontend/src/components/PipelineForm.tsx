@@ -26,7 +26,7 @@ interface PipelineFormProps {
   onStepIncomplete?: (stepIndex: number) => void;
 }
 
-interface PipelineFormData {
+export interface PipelineFormData {
   pipelineName: string;
   description: string;
   labels: string[];
